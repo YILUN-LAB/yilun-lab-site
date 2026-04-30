@@ -78,14 +78,14 @@ export function ContactPage() {
 
               <div className="flex items-center gap-3">
                 <a
-                  href="mailto:hello@yilunlab.com"
+                  href="mailto:yilun@yilunlab.com"
                   aria-label="Email the studio"
                   className="liquid-glass-strong liquid-glass-tint flex h-14 w-14 items-center justify-center rounded-full"
                 >
                   <MailIcon className="h-6 w-6" />
                 </a>
                 <a
-                  href="https://instagram.com/yilun.lab"
+                  href="https://www.instagram.com/yilunlab/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"

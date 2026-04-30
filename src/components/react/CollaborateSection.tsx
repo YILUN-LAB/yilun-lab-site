@@ -71,14 +71,14 @@ export function CollaborateSection() {
           className="mt-10 flex items-center justify-center gap-3"
         >
           <a
-            href="mailto:hello@yilunlab.com"
+            href="mailto:yilun@yilunlab.com"
             aria-label="Email the studio"
             className="liquid-glass flex h-11 w-11 items-center justify-center rounded-full text-white/90 transition-colors hover:text-white"
           >
             <MailIcon className="h-5 w-5" />
           </a>
           <a
-            href="https://instagram.com/yilun.lab"
+            href="https://www.instagram.com/yilunlab/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
