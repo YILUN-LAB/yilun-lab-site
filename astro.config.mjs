@@ -3,7 +3,7 @@ import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
-import vercel from "@astrojs/vercel/static";
+import vercel from "@astrojs/vercel";
 import remarkSmartypants from "remark-smartypants";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
