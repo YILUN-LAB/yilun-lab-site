@@ -19,15 +19,15 @@ const PRACTICE = [
 ];
 
 const SELECTED_CREDITS = [
-  { year: "2025", title: "MIT AI Filmmaking Hackathon — BLUE 001", role: "Director · Lighting" },
+  { year: "2025", title: "Mood Cocoon — Three sensory environments", role: "Lighting Artist · Researcher" },
   { year: "2025", title: "TAO CAVE — Immersive pavilion", role: "Lighting Artist · Tech Lead" },
   {
     year: "2024",
     title: "A Human Permeability — Drift · Eon · Mortal",
     role: "Lighting Artist · Director",
   },
-  { year: "2024", title: "STARFALL — Ambient luminous field", role: "Lighting Artist" },
-  { year: "2024", title: "Eight Lights of HEALING", role: "Lighting Designer" },
+  { year: "2024", title: "TRUE SELF — Performance · projection", role: "Lighting Designer" },
+  { year: "2024", title: "Mo Gu — Installation · light", role: "Lighting Artist" },
 ];
 
 export function AboutPage() {
@@ -54,35 +54,19 @@ export function AboutPage() {
               {...fadeBlurIn(0.1)}
               className="liquid-glass relative aspect-[4/5] overflow-hidden rounded-[1.25rem]"
             >
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(50% 60% at 50% 35%, rgba(245,185,66,0.55), transparent 70%), linear-gradient(to bottom, #150d08 0%, #050407 100%)",
-                }}
+              <img
+                src="/assets/images/founder/headshot.webp"
+                alt="Yilun Zhan portrait"
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: "50% 30%" }}
               />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(20% 15% at 50% 38%, rgba(255,220,170,0.6), transparent 70%)",
-                  mixBlendMode: "screen",
-                }}
-              />
-              <div
-                className="absolute bottom-0 left-1/2 h-[70%] w-[20%] -translate-x-1/2 rounded-t-full"
-                style={{
-                  background: "linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.55))",
-                }}
-              />
-              <div className="liquid-glass absolute left-4 top-4 rounded-full px-3 py-1 font-body text-[10px] uppercase tracking-wider text-white/80">
-                Portrait — placeholder
-              </div>
             </motion.div>
 
             <motion.div {...fadeBlurIn(0.2)} className="flex flex-col gap-6">
               <p className="font-body text-base font-light leading-relaxed text-white/90 md:text-lg">
-                Yilun Zhan's practice focuses on creating emotional, immersive, and human-centered
+                Her practice focuses on creating emotional, immersive, and human-centered
                 experiences through light — across spatial design, installation, performance, and
                 emerging technology.
               </p>
