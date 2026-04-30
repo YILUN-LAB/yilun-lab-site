@@ -1,6 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="32" fill="#0a0705"/>
-  <text x="50%" y="56%" text-anchor="middle"
-        font-family="Georgia, 'Instrument Serif', serif"
-        font-style="italic" font-size="44" fill="#f5af3c">y</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="100" fill="#0a0705" />
+  <g
+    transform="translate(-300 -107.5)"
+    stroke="#F5C22D"
+    stroke-width="10"
+    stroke-linecap="butt"
+    fill="none"
+  >
+    <path d="M 340 144 A 60 60 0 0 0 460 144" />
+    <path d="M 328 222 A 78 78 0 0 0 472 222" />
+    <path d="M 400 203 L 400 271" />
+  </g>
 </svg>

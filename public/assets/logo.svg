@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" fill="none">
-  <path d="M 140 150 C 200 80, 300 80, 360 150" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
-  <path d="M 250 150 L 250 250 L 320 250" stroke="currentColor" stroke-width="14" stroke-linecap="square" stroke-linejoin="miter" />
-  <path d="M 250 150 L 190 90" stroke="currentColor" stroke-width="14" stroke-linecap="square" />
-  <path d="M 250 150 L 320 80" stroke="currentColor" stroke-width="2" stroke-linecap="square" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="310 117 180 180" fill="none">
+  <g stroke="#F5C22D" stroke-width="10" stroke-linecap="butt">
+    <path d="M 340 144 A 60 60 0 0 0 460 144" />
+    <path d="M 328 222 A 78 78 0 0 0 472 222" />
+    <path d="M 400 203 L 400 271" />
+  </g>
 </svg>
