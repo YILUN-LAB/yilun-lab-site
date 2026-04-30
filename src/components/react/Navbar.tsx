@@ -22,7 +22,7 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
       }
       const el = document.getElementById(target);
       if (el) {
-        const top = el.getBoundingClientRect().top + window.pageYOffset - 20;
+        const top = el.getBoundingClientRect().top + window.scrollY - 20;
         window.scrollTo({ top, behavior: "smooth" });
       }
     } else {
@@ -40,8 +40,7 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
   ];
 
   function isLinkActive(id: string) {
-    if (id === "about" && activePage === "about") return true;
-    return false;
+    return id === "about" && activePage === "about";
   }
 
   return (
