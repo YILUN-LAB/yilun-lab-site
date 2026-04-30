@@ -52,6 +52,24 @@ const projects = defineCollection({
 
     order: z.number().optional(),
     draft: z.boolean().default(false),
+  }).superRefine((data, ctx) => {
+    if (data.variant === "video-hero" && !data.youtube) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["youtube"],
+        message: 'variant "video-hero" requires a youtube ID',
+      });
+    }
+    if (
+      (data.variant === "chapters" || data.variant === "chapters-tabbed") &&
+      (!data.chapters || data.chapters.length === 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["chapters"],
+        message: `variant "${data.variant}" requires at least one entry in chapters`,
+      });
+    }
   }),
 });
 
