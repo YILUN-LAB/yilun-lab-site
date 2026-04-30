@@ -14,7 +14,7 @@ export function AboutSection() {
     <section
       data-screen-label="About"
       id="about"
-      className="relative bg-black px-8 py-28 md:px-16 lg:px-20"
+      className="relative bg-black/85 px-8 py-28 md:px-16 lg:px-20"
     >
       <motion.div {...fadeBlurIn(0)} className="mx-auto mb-14 max-w-7xl">
         <div className="mb-6 font-body text-sm text-white/80">// Founder</div>
@@ -31,35 +31,21 @@ export function AboutSection() {
           {...fadeBlurIn(0.1)}
           className="liquid-glass relative aspect-[4/5] overflow-hidden rounded-[1.25rem]"
         >
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(50% 60% at 50% 35%, rgba(245,185,66,0.55), transparent 70%), linear-gradient(to bottom, #150d08 0%, #050407 100%)",
-            }}
+          <img
+            src="/assets/images/founder/headshot.webp"
+            alt="Yilun Zhan portrait"
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: "50% 30%" }}
           />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(20% 15% at 50% 38%, rgba(255,220,170,0.6), transparent 70%)",
-              mixBlendMode: "screen",
-            }}
-          />
-          <div
-            className="absolute bottom-0 left-1/2 h-[70%] w-[20%] -translate-x-1/2 rounded-t-full"
-            style={{ background: "linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.55))" }}
-          />
-          <div className="liquid-glass absolute left-4 top-4 rounded-full px-3 py-1 font-body text-[10px] uppercase tracking-wider text-white/80">
-            Portrait — placeholder
-          </div>
         </motion.div>
 
         <motion.div {...fadeBlurIn(0.2)} className="flex flex-col gap-6">
           <p className="font-body text-base font-light leading-relaxed text-white/90 md:text-lg">
-            Yilun Zhan's practice focuses on creating emotional, immersive, and human-centered
-            experiences through light — across spatial design, installation, performance, and
-            emerging technology.
+            Her practice focuses on creating emotional, immersive, and human-centered experiences
+            through light — across spatial design, installation, performance, and emerging
+            technology.
           </p>
           <p className="font-body text-base font-light leading-relaxed text-white/80 md:text-lg">
             With a background in professional lighting design and a growing body of artistic and
