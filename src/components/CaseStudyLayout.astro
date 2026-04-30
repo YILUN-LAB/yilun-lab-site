@@ -4,6 +4,7 @@ import { Navbar } from "@components/react/Navbar";
 import { Footer } from "@components/react/Footer";
 import { ImageWallVariant } from "@components/react/ImageWallVariant";
 import { VideoHeroVariant } from "@components/react/VideoHeroVariant";
+import { ImagePosterVariant } from "@components/react/ImagePosterVariant";
 import { Chapters } from "@components/react/Chapters";
 import { ArrowUpRight } from "@components/react/icons";
 import { caseStudyComponents } from "@lib/mdx-components";
@@ -84,6 +85,21 @@ const categoryRail = data.category
       >
         <Content components={caseStudyComponents} slot="body" />
       </VideoHeroVariant>
+    )
+  }
+
+  {
+    data.variant === "image-poster" && data.images && data.images.length > 0 && (
+      <ImagePosterVariant
+        client:load
+        poster={data.images[0]}
+        title={data.title}
+        tagline={data.tagline}
+        youtube={data.youtube}
+        images={data.images.slice(1)}
+      >
+        <Content components={caseStudyComponents} slot="body" />
+      </ImagePosterVariant>
     )
   }
 
