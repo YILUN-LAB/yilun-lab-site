@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { FadingVideo } from "./FadingVideo";
 import { BlurText } from "./BlurText";
 import { ArrowUpRight, PlayIcon, ClockIcon, GlobeIcon } from "./icons";
-import { easeOut } from "@lib/motion-presets";
+import { fadeBlurInImmediate } from "@lib/motion-presets";
 
 const HERO_VIDEO_SRC = "/assets/videos/hero.mp4";
 
@@ -30,9 +30,7 @@ export function Hero() {
 
         <div className="flex-1 flex flex-col items-center justify-center text-center pt-12 px-4">
           <motion.div
-            initial={{ filter: "blur(10px)", opacity: 0, y: 20 }}
-            animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: easeOut, delay: 0.4 }}
+            {...fadeBlurInImmediate(0.4)}
             className="liquid-glass rounded-full inline-flex items-center gap-2 pl-1 pr-3 py-1"
           >
             <span className="bg-white text-black px-3 py-1 text-xs font-semibold rounded-full">
@@ -51,9 +49,7 @@ export function Hero() {
           </div>
 
           <motion.p
-            initial={{ filter: "blur(10px)", opacity: 0, y: 20 }}
-            animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: easeOut, delay: 0.8 }}
+            {...fadeBlurInImmediate(0.8)}
             className="mt-5 text-sm md:text-base text-white max-w-2xl font-body font-light leading-tight"
           >
             A creative lighting lab shaping emotion, space, and future experiences through light.
@@ -62,9 +58,7 @@ export function Hero() {
           </motion.p>
 
           <motion.div
-            initial={{ filter: "blur(10px)", opacity: 0, y: 20 }}
-            animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: easeOut, delay: 1.1 }}
+            {...fadeBlurInImmediate(1.1)}
             className="flex items-center gap-6 mt-6"
           >
             <a
@@ -82,9 +76,7 @@ export function Hero() {
           </motion.div>
 
           <motion.div
-            initial={{ filter: "blur(10px)", opacity: 0, y: 20 }}
-            animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: easeOut, delay: 1.3 }}
+            {...fadeBlurInImmediate(1.3)}
             className="flex items-stretch gap-4 mt-8 flex-wrap justify-center"
           >
             <div className="liquid-glass p-5 w-[220px] rounded-[1.25rem] text-left">
@@ -109,9 +101,7 @@ export function Hero() {
         </div>
 
         <motion.div
-          initial={{ filter: "blur(10px)", opacity: 0, y: 20 }}
-          animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: easeOut, delay: 1.4 }}
+          {...fadeBlurInImmediate(1.4)}
           className="flex flex-col items-center gap-4 pb-8 px-4"
         >
           <div className="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white">
