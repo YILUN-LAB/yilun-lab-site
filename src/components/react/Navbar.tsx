@@ -34,7 +34,7 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
   }
 
   const links = [
-    { id: "capabilities", label: "Capabilities" },
+    { id: "selected", label: "Selected" },
     { id: "works", label: "Works" },
     { id: "about", label: "About" },
   ];
