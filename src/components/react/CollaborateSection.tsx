@@ -62,8 +62,8 @@ export function CollaborateSection() {
           className="mt-10 flex items-center justify-center gap-3"
         >
           <a
-            href="mailto:yilun@yilunlab.com"
-            aria-label="Email the studio"
+            href="/contact"
+            aria-label="Contact the studio"
             className="liquid-glass flex h-11 w-11 items-center justify-center rounded-full text-white/90 transition-colors hover:text-white"
           >
             <MailIcon className="h-5 w-5" />
