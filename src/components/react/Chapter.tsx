@@ -1,56 +1,43 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
-import { useChaptersContext } from "./ChaptersContext";
-import { gradientFor } from "@lib/accent-gradients";
+import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import { fadeBlurIn } from "@lib/motion-presets";
 
 interface ChapterProps {
   name: string;
+  note?: string;
+  accent?: AccentName;
+  cover?: string;
   children?: ReactNode;
 }
 
-export function Chapter({ name, children }: ChapterProps) {
-  const ctx = useChaptersContext();
-
-  // During SSR (Astro static build), MDX children render outside the React
-  // hydration boundary, so context is unavailable. Render nothing; the client-
-  // side hydration of <Chapters> will provide context and render correctly.
-  if (!ctx) return null;
-
-  const meta = ctx.chapters.find((c) => c.name === name);
-
-  if (ctx.variant === "chapters-tabbed" && ctx.activeName !== name) {
-    return null;
-  }
-
-  const accent = meta?.accent || "amber";
+export function Chapter({ name, note, accent, cover, children }: ChapterProps) {
+  const accentKey: AccentName = accent ?? "amber";
 
   return (
     <motion.section
-      key={name}
+      data-chapter-name={name}
       {...fadeBlurIn(0)}
       className="px-8 md:px-16 lg:px-20 py-16 max-w-6xl mx-auto"
     >
-      {ctx.variant === "chapters" && (
-        <div className="mb-8">
-          <div className="text-[10px] text-white/55 font-body uppercase tracking-[0.18em] mb-2">
-            // Chapter
-          </div>
-          <h3 className="font-heading italic text-white text-4xl md:text-5xl lg:text-6xl leading-[0.95] tracking-[-1.5px]">
-            {name}
-          </h3>
-          {meta?.note && (
-            <p className="mt-2 text-base md:text-lg text-white/70 font-body font-light italic">
-              {meta.note}
-            </p>
-          )}
+      <div className="mb-8">
+        <div className="text-[10px] text-white/55 font-body uppercase tracking-[0.18em] mb-2">
+          // Chapter
         </div>
-      )}
+        <h3 className="font-heading italic text-white text-4xl md:text-5xl lg:text-6xl leading-[0.95] tracking-[-1.5px]">
+          {name}
+        </h3>
+        {note && (
+          <p className="mt-2 text-base md:text-lg text-white/70 font-body font-light italic">
+            {note}
+          </p>
+        )}
+      </div>
 
       <div className="liquid-glass relative overflow-hidden rounded-[1.25rem] aspect-[16/9] mb-8">
-        {meta?.cover ? (
+        {cover ? (
           <img
-            src={meta.cover}
+            src={cover}
             alt={`${name} — cover`}
             loading="lazy"
             decoding="async"
@@ -58,7 +45,7 @@ export function Chapter({ name, children }: ChapterProps) {
           />
         ) : (
           <>
-            <div className="absolute inset-0" style={{ background: gradientFor(accent) }} />
+            <div className="absolute inset-0" style={{ background: gradientFor(accentKey) }} />
             <div
               className="absolute inset-0"
               style={{
