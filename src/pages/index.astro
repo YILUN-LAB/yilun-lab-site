@@ -18,6 +18,8 @@ const projects = entries.map((e: CollectionEntry<"projects">) => ({
   year: e.data.year,
   accent: e.data.accent,
   size: e.data.size,
+  featured: e.data.featured,
+  cover: e.data.cover ?? `/assets/images/projects/${e.slug}/01.webp`,
 }));
 ---
 
