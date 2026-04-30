@@ -126,7 +126,8 @@ yilun-lab-website/
     │       ├── FilterTabs.tsx                      (uses PillTabs — Works filter)
     │       ├── ChapterTabs.tsx                     (uses PillTabs — chapter switcher)
     │       ├── WorkCard.tsx                        (interactive grid card; routes to /projects/<slug>)
-    │       ├── ChapterBody.tsx                     (slot component for chapter prose)
+    │       ├── Chapters.tsx                        (wrapper — variant-aware container)
+    │       ├── Chapter.tsx                          (slot component — single chapter content)
     │       └── icons.tsx                           (ArrowUpRight, PlayIcon, ClockIcon, etc.)
     └── pages/
         ├── index.astro                             (mounts <HomePage client:load />)
@@ -143,7 +144,7 @@ yilun-lab-website/
 2. **Case study pages use multiple smaller islands** (Navbar + Footer + per-section). This is acceptable because case studies are a new design, not a port of the prototype, so there is no fidelity baseline to preserve.
 3. **All React lives in `src/components/react/`** to avoid filename collisions with Astro components and to make the boundary explicit.
 4. **`useGlassLensing` runs once per page** — placed inside `<Navbar />` since Navbar renders on every page.
-5. **Project clicks navigate to routes** — the prototype's `ProjectOverlay` modal is dropped. `WorkCard` clicks call `window.location.href = "/projects/<slug>"`.
+5. **Project cards are `<a>` elements** — the prototype's `ProjectOverlay` modal is dropped. `WorkCard` renders an `<a href="/projects/<slug>">` so links work without JS, get correct hover/right-click semantics, and are SEO-discoverable.
 
 ## 6. Content schema
 
@@ -254,8 +255,21 @@ Chapter prose
 
 [Next work →]
 ```
-- `chapters[]` defines order, names, accents, cover images
-- MDX body uses `<ChapterBody name="Drift">…</ChapterBody>` blocks for per-chapter prose
+- `chapters[]` in frontmatter defines order, names, accents, cover images
+- MDX body uses a `<Chapters>` wrapper containing `<Chapter name="Drift">…</Chapter>` blocks for per-chapter prose. Each `<Chapter>` block accepts free-form MDX (rich text, `<MediaBlock>` calls, etc.):
+
+```mdx
+<Chapters>
+  <Chapter name="Drift">
+    Drift prose with **rich** formatting.
+    <MediaBlock type="image" src="..." alt="..." />
+  </Chapter>
+  <Chapter name="Eon">…</Chapter>
+  <Chapter name="Mortal">…</Chapter>
+</Chapters>
+```
+
+The `<Chapters>` component reads `variant` from page context: for `chapters` it renders all `<Chapter>` children stacked; for `chapters-tabbed` it renders only the active one with the pill switcher above. Both variants share this same authoring shape.
 
 ### 7.4 `chapters-tabbed` (4th variant — interactive switcher)
 
@@ -274,7 +288,7 @@ Centered intro paragraph
 [Next work →]
 ```
 - One chapter visible at a time
-- Pill bar uses **the same `<PillTabs />` component** as homepage `FilterTabs` (sliding tinted indicator, identical hover states, identical liquid-glass material)
+- Pill bar uses **the same `<PillTabs />` component** as homepage `FilterTabs` (sliding tinted indicator, identical hover states, identical liquid-glass material). `PillTabs` accepts a generic `tabs: { id, label, badge? }[]` shape; `FilterTabs` passes counts as `badge`, `ChapterTabs` omits the badge.
 - Tab change re-runs the same blur-in entrance animation the rest of the site uses (motion `whileInView`)
 - Chapter accent gradient drives the section's tint
 
