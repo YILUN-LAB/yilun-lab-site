@@ -14,7 +14,7 @@ export function FeaturedHighlights({ projects }: FeaturedHighlightsProps) {
     <section
       data-screen-label="Selected"
       id="selected"
-      className="relative w-full bg-black/85 px-8 py-28 md:px-16 lg:px-20"
+      className="relative w-full bg-black/65 px-8 py-28 md:px-16 lg:px-20"
     >
       <motion.div {...fadeBlurIn(0)} className="mb-14">
         <div className="mb-6 font-body text-sm text-white/80">// Selected</div>

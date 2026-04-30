@@ -31,7 +31,7 @@ export function AuroraBackground() {
           max-height: 1300px;
           border-radius: 50%;
           filter: blur(110px);
-          opacity: 0.28;
+          opacity: 0.5;
           mix-blend-mode: screen;
           will-change: transform;
         }
@@ -58,7 +58,9 @@ export function AuroraBackground() {
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0705] to-[#050302]" />
+        {/* No solid base layer here — the html element provides --warm-bg.
+            That keeps the blobs blending against the page color directly,
+            instead of being dimmed by a stacked dark gradient on top. */}
         <div className="aurora-blob aurora-blob--violet" />
         <div className="aurora-blob aurora-blob--amber" />
         <div className="aurora-blob aurora-blob--cyan" />

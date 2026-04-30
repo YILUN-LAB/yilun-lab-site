@@ -14,7 +14,7 @@ export function AboutSection() {
     <section
       data-screen-label="About"
       id="about"
-      className="relative bg-black/85 px-8 py-28 md:px-16 lg:px-20"
+      className="relative bg-black/65 px-8 py-28 md:px-16 lg:px-20"
     >
       <motion.div {...fadeBlurIn(0)} className="mx-auto mb-14 max-w-7xl">
         <div className="mb-6 font-body text-sm text-white/80">// Founder</div>

@@ -8,7 +8,7 @@ export function CollaborateSection() {
     <section
       data-screen-label="Collaborate"
       id="collaborate"
-      className="relative overflow-hidden bg-black/85 px-8 py-28 md:px-16 lg:px-20"
+      className="relative overflow-hidden bg-black/65 px-8 py-28 md:px-16 lg:px-20"
     >
       <div
         className="pointer-events-none absolute inset-0"

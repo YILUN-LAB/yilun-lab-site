@@ -10,7 +10,7 @@ const FACTS: Array<[string, string]> = [
 
 export function ManifestoSection() {
   return (
-    <section className="relative bg-black/85 px-8 py-28 md:px-16 lg:px-20">
+    <section className="relative bg-black/65 px-8 py-28 md:px-16 lg:px-20">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-2 md:gap-20">
         <motion.div {...fadeBlurIn(0)}>
           <div className="mb-6 font-body text-sm text-white/80">// The Lab</div>
