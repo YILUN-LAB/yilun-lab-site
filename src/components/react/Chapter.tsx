@@ -11,6 +11,12 @@ interface ChapterProps {
 
 export function Chapter({ name, children }: ChapterProps) {
   const ctx = useChaptersContext();
+
+  // During SSR (Astro static build), MDX children render outside the React
+  // hydration boundary, so context is unavailable. Render nothing; the client-
+  // side hydration of <Chapters> will provide context and render correctly.
+  if (!ctx) return null;
+
   const meta = ctx.chapters.find((c) => c.name === name);
 
   if (ctx.variant === "chapters-tabbed" && ctx.activeName !== name) {

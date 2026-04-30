@@ -17,10 +17,6 @@ export interface ChaptersContextValue {
 
 export const ChaptersContext = createContext<ChaptersContextValue | null>(null);
 
-export function useChaptersContext(): ChaptersContextValue {
-  const ctx = useContext(ChaptersContext);
-  if (!ctx) {
-    throw new Error("Chapter components must be used inside <Chapters>");
-  }
-  return ctx;
+export function useChaptersContext(): ChaptersContextValue | null {
+  return useContext(ChaptersContext);
 }
