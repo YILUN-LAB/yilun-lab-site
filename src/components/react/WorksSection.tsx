@@ -29,7 +29,10 @@ export function WorksSection({ projects }: WorksSectionProps) {
     return c;
   }, [projects]);
 
-  const tabs: PillTab[] = CATEGORIES.map((t) => ({ ...t, badge: counts[t.id] || 0 }));
+  const tabs = useMemo<PillTab[]>(
+    () => CATEGORIES.map((t) => ({ ...t, badge: counts[t.id] || 0 })),
+    [counts]
+  );
 
   return (
     <section
