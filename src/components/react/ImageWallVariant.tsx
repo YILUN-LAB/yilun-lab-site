@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { motion } from "motion/react";
 import { fadeBlurIn } from "@lib/motion-presets";
-import { gradientFor } from "@lib/accent-gradients";
+import { gradientFor, type AccentName } from "@lib/accent-gradients";
 
 interface ImageWallVariantProps {
   intro?: ReactNode;
   images?: Array<{ src: string; alt: string; caption?: string }>;
-  accent?: string;
+  accent?: AccentName;
 }
 
 export function ImageWallVariant({ intro, images, accent = "amber" }: ImageWallVariantProps) {
