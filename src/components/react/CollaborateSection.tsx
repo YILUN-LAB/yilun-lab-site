@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { ArrowUpRight, PlayIcon, MailIcon, InstagramIcon, LinkedInIcon } from "./icons";
+import { ArrowUpRight, MailIcon, InstagramIcon, LinkedInIcon } from "./icons";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { COLLAB_AREAS as AREAS } from "@lib/data/collab-areas";
 
@@ -48,21 +48,12 @@ export function CollaborateSection() {
           ))}
         </div>
 
-        <motion.div
-          {...fadeBlurIn(0.4)}
-          className="flex flex-wrap items-center justify-center gap-6"
-        >
+        <motion.div {...fadeBlurIn(0.4)} className="flex items-center justify-center">
           <a
             href="/contact"
             className="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
           >
             Start a Collaboration <ArrowUpRight className="h-5 w-5" />
-          </a>
-          <a
-            href="/contact"
-            className="liquid-glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white"
-          >
-            Download Capabilities <PlayIcon className="h-4 w-4" />
           </a>
         </motion.div>
 
