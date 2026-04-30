@@ -47,23 +47,13 @@ const categoryRail = data.category
         {data.tagline}
       </p>
 
-      <div class="mt-10 grid max-w-3xl grid-cols-2 gap-3 md:grid-cols-4">
+      <p class="mt-8 font-body text-xs uppercase tracking-[0.22em] text-white/45">
         {
-          [
-            ["Year", data.year || "—"],
-            ["Role", data.role || "—"],
-            ["Medium", data.medium || "—"],
-            ["Runtime", data.runtime || data.date || "—"],
-          ].map(([k, v]) => (
-            <div class="liquid-glass rounded-[1rem] p-4">
-              <div class="mb-1.5 font-body text-[10px] uppercase tracking-[0.18em] text-white/55">
-                {k}
-              </div>
-              <div class="font-body text-sm text-white">{v}</div>
-            </div>
-          ))
+          [data.year, data.role, data.medium, data.runtime || data.date]
+            .filter((v): v is string => Boolean(v))
+            .join(" · ")
         }
-      </div>
+      </p>
     </div>
   </header>
 
