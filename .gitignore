@@ -1,0 +1,45 @@
+# ── Reference / non-deployment files ────────────────────────────────────────
+# Read-only handoff bundle from Claude Design — kept locally for fidelity
+# reference; never deployed and not part of the source tree.
+migration/
+
+# Superpowers brainstorming + planning artifacts — local only.
+docs/superpowers/
+
+# ── Astro / Node build output ───────────────────────────────────────────────
+dist/
+.astro/
+.output/
+
+# ── Dependencies ────────────────────────────────────────────────────────────
+node_modules/
+.pnp/
+.pnp.*
+
+# ── Vercel ──────────────────────────────────────────────────────────────────
+.vercel/
+
+# ── Logs ────────────────────────────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ── Environment ────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Editor / OS ────────────────────────────────────────────────────────────
+.DS_Store
+*/.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+
+# ── TypeScript build info ──────────────────────────────────────────────────
+*.tsbuildinfo
