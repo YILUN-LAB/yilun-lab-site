@@ -124,6 +124,11 @@ the only thing to put in `run_in_background: true`.
    (catch JS errors). Use `browser_take_screenshot` only when a visual
    reference will go in the report or compare against the prototype.
 
+   **Always save screenshots under `.playwright-mcp/`** (e.g.
+   `filename: ".playwright-mcp/qa-home-fold.jpg"`). That directory is
+   gitignored alongside the playwright auto-snapshots, so verification
+   artifacts never end up in commits.
+
    Standard routes for this site:
 
    | Route | What to check |
