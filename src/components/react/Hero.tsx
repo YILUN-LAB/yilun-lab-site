@@ -40,7 +40,7 @@ export function Hero() {
               Winner
             </span>
             <span className="font-body text-sm text-white/90">
-              LIT Awards 2026 — A Human Permeability
+              LIT Awards 2025 — A Human Permeability
             </span>
           </motion.a>
 
