@@ -13,33 +13,33 @@ export function ImageWallVariant({ intro, images, accent = "amber" }: ImageWallV
   const tiles = images && images.length > 0 ? images : null;
 
   return (
-    <div className="px-8 md:px-16 lg:px-20 py-16">
+    <div className="px-8 py-16 md:px-16 lg:px-20">
       {intro && (
         <motion.div
           {...fadeBlurIn(0)}
-          className="max-w-3xl mx-auto text-center font-heading italic text-white text-3xl md:text-4xl lg:text-5xl tracking-[-1.5px] leading-[1.05] mb-16"
+          className="mx-auto mb-16 max-w-3xl text-center font-heading text-3xl italic leading-[1.05] tracking-[-1.5px] text-white md:text-4xl lg:text-5xl"
         >
           {intro}
         </motion.div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-6xl mx-auto">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
         {tiles
           ? tiles.map((img, i) => (
               <motion.figure
                 key={img.src}
                 {...fadeBlurIn(0.05 + Math.min(i * 0.04, 0.4))}
-                className="liquid-glass relative overflow-hidden rounded-[1rem] aspect-[3/4]"
+                className="liquid-glass relative aspect-[3/4] overflow-hidden rounded-[1rem]"
               >
                 <img
                   src={img.src}
                   alt={img.alt}
                   loading="lazy"
                   decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 h-full w-full object-cover"
                 />
                 {img.caption && (
-                  <figcaption className="absolute bottom-0 left-0 right-0 px-4 py-3 bg-gradient-to-t from-black/80 to-transparent text-xs text-white/85 font-body font-light">
+                  <figcaption className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 font-body text-xs font-light text-white/85">
                     {img.caption}
                   </figcaption>
                 )}
@@ -49,13 +49,10 @@ export function ImageWallVariant({ intro, images, accent = "amber" }: ImageWallV
               <motion.div
                 key={i}
                 {...fadeBlurIn(0.05 + Math.min(i * 0.04, 0.4))}
-                className="liquid-glass relative overflow-hidden rounded-[1rem] aspect-[3/4]"
+                className="liquid-glass relative aspect-[3/4] overflow-hidden rounded-[1rem]"
               >
-                <div
-                  className="absolute inset-0"
-                  style={{ background: gradientFor(accent) }}
-                />
-                <div className="absolute top-3 left-3 liquid-glass rounded-full px-2.5 py-0.5 text-[10px] text-white/75 font-body uppercase tracking-wider">
+                <div className="absolute inset-0" style={{ background: gradientFor(accent) }} />
+                <div className="liquid-glass absolute left-3 top-3 rounded-full px-2.5 py-0.5 font-body text-[10px] uppercase tracking-wider text-white/75">
                   Still {i + 1}
                 </div>
               </motion.div>

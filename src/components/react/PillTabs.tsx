@@ -31,12 +31,12 @@ export function PillTabs({ tabs, activeId, onChange, className = "" }: PillTabsP
     <div
       ref={containerRef}
       className={
-        "liquid-glass relative inline-flex flex-wrap items-center p-1.5 gap-1 rounded-full " +
+        "liquid-glass relative inline-flex flex-wrap items-center gap-1 rounded-full p-1.5 " +
         className
       }
     >
       <span
-        className="liquid-glass-tint absolute rounded-full pointer-events-none"
+        className="liquid-glass-tint pointer-events-none absolute rounded-full"
         style={{
           left: indicator.left,
           width: indicator.width,
@@ -57,7 +57,7 @@ export function PillTabs({ tabs, activeId, onChange, className = "" }: PillTabsP
             data-active={isActive}
             onClick={() => onChange(t.id)}
             className={
-              "relative z-10 px-4 py-2 text-sm font-medium font-body rounded-full inline-flex items-center gap-2 transition-colors duration-300 " +
+              "relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-medium transition-colors duration-300 " +
               (isActive ? "text-[#fff5e0]" : "glass-link text-white/85")
             }
             style={isActive ? { textShadow: "0 1px 0 rgba(80,40,5,0.45)" } : undefined}

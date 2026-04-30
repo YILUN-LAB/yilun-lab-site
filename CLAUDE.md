@@ -35,14 +35,14 @@ when a regression is suspected, compare against the prototype rendered locally.
 
 ## Useful commands
 
-| Command | What |
-|---|---|
-| `npm run dev` | Astro dev server with HMR |
-| `npm run build` | Static + Vercel adapter build |
-| `npm run preview` | Preview the built site locally |
-| `npm run check` | `astro check` + `tsc --noEmit` |
-| `npm run format` | Prettier (Astro + Tailwind plugins) write |
-| `npm run lint` | ESLint with jsx-a11y |
+| Command           | What                                      |
+| ----------------- | ----------------------------------------- |
+| `npm run dev`     | Astro dev server with HMR                 |
+| `npm run build`   | Static + Vercel adapter build             |
+| `npm run preview` | Preview the built site locally            |
+| `npm run check`   | `astro check` + `tsc --noEmit`            |
+| `npm run format`  | Prettier (Astro + Tailwind plugins) write |
+| `npm run lint`    | ESLint with jsx-a11y                      |
 
 ## Don't
 
@@ -122,17 +122,17 @@ before review — saving review iterations.
 Quality bar over cost. Implementation tasks use Sonnet or Opus only —
 never Haiku. Reviewers always use Opus.
 
-| Task category | Implementation model | Examples |
-|---|---|---|
-| Mechanical port + assembly + most feature work | **Sonnet 4.6** (`claude-sonnet-4-6`) | Default for nearly all tasks |
-| Architecture, complex integration, debugging unblocking | **Opus 4.7** (`claude-opus-4-7`) | Tasks that touch multiple subsystems, require design judgment, or have failed once on Sonnet |
+| Task category                                           | Implementation model                 | Examples                                                                                     |
+| ------------------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Mechanical port + assembly + most feature work          | **Sonnet 4.6** (`claude-sonnet-4-6`) | Default for nearly all tasks                                                                 |
+| Architecture, complex integration, debugging unblocking | **Opus 4.7** (`claude-opus-4-7`)     | Tasks that touch multiple subsystems, require design judgment, or have failed once on Sonnet |
 
 **Reviewer model defaults:**
 
-| Reviewer role | Model |
-|---|---|
-| Spec compliance reviewer | **Opus 4.7** |
-| Code quality reviewer | **Opus 4.7** |
+| Reviewer role                       | Model        |
+| ----------------------------------- | ------------ |
+| Spec compliance reviewer            | **Opus 4.7** |
+| Code quality reviewer               | **Opus 4.7** |
 | Final whole-implementation reviewer | **Opus 4.7** |
 
 **Triage rules:**

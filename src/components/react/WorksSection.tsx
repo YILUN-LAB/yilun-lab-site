@@ -38,21 +38,23 @@ export function WorksSection({ projects }: WorksSectionProps) {
     <section
       data-screen-label="Works"
       id="works"
-      className="relative w-full bg-black px-8 md:px-16 lg:px-20 py-28"
+      className="relative w-full bg-black px-8 py-28 md:px-16 lg:px-20"
     >
       <motion.div {...fadeBlurIn(0)} className="mb-14">
-        <div className="text-sm font-body text-white/80 mb-6">// Works · Selected</div>
-        <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-[5.5rem] leading-[0.9] tracking-[-2px] max-w-3xl">
-          A field of light<br />and what it shapes.
+        <div className="mb-6 font-body text-sm text-white/80">// Works · Selected</div>
+        <h2 className="max-w-3xl font-heading text-5xl italic leading-[0.9] tracking-[-2px] text-white md:text-6xl lg:text-[5.5rem]">
+          A field of light
+          <br />
+          and what it shapes.
         </h2>
-        <p className="mt-6 max-w-xl text-white/80 font-body font-light text-base md:text-lg leading-snug">
-          From dance and immersive performance to spatial installation and AI-driven film, each
-          work is an exploration of how light makes a moment unforgettable.
+        <p className="mt-6 max-w-xl font-body text-base font-light leading-snug text-white/80 md:text-lg">
+          From dance and immersive performance to spatial installation and AI-driven film, each work
+          is an exploration of how light makes a moment unforgettable.
         </p>
       </motion.div>
 
       <PillTabs tabs={tabs} activeId={filter} onChange={setFilter} className="mb-10" />
-      <div className="text-xs text-white/55 font-body mb-6 -mt-4">
+      <div className="-mt-4 mb-6 font-body text-xs text-white/55">
         {filtered.length} {filtered.length === 1 ? "work" : "works"}
       </div>
 

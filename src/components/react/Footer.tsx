@@ -1,10 +1,10 @@
 export function Footer() {
   return (
-    <footer className="relative bg-black px-8 md:px-16 lg:px-20 pt-16 pb-10 border-t border-white/10">
-      <div className="font-heading italic text-white text-6xl md:text-7xl lg:text-[8rem] leading-[0.85] tracking-[-3px] mb-12">
+    <footer className="relative border-t border-white/10 bg-black px-8 pb-10 pt-16 md:px-16 lg:px-20">
+      <div className="mb-12 font-heading text-6xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[8rem]">
         Light. Emotion. Future.
       </div>
-      <div className="flex items-end justify-between flex-wrap gap-6 text-xs text-white/55 font-body uppercase tracking-[0.18em]">
+      <div className="flex flex-wrap items-end justify-between gap-6 font-body text-xs uppercase tracking-[0.18em] text-white/55">
         <div>
           <div className="text-white/85">YILUN LAB · est. 2022</div>
           <div>Yilun (Yilia) Zhan, Founder</div>

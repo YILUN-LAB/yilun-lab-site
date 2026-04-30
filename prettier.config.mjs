@@ -5,7 +5,5 @@ export default {
   semi: true,
   singleQuote: false,
   trailingComma: "es5",
-  overrides: [
-    { files: "*.astro", options: { parser: "astro" } },
-  ],
+  overrides: [{ files: "*.astro", options: { parser: "astro" } }],
 };

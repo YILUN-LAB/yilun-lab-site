@@ -13,53 +13,59 @@ interface Props {
 const { type, src, alt = "", caption, poster, aspect = "aspect-[4/3]" } = Astro.props;
 ---
 
-{type === "image" && (
-  <figure class="liquid-glass relative overflow-hidden rounded-[1.25rem] my-6">
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      decoding="async"
-      class={`w-full h-auto ${aspect ? aspect + " object-cover" : ""}`}
-    />
-    {caption && (
-      <figcaption class="px-4 py-3 text-xs text-white/70 font-body font-light">
-        {caption}
-      </figcaption>
-    )}
-  </figure>
-)}
+{
+  type === "image" && (
+    <figure class="liquid-glass relative my-6 overflow-hidden rounded-[1.25rem]">
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        class={`h-auto w-full ${aspect ? aspect + " object-cover" : ""}`}
+      />
+      {caption && (
+        <figcaption class="px-4 py-3 font-body text-xs font-light text-white/70">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
 
-{type === "video" && (
-  <figure class={`liquid-glass relative overflow-hidden rounded-[1.25rem] my-6 ${aspect}`}>
-    <video
-      src={src}
-      poster={poster}
-      controls
-      playsinline
-      preload="metadata"
-      class="w-full h-full object-cover"
-    >
-      <track kind="captions" />
-    </video>
-    {caption && (
-      <figcaption class="px-4 py-3 text-xs text-white/70 font-body font-light">
-        {caption}
-      </figcaption>
-    )}
-  </figure>
-)}
+{
+  type === "video" && (
+    <figure class={`liquid-glass relative my-6 overflow-hidden rounded-[1.25rem] ${aspect}`}>
+      <video
+        src={src}
+        poster={poster}
+        controls
+        playsinline
+        preload="metadata"
+        class="h-full w-full object-cover"
+      >
+        <track kind="captions" />
+      </video>
+      {caption && (
+        <figcaption class="px-4 py-3 font-body text-xs font-light text-white/70">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
 
-{type === "youtube" && (
-  <figure class="liquid-glass relative overflow-hidden rounded-[1.25rem] my-6 aspect-video">
-    <lite-youtube videoid={src} class="w-full h-full"></lite-youtube>
-    {caption && (
-      <figcaption class="px-4 py-3 text-xs text-white/70 font-body font-light">
-        {caption}
-      </figcaption>
-    )}
-  </figure>
-)}
+{
+  type === "youtube" && (
+    <figure class="liquid-glass relative my-6 aspect-video overflow-hidden rounded-[1.25rem]">
+      <lite-youtube videoid={src} class="h-full w-full" />
+      {caption && (
+        <figcaption class="px-4 py-3 font-body text-xs font-light text-white/70">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
 
 <script>
   import "lite-youtube-embed";

@@ -46,24 +46,24 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
   return (
     <>
       <div className="scroll-edge" aria-hidden="true" />
-      <nav className="fixed top-4 left-0 right-0 z-50 px-8 lg:px-16 flex items-center justify-between font-body">
+      <nav className="fixed left-0 right-0 top-4 z-50 flex items-center justify-between px-8 font-body lg:px-16">
         <button
           onClick={() => jumpTo("top")}
-          className="liquid-glass w-12 h-12 flex items-center justify-center rounded-full"
+          className="liquid-glass flex h-12 w-12 items-center justify-center rounded-full"
           aria-label="Yilun Lab"
         >
-          <span className="font-heading italic text-white text-2xl leading-none lowercase select-none">
+          <span className="select-none font-heading text-2xl lowercase italic leading-none text-white">
             y
           </span>
         </button>
 
-        <div className="liquid-glass hidden md:flex items-center px-1.5 py-1.5 rounded-full">
+        <div className="liquid-glass hidden items-center rounded-full px-1.5 py-1.5 md:flex">
           {links.map((l) => (
             <button
               key={l.id}
               onClick={() => jumpTo(l.id)}
               className={
-                "glass-link px-3 py-2 text-sm font-medium font-body rounded-full " +
+                "glass-link rounded-full px-3 py-2 font-body text-sm font-medium " +
                 (isLinkActive(l.id) ? "text-[#fff5e0]" : "text-white/85")
               }
             >
@@ -73,14 +73,14 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
           <button
             onClick={() => jumpTo("collaborate")}
             className={
-              "liquid-glass-strong liquid-glass-tint ml-1 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold whitespace-nowrap"
+              "liquid-glass-strong liquid-glass-tint ml-1 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold"
             }
           >
             Collaborate <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="w-12 h-12 invisible" aria-hidden="true" />
+        <div className="invisible h-12 w-12" aria-hidden="true" />
       </nav>
     </>
   );

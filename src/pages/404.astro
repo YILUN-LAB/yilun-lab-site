@@ -7,18 +7,20 @@ import { ArrowUpRight } from "@components/react/icons";
 
 <BaseLayout title="Page not found" description="The page you're looking for isn't here.">
   <Navbar client:load mode="page" />
-  <main class="min-h-[80vh] flex items-center justify-center px-8">
+  <main class="flex min-h-[80vh] items-center justify-center px-8">
     <div class="max-w-2xl text-center">
-      <div class="text-sm font-body text-white/60 mb-6">// 404</div>
-      <h1 class="font-heading italic text-white text-6xl md:text-7xl lg:text-[7rem] leading-[0.85] tracking-[-3px]">
+      <div class="mb-6 font-body text-sm text-white/60">// 404</div>
+      <h1
+        class="font-heading text-6xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[7rem]"
+      >
         Lost in the dark.
       </h1>
-      <p class="mt-6 text-base md:text-lg text-white/70 font-body font-light">
+      <p class="mt-6 font-body text-base font-light text-white/70 md:text-lg">
         The page you're looking for isn't here. Light leads back home.
       </p>
       <a
         href="/"
-        class="liquid-glass-strong liquid-glass-tint rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 mt-8"
+        class="liquid-glass-strong liquid-glass-tint mt-8 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
       >
         Back to home <ArrowUpRight className="h-4 w-4" />
       </a>

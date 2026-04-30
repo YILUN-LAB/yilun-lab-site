@@ -8,55 +8,59 @@ export function CollaborateSection() {
     <section
       data-screen-label="Collaborate"
       id="collaborate"
-      className="relative bg-black px-8 md:px-16 lg:px-20 py-28 overflow-hidden"
+      className="relative overflow-hidden bg-black px-8 py-28 md:px-16 lg:px-20"
     >
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            "radial-gradient(50% 60% at 50% 50%, rgba(245,185,66,0.18), transparent 65%)",
+          background: "radial-gradient(50% 60% at 50% 50%, rgba(245,185,66,0.18), transparent 65%)",
         }}
       />
-      <div className="relative max-w-5xl mx-auto text-center">
+      <div className="relative mx-auto max-w-5xl text-center">
         <motion.div {...fadeBlurIn(0)}>
-          <div className="text-sm font-body text-white/80 mb-6">// Work with us</div>
-          <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-[5.5rem] leading-[0.9] tracking-[-2px]">
-            Tell us a space<br />you want to feel.
+          <div className="mb-6 font-body text-sm text-white/80">// Work with us</div>
+          <h2 className="font-heading text-5xl italic leading-[0.9] tracking-[-2px] text-white md:text-6xl lg:text-[5.5rem]">
+            Tell us a space
+            <br />
+            you want to feel.
           </h2>
-          <p className="mt-6 text-base md:text-lg text-white/85 font-body font-light max-w-2xl mx-auto">
+          <p className="mx-auto mt-6 max-w-2xl font-body text-base font-light text-white/85 md:text-lg">
             We're taking on a small number of new collaborations each season. If your project asks
             for emotional weight and a memorable visual identity through light — let's talk.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-14 mb-10 text-left">
+        <div className="mb-10 mt-14 grid grid-cols-2 gap-4 text-left md:grid-cols-4">
           {AREAS.map((a, i) => (
             <motion.div
               key={a.num}
               {...fadeBlurIn(0.1 + i * 0.08)}
-              className="liquid-glass rounded-[1.25rem] p-5 flex flex-col gap-2 min-h-[180px]"
+              className="liquid-glass flex min-h-[180px] flex-col gap-2 rounded-[1.25rem] p-5"
             >
-              <div className="text-[10px] text-white/55 font-body uppercase tracking-[0.18em]">
+              <div className="font-body text-[10px] uppercase tracking-[0.18em] text-white/55">
                 {a.num}
               </div>
-              <div className="font-heading italic text-white text-2xl leading-tight">{a.name}</div>
-              <div className="text-sm text-white/75 font-body font-light leading-snug">
+              <div className="font-heading text-2xl italic leading-tight text-white">{a.name}</div>
+              <div className="font-body text-sm font-light leading-snug text-white/75">
                 {a.desc}
               </div>
             </motion.div>
           ))}
         </div>
 
-        <motion.div {...fadeBlurIn(0.4)} className="flex items-center gap-6 justify-center flex-wrap">
+        <motion.div
+          {...fadeBlurIn(0.4)}
+          className="flex flex-wrap items-center justify-center gap-6"
+        >
           <a
             href="/contact"
-            className="liquid-glass-strong liquid-glass-tint rounded-full px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2"
+            className="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
           >
             Start a Collaboration <ArrowUpRight className="h-5 w-5" />
           </a>
           <a
             href="/contact"
-            className="liquid-glass rounded-full px-5 py-2.5 text-sm font-medium text-white inline-flex items-center gap-2"
+            className="liquid-glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white"
           >
             Download Capabilities <PlayIcon className="h-4 w-4" />
           </a>
@@ -64,11 +68,11 @@ export function CollaborateSection() {
 
         <motion.div
           {...fadeBlurIn(0.5)}
-          className="flex items-center gap-3 justify-center flex-wrap mt-10"
+          className="mt-10 flex flex-wrap items-center justify-center gap-3"
         >
           <a
             href="mailto:hello@yilunlab.com"
-            className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/90 font-body"
+            className="liquid-glass rounded-full px-4 py-1.5 font-body text-xs text-white/90"
           >
             hello@yilunlab.com
           </a>
@@ -76,7 +80,7 @@ export function CollaborateSection() {
             href="https://instagram.com/yilun.lab"
             target="_blank"
             rel="noopener noreferrer"
-            className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/90 font-body"
+            className="liquid-glass rounded-full px-4 py-1.5 font-body text-xs text-white/90"
           >
             @yilun.lab — Instagram
           </a>
@@ -84,7 +88,7 @@ export function CollaborateSection() {
             href="https://www.linkedin.com/in/yilun-zhan"
             target="_blank"
             rel="noopener noreferrer"
-            className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/90 font-body"
+            className="liquid-glass rounded-full px-4 py-1.5 font-body text-xs text-white/90"
           >
             linkedin / yilun-zhan
           </a>

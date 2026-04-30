@@ -36,7 +36,7 @@ export function Chapters({ variant, chapters, children }: ChaptersProps) {
   return (
     <div ref={containerRef}>
       {variant === "chapters-tabbed" && chapters.length > 0 && (
-        <div className="px-8 md:px-16 lg:px-20 py-8 flex justify-center">
+        <div className="flex justify-center px-8 py-8 md:px-16 lg:px-20">
           <PillTabs tabs={tabs} activeId={activeName} onChange={setActiveName} />
         </div>
       )}

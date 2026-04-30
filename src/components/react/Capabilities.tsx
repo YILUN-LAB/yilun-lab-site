@@ -39,7 +39,7 @@ export function Capabilities() {
     <section
       data-screen-label="Capabilities"
       id="capabilities"
-      className="relative w-full min-h-screen overflow-hidden"
+      className="relative min-h-screen w-full overflow-hidden"
       style={{
         background:
           "radial-gradient(60% 50% at 50% 30%, rgba(245,175,60,0.22), transparent 60%)," +
@@ -49,23 +49,24 @@ export function Capabilities() {
     >
       <FadingVideo
         src={CAP_VIDEO_SRC}
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        className="absolute inset-0 z-0 h-full w-full object-cover"
       />
-      <div className="relative z-10 px-8 md:px-16 lg:px-20 pt-24 pb-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex min-h-screen flex-col px-8 pb-10 pt-24 md:px-16 lg:px-20">
         <div className="mb-auto">
-          <div className="text-sm font-body text-white/80 mb-6">// Capabilities</div>
-          <h2 className="font-heading italic text-white text-6xl md:text-7xl lg:text-[6rem] leading-[0.9] tracking-[-3px]">
-            The Lab,<br />
+          <div className="mb-6 font-body text-sm text-white/80">// Capabilities</div>
+          <h2 className="font-heading text-6xl italic leading-[0.9] tracking-[-3px] text-white md:text-7xl lg:text-[6rem]">
+            The Lab,
+            <br />
             in practice
           </h2>
-          <p className="mt-8 max-w-xl text-white/85 font-body font-light text-base md:text-lg leading-snug">
+          <p className="mt-8 max-w-xl font-body text-base font-light leading-snug text-white/85 md:text-lg">
             Light shapes how a space is felt, remembered, returned to. Across spatial design,
-            installation, performance, and emerging technology — guided by a single conviction:
-            that light is never just illumination.
+            installation, performance, and emerging technology — guided by a single conviction: that
+            light is never just illumination.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3">
           {CARDS.map((c, idx) => (
             <CapabilityCard key={c.title} card={c} delay={idx * 0.12} />
           ))}
@@ -80,17 +81,17 @@ function CapabilityCard({ card, delay }: { card: CardData; delay: number }) {
   return (
     <motion.div
       {...fadeBlurIn(delay)}
-      className="liquid-glass rounded-[1.25rem] p-6 min-h-[360px] flex flex-col"
+      className="liquid-glass flex min-h-[360px] flex-col rounded-[1.25rem] p-6"
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="liquid-glass w-11 h-11 rounded-[0.75rem] flex items-center justify-center">
+        <div className="liquid-glass flex h-11 w-11 items-center justify-center rounded-[0.75rem]">
           <Icon className="h-6 w-6 text-white" />
         </div>
-        <div className="flex flex-wrap justify-end gap-1.5 max-w-[70%]">
+        <div className="flex max-w-[70%] flex-wrap justify-end gap-1.5">
           {tags.map((t) => (
             <span
               key={t}
-              className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/90 font-body whitespace-nowrap"
+              className="liquid-glass whitespace-nowrap rounded-full px-3 py-1 font-body text-[11px] text-white/90"
             >
               {t}
             </span>
@@ -99,10 +100,10 @@ function CapabilityCard({ card, delay }: { card: CardData; delay: number }) {
       </div>
       <div className="flex-1" />
       <div className="mt-6">
-        <h3 className="font-heading italic text-white text-3xl md:text-4xl tracking-[-1px] leading-none">
+        <h3 className="font-heading text-3xl italic leading-none tracking-[-1px] text-white md:text-4xl">
           {title}
         </h3>
-        <p className="mt-3 text-sm text-white/90 font-body font-light leading-snug max-w-[32ch]">
+        <p className="mt-3 max-w-[32ch] font-body text-sm font-light leading-snug text-white/90">
           {body}
         </p>
       </div>

@@ -18,30 +18,30 @@ export function Chapter({ name, note, accent, cover, children }: ChapterProps) {
     <motion.section
       data-chapter-name={name}
       {...fadeBlurIn(0)}
-      className="px-8 md:px-16 lg:px-20 py-16 max-w-6xl mx-auto"
+      className="mx-auto max-w-6xl px-8 py-16 md:px-16 lg:px-20"
     >
       <div className="mb-8">
-        <div className="text-[10px] text-white/55 font-body uppercase tracking-[0.18em] mb-2">
+        <div className="mb-2 font-body text-[10px] uppercase tracking-[0.18em] text-white/55">
           // Chapter
         </div>
-        <h3 className="font-heading italic text-white text-4xl md:text-5xl lg:text-6xl leading-[0.95] tracking-[-1.5px]">
+        <h3 className="font-heading text-4xl italic leading-[0.95] tracking-[-1.5px] text-white md:text-5xl lg:text-6xl">
           {name}
         </h3>
         {note && (
-          <p className="mt-2 text-base md:text-lg text-white/70 font-body font-light italic">
+          <p className="mt-2 font-body text-base font-light italic text-white/70 md:text-lg">
             {note}
           </p>
         )}
       </div>
 
-      <div className="liquid-glass relative overflow-hidden rounded-[1.25rem] aspect-[16/9] mb-8">
+      <div className="liquid-glass relative mb-8 aspect-[16/9] overflow-hidden rounded-[1.25rem]">
         {cover ? (
           <img
             src={cover}
             alt={`${name} — cover`}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
           <>
@@ -58,7 +58,7 @@ export function Chapter({ name, note, accent, cover, children }: ChapterProps) {
         )}
       </div>
 
-      <div className="prose prose-invert max-w-3xl mx-auto text-base md:text-lg text-white/90 font-body font-light leading-relaxed [&>p]:mb-4">
+      <div className="prose prose-invert mx-auto max-w-3xl font-body text-base font-light leading-relaxed text-white/90 md:text-lg [&>p]:mb-4">
         {children}
       </div>
     </motion.section>

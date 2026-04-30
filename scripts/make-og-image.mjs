@@ -18,8 +18,6 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
         font-size="40" fill="#fff5e0">Light. Emotion. Future.</text>
 </svg>`;
 
-await sharp(Buffer.from(svg))
-  .jpeg({ quality: 85 })
-  .toFile("public/og-image.jpg");
+await sharp(Buffer.from(svg)).jpeg({ quality: 85 }).toFile("public/og-image.jpg");
 
 console.log("public/og-image.jpg written");

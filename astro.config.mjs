@@ -19,10 +19,7 @@ export default defineConfig({
     react(),
     mdx({
       remarkPlugins: [remarkSmartypants],
-      rehypePlugins: [
-        rehypeSlug,
-        [rehypeAutolinkHeadings, { behavior: "wrap" }],
-      ],
+      rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
     }),
     tailwind({ applyBaseStyles: false }),
     sitemap(),
