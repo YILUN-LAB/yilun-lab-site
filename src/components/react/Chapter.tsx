@@ -1,18 +1,40 @@
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import { fadeBlurIn } from "@lib/motion-presets";
+
+interface ChapterImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
 
 interface ChapterProps {
   name: string;
   note?: string;
   accent?: AccentName;
   cover?: string;
+  youtube?: string;
+  images?: ChapterImage[];
   children?: ReactNode;
 }
 
-export function Chapter({ name, note, accent, cover, children }: ChapterProps) {
+export function Chapter({ name, note, accent, cover, youtube, images, children }: ChapterProps) {
   const accentKey: AccentName = accent ?? "amber";
+  const [embedReady, setEmbedReady] = useState(false);
+
+  useEffect(() => {
+    if (!youtube) return;
+    let cancelled = false;
+    import("lite-youtube-embed").then(() => {
+      if (!cancelled) setEmbedReady(true);
+    });
+    import("lite-youtube-embed/src/lite-yt-embed.css");
+    return () => {
+      cancelled = true;
+    };
+  }, [youtube]);
 
   return (
     <motion.section
@@ -34,8 +56,10 @@ export function Chapter({ name, note, accent, cover, children }: ChapterProps) {
         )}
       </div>
 
-      <div className="liquid-glass relative mb-8 aspect-[16/9] overflow-hidden rounded-[1.25rem]">
-        {cover ? (
+      <div className="liquid-glass relative mb-8 aspect-video overflow-hidden rounded-[1.25rem]">
+        {youtube ? (
+          embedReady && <lite-youtube videoid={youtube} class="h-full w-full" />
+        ) : cover ? (
           <img
             src={cover}
             alt={`${name} — cover`}
@@ -61,6 +85,31 @@ export function Chapter({ name, note, accent, cover, children }: ChapterProps) {
       <div className="prose prose-invert mx-auto max-w-3xl font-body text-base font-light leading-relaxed text-white/90 md:text-lg [&>p]:mb-4">
         {children}
       </div>
+
+      {images && images.length > 0 && (
+        <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+          {images.map((img, i) => (
+            <motion.figure
+              key={img.src}
+              {...fadeBlurIn(0.05 + Math.min(i * 0.04, 0.3))}
+              className="liquid-glass relative aspect-[3/4] overflow-hidden rounded-[1rem]"
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              {img.caption && (
+                <figcaption className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 font-body text-xs font-light text-white/85">
+                  {img.caption}
+                </figcaption>
+              )}
+            </motion.figure>
+          ))}
+        </div>
+      )}
     </motion.section>
   );
 }
