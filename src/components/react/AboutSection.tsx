@@ -16,7 +16,7 @@ export function AboutSection() {
       id="about"
       className="relative bg-black px-8 md:px-16 lg:px-20 py-28"
     >
-      <motion.div {...fadeBlurIn(0)} className="mb-14">
+      <motion.div {...fadeBlurIn(0)} className="mb-14 max-w-7xl mx-auto">
         <div className="text-sm font-body text-white/80 mb-6">// Founder</div>
         <h2 className="font-heading italic text-white text-5xl md:text-6xl lg:text-[5.5rem] leading-[0.9] tracking-[-2px]">
           Yilun (Yilia) Zhan.
