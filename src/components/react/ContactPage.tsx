@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
-import { ArrowUpRight } from "./icons";
+import { MailIcon, InstagramIcon, LinkedInIcon } from "./icons";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { COLLAB_AREAS as AREAS } from "@lib/data/collab-areas";
 
@@ -76,28 +76,31 @@ export function ContactPage() {
                 timeline, and what you want it to feel like — we'll write back within a few days.
               </p>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
                 <a
                   href="mailto:hello@yilunlab.com"
-                  className="liquid-glass-strong liquid-glass-tint inline-flex items-center justify-between gap-2 rounded-full px-5 py-3 text-sm font-semibold"
+                  aria-label="Email the studio"
+                  className="liquid-glass-strong liquid-glass-tint flex h-14 w-14 items-center justify-center rounded-full"
                 >
-                  hello@yilunlab.com <ArrowUpRight className="h-5 w-5" />
+                  <MailIcon className="h-6 w-6" />
                 </a>
                 <a
                   href="https://instagram.com/yilun.lab"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="liquid-glass inline-flex items-center justify-between gap-2 rounded-full px-5 py-3 text-sm font-medium text-white"
+                  aria-label="Instagram"
+                  className="liquid-glass flex h-14 w-14 items-center justify-center rounded-full text-white transition-colors hover:text-white/90"
                 >
-                  Instagram — @yilun.lab <ArrowUpRight className="h-4 w-4" />
+                  <InstagramIcon className="h-6 w-6" />
                 </a>
                 <a
                   href="https://www.linkedin.com/in/yilun-zhan"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="liquid-glass inline-flex items-center justify-between gap-2 rounded-full px-5 py-3 text-sm font-medium text-white"
+                  aria-label="LinkedIn"
+                  className="liquid-glass flex h-14 w-14 items-center justify-center rounded-full text-white transition-colors hover:text-white/90"
                 >
-                  LinkedIn — yilun-zhan <ArrowUpRight className="h-4 w-4" />
+                  <LinkedInIcon className="h-6 w-6" />
                 </a>
               </div>
             </motion.div>

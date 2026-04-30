@@ -91,3 +91,50 @@ export function BulbIcon({ className = "h-6 w-6", ...rest }: IconProps) {
     </svg>
   );
 }
+
+export function MailIcon({ className = "h-5 w-5", ...rest }: IconProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...rest}
+      aria-hidden="true"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </svg>
+  );
+}
+
+export function InstagramIcon({ className = "h-5 w-5", ...rest }: IconProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...rest}
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function LinkedInIcon({ className = "h-5 w-5", ...rest }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" {...rest} aria-hidden="true">
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14ZM8.5 18V10H6v8h2.5Zm-1.25-9.2a1.45 1.45 0 1 0 0-2.9 1.45 1.45 0 0 0 0 2.9ZM18 18v-4.6c0-2.18-1.16-3.2-2.7-3.2-1.25 0-1.81.69-2.12 1.17V10H10.7c.03.71 0 8 0 8h2.48v-4.47c0-.22.02-.44.08-.6.18-.45.6-.92 1.3-.92.92 0 1.29.7 1.29 1.72V18H18Z" />
+    </svg>
+  );
+}

@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { ArrowUpRight, PlayIcon } from "./icons";
+import { ArrowUpRight, PlayIcon, MailIcon, InstagramIcon, LinkedInIcon } from "./icons";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { COLLAB_AREAS as AREAS } from "@lib/data/collab-areas";
 
@@ -8,7 +8,7 @@ export function CollaborateSection() {
     <section
       data-screen-label="Collaborate"
       id="collaborate"
-      className="relative overflow-hidden bg-black px-8 py-28 md:px-16 lg:px-20"
+      className="relative overflow-hidden bg-black/85 px-8 py-28 md:px-16 lg:px-20"
     >
       <div
         className="pointer-events-none absolute inset-0"
@@ -68,29 +68,32 @@ export function CollaborateSection() {
 
         <motion.div
           {...fadeBlurIn(0.5)}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          className="mt-10 flex items-center justify-center gap-3"
         >
           <a
             href="mailto:hello@yilunlab.com"
-            className="liquid-glass rounded-full px-4 py-1.5 font-body text-xs text-white/90"
+            aria-label="Email the studio"
+            className="liquid-glass flex h-11 w-11 items-center justify-center rounded-full text-white/90 transition-colors hover:text-white"
           >
-            hello@yilunlab.com
+            <MailIcon className="h-5 w-5" />
           </a>
           <a
             href="https://instagram.com/yilun.lab"
             target="_blank"
             rel="noopener noreferrer"
-            className="liquid-glass rounded-full px-4 py-1.5 font-body text-xs text-white/90"
+            aria-label="Instagram"
+            className="liquid-glass flex h-11 w-11 items-center justify-center rounded-full text-white/90 transition-colors hover:text-white"
           >
-            @yilun.lab — Instagram
+            <InstagramIcon className="h-5 w-5" />
           </a>
           <a
             href="https://www.linkedin.com/in/yilun-zhan"
             target="_blank"
             rel="noopener noreferrer"
-            className="liquid-glass rounded-full px-4 py-1.5 font-body text-xs text-white/90"
+            aria-label="LinkedIn"
+            className="liquid-glass flex h-11 w-11 items-center justify-center rounded-full text-white/90 transition-colors hover:text-white"
           >
-            linkedin / yilun-zhan
+            <LinkedInIcon className="h-5 w-5" />
           </a>
         </motion.div>
       </div>
