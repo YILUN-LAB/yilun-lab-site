@@ -1,5 +1,4 @@
 import { motion } from "motion/react";
-import { ArrowUpRight } from "./icons";
 import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import { easeOut } from "@lib/motion-presets";
 
@@ -67,9 +66,6 @@ export function WorkCard({ project, idx }: WorkCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="liquid-glass absolute left-4 top-4 rounded-full px-3 py-1 font-body text-[10px] uppercase tracking-wider text-white/80">
           {project.year || "—"}
-        </div>
-        <div className="liquid-glass absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-white/90 transition-colors group-hover:text-white">
-          <ArrowUpRight className="h-4 w-4" />
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
           <h3 className="font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-3xl lg:text-4xl">
