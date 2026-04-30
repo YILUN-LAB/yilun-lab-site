@@ -25,13 +25,13 @@ export function AuroraBackground() {
         }
         .aurora-blob {
           position: absolute;
-          width: 80vw;
-          height: 80vw;
-          max-width: 1100px;
-          max-height: 1100px;
+          width: 90vw;
+          height: 90vw;
+          max-width: 1300px;
+          max-height: 1300px;
           border-radius: 50%;
-          filter: blur(120px);
-          opacity: 0.12;
+          filter: blur(110px);
+          opacity: 0.28;
           mix-blend-mode: screen;
           will-change: transform;
         }

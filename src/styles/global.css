@@ -19,19 +19,18 @@
 }
 
 @layer base {
-  html,
-  body {
+  html {
     background: var(--warm-bg);
     color: #fff;
   }
   body {
+    /* Transparent so the fixed AuroraBackground (z-index: -1) is visible
+       behind page content. The base color comes from <html>. */
+    background: transparent;
+    color: #fff;
     font-family: "Barlow", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background:
-      radial-gradient(1200px 700px at 50% -10%, rgba(var(--amber-2), 0.12), transparent 65%),
-      radial-gradient(900px 600px at 100% 100%, rgba(var(--amber-2), 0.05), transparent 65%),
-      var(--warm-bg);
   }
 }
 
