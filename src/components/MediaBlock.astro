@@ -1,0 +1,72 @@
+---
+import "lite-youtube-embed/src/lite-yt-embed.css";
+
+interface Props {
+  type: "image" | "video" | "youtube";
+  src: string;
+  alt?: string;
+  caption?: string;
+  poster?: string;
+  aspect?: string;
+}
+
+const { type, src, alt = "", caption, poster, aspect = "aspect-[4/3]" } = Astro.props;
+---
+
+{
+  type === "image" && (
+    <figure class="liquid-glass relative my-6 overflow-hidden rounded-[1.25rem]">
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        class={`h-auto w-full ${aspect ? aspect + " object-cover" : ""}`}
+      />
+      {caption && (
+        <figcaption class="px-4 py-3 font-body text-xs font-light text-white/70">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+{
+  type === "video" && (
+    <figure class={`liquid-glass relative my-6 overflow-hidden rounded-[1.25rem] ${aspect}`}>
+      <video
+        src={src}
+        poster={poster}
+        controls
+        playsinline
+        preload="metadata"
+        class="h-full w-full object-cover"
+      >
+        <track kind="captions" />
+      </video>
+      {caption && (
+        <figcaption class="px-4 py-3 font-body text-xs font-light text-white/70">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+{
+  type === "youtube" && (
+    <figure class="liquid-glass relative my-6 aspect-video overflow-hidden rounded-[1.25rem]">
+      <lite-youtube videoid={src} class="h-full w-full" />
+      {caption && (
+        <figcaption class="px-4 py-3 font-body text-xs font-light text-white/70">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+<script>
+  import "lite-youtube-embed";
+</script>

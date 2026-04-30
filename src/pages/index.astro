@@ -1,0 +1,26 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "@components/BaseLayout.astro";
+import { HomePage } from "@components/react/HomePage";
+
+const entries = await getCollection("projects", (e: CollectionEntry<"projects">) => !e.data.draft);
+entries.sort(
+  (a: CollectionEntry<"projects">, b: CollectionEntry<"projects">) =>
+    (a.data.order ?? 9999) - (b.data.order ?? 9999)
+);
+
+const projects = entries.map((e: CollectionEntry<"projects">) => ({
+  slug: e.slug,
+  title: e.data.title,
+  subtitle: e.data.subtitle,
+  tagline: e.data.tagline,
+  category: e.data.category,
+  year: e.data.year,
+  accent: e.data.accent,
+  size: e.data.size,
+}));
+---
+
+<BaseLayout title="YILUN LAB" description="Light. Emotion. Future.">
+  <HomePage client:load projects={projects} />
+</BaseLayout>

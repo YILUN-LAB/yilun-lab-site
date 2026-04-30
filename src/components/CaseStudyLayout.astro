@@ -1,0 +1,115 @@
+---
+import { type CollectionEntry } from "astro:content";
+import { Navbar } from "@components/react/Navbar";
+import { Footer } from "@components/react/Footer";
+import { ImageWallVariant } from "@components/react/ImageWallVariant";
+import { VideoHeroVariant } from "@components/react/VideoHeroVariant";
+import { Chapters } from "@components/react/Chapters";
+import { ArrowUpRight } from "@components/react/icons";
+import { caseStudyComponents } from "@lib/mdx-components";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+  next?: CollectionEntry<"projects"> | null;
+}
+
+const { entry, next } = Astro.props;
+const { data } = entry;
+const { Content } = await entry.render();
+
+const categoryRail = data.category
+  .map((c: string) => `Light & ${c[0].toUpperCase() + c.slice(1)}`)
+  .join(" · ");
+---
+
+<Navbar client:load mode="page" />
+
+<article class="bg-black pb-20 pt-28">
+  <header class="relative px-8 pb-12 md:px-16 lg:px-20">
+    <div class="mx-auto max-w-6xl">
+      <div class="mb-4 font-body text-sm text-white/80">// {categoryRail}</div>
+      <h1
+        class="font-heading text-5xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[7rem]"
+      >
+        {data.title}
+      </h1>
+      {
+        data.subtitle && (
+          <div class="mt-3 font-heading text-2xl italic text-white/80 md:text-3xl">
+            {data.subtitle}
+          </div>
+        )
+      }
+      <p
+        class="mt-6 max-w-2xl font-body text-base font-light leading-relaxed text-white/85 md:text-lg"
+      >
+        {data.tagline}
+      </p>
+
+      <div class="mt-10 grid max-w-3xl grid-cols-2 gap-3 md:grid-cols-4">
+        {
+          [
+            ["Year", data.year || "—"],
+            ["Role", data.role || "—"],
+            ["Medium", data.medium || "—"],
+            ["Runtime", data.runtime || data.date || "—"],
+          ].map(([k, v]) => (
+            <div class="liquid-glass rounded-[1rem] p-4">
+              <div class="mb-1.5 font-body text-[10px] uppercase tracking-[0.18em] text-white/55">
+                {k}
+              </div>
+              <div class="font-body text-sm text-white">{v}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </header>
+
+  {
+    data.variant === "image-wall" && (
+      <ImageWallVariant client:load images={data.images} accent={data.accent}>
+        <Content components={caseStudyComponents} slot="intro" />
+      </ImageWallVariant>
+    )
+  }
+
+  {
+    data.variant === "video-hero" && data.youtube && (
+      <VideoHeroVariant
+        client:load
+        youtube={data.youtube}
+        youtubeAlt={data.youtubeAlt}
+        images={data.images}
+      >
+        <Content components={caseStudyComponents} slot="body" />
+      </VideoHeroVariant>
+    )
+  }
+
+  {
+    (data.variant === "chapters" || data.variant === "chapters-tabbed") && data.chapters && (
+      <Chapters client:load variant={data.variant} chapters={data.chapters}>
+        <Content components={caseStudyComponents} />
+      </Chapters>
+    )
+  }
+
+  {
+    next && (
+      <div class="mx-auto mt-12 max-w-6xl px-8 md:px-16 lg:px-20">
+        <div class="flex items-center justify-between border-t border-white/10 pt-10">
+          <span class="font-body text-xs uppercase tracking-[0.18em] text-white/55">Next work</span>
+          <a
+            href={`/projects/${next.slug}`}
+            class="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
+          >
+            {next.data.title} <ArrowUpRight className="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    )
+  }
+</article>
+
+<Footer />

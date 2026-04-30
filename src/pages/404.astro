@@ -1,0 +1,30 @@
+---
+import BaseLayout from "@components/BaseLayout.astro";
+import { Navbar } from "@components/react/Navbar";
+import { Footer } from "@components/react/Footer";
+import { ArrowUpRight } from "@components/react/icons";
+---
+
+<BaseLayout title="Page not found" description="The page you're looking for isn't here.">
+  <Navbar client:load mode="page" />
+  <main class="flex min-h-[80vh] items-center justify-center px-8">
+    <div class="max-w-2xl text-center">
+      <div class="mb-6 font-body text-sm text-white/60">// 404</div>
+      <h1
+        class="font-heading text-6xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[7rem]"
+      >
+        Lost in the dark.
+      </h1>
+      <p class="mt-6 font-body text-base font-light text-white/70 md:text-lg">
+        The page you're looking for isn't here. Light leads back home.
+      </p>
+      <a
+        href="/"
+        class="liquid-glass-strong liquid-glass-tint mt-8 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
+      >
+        Back to home <ArrowUpRight className="h-4 w-4" />
+      </a>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

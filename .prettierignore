@@ -1,0 +1,6 @@
+dist/
+.astro/
+node_modules/
+migration/
+package-lock.json
+public/
