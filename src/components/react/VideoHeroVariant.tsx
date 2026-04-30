@@ -15,8 +15,6 @@ export function VideoHeroVariant({ body, youtube, youtubeAlt, images }: VideoHer
 
   useEffect(() => {
     let cancelled = false;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore no declaration file for lite-youtube-embed
     import("lite-youtube-embed").then(() => {
       if (!cancelled) setEmbedReady(true);
     });
@@ -33,7 +31,6 @@ export function VideoHeroVariant({ body, youtube, youtubeAlt, images }: VideoHer
         className="liquid-glass relative overflow-hidden rounded-[1.25rem] aspect-video max-w-6xl mx-auto"
       >
         {embedReady && (
-          /* @ts-expect-error custom element */
           <lite-youtube videoid={youtube} class="w-full h-full" />
         )}
       </motion.div>
@@ -59,7 +56,6 @@ export function VideoHeroVariant({ body, youtube, youtubeAlt, images }: VideoHer
               className="liquid-glass relative overflow-hidden rounded-[1rem] aspect-video"
             >
               {embedReady && (
-                /* @ts-expect-error custom element */
                 <lite-youtube videoid={id} class="w-full h-full" />
               )}
             </motion.div>
