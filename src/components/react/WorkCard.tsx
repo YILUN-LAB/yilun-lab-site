@@ -12,6 +12,7 @@ export interface WorkCardData {
   year?: string;
   accent: AccentName;
   size: "xl" | "lg" | "md" | "sm";
+  cover?: string;
 }
 
 const SIZE_CLASSES: Record<string, string> = {
@@ -42,16 +43,28 @@ export function WorkCard({ project, idx }: WorkCardProps) {
       className={"group block text-left " + SIZE_CLASSES[project.size]}
     >
       <div className={"liquid-glass relative w-full overflow-hidden rounded-[1.25rem] " + aspect}>
-        <div className="absolute inset-0" style={{ background: gradientFor(project.accent) }} />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(35% 30% at 50% 45%, rgba(255,255,255,0.18), transparent 70%)",
-            mixBlendMode: "screen",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        {project.cover ? (
+          <img
+            src={project.cover}
+            alt={`${project.title} — cover`}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0" style={{ background: gradientFor(project.accent) }} />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(35% 30% at 50% 45%, rgba(255,255,255,0.18), transparent 70%)",
+                mixBlendMode: "screen",
+              }}
+            />
+          </>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="liquid-glass absolute left-4 top-4 rounded-full px-3 py-1 font-body text-[10px] uppercase tracking-wider text-white/80">
           {project.year || "—"}
         </div>
