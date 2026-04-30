@@ -6,6 +6,7 @@ import { ImageWallVariant } from "@components/react/ImageWallVariant";
 import { VideoHeroVariant } from "@components/react/VideoHeroVariant";
 import { Chapters } from "@components/react/Chapters";
 import { ArrowUpRight } from "@components/react/icons";
+import { caseStudyComponents } from "@lib/mdx-components";
 
 interface Props {
   entry: CollectionEntry<"projects">;
@@ -63,7 +64,7 @@ const categoryRail = data.category
       images={data.images}
       accent={data.accent}
     >
-      <Content slot="intro" />
+      <Content components={caseStudyComponents} slot="intro" />
     </ImageWallVariant>
   )}
 
@@ -74,13 +75,13 @@ const categoryRail = data.category
       youtubeAlt={data.youtubeAlt}
       images={data.images}
     >
-      <Content slot="body" />
+      <Content components={caseStudyComponents} slot="body" />
     </VideoHeroVariant>
   )}
 
   {(data.variant === "chapters" || data.variant === "chapters-tabbed") && data.chapters && (
     <Chapters client:load variant={data.variant} chapters={data.chapters}>
-      <Content />
+      <Content components={caseStudyComponents} />
     </Chapters>
   )}
 
