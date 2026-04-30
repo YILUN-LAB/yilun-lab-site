@@ -19,12 +19,15 @@ export function FadingVideo({ src, className = "", style = {} }: FadingVideoProp
     const video = videoRef.current;
     if (!video) return;
 
+    let fadeGen = 0;
     function fadeTo(target: number, duration = FADE_MS) {
+      const myGen = ++fadeGen;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       const start = performance.now();
       const from = parseFloat(video!.style.opacity || "0") || 0;
       const delta = target - from;
       function step(now: number) {
+        if (myGen !== fadeGen) return;
         const t = Math.min(1, (now - start) / duration);
         video!.style.opacity = String(from + delta * t);
         if (t < 1) rafRef.current = requestAnimationFrame(step);
@@ -73,6 +76,7 @@ export function FadingVideo({ src, className = "", style = {} }: FadingVideoProp
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      fadingOutRef.current = false;
       video.removeEventListener("loadeddata", onLoaded);
       video.removeEventListener("timeupdate", onTime);
       video.removeEventListener("ended", onEnded);
