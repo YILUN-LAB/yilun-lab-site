@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ArrowUpRight } from "./icons";
-import { gradientFor } from "@lib/accent-gradients";
+import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import { easeOut } from "@lib/motion-presets";
 
 export interface WorkCardData {
@@ -10,7 +10,7 @@ export interface WorkCardData {
   tagline: string;
   category: string[];
   year?: string;
-  accent: string;
+  accent: AccentName;
   size: "xl" | "lg" | "md" | "sm";
 }
 
