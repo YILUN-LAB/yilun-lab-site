@@ -1,8 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
 import { gradientFor, type AccentName } from "@lib/accent-gradients";
-import { fadeBlurIn } from "@lib/motion-presets";
 
 interface ChapterImage {
   src: string;
@@ -20,26 +17,19 @@ interface ChapterProps {
   children?: ReactNode;
 }
 
+/**
+ * Chapter is rendered inside MDX as a static child of <Chapters client:load>.
+ * Because Astro doesn't hydrate slot children, this component must render to
+ * fully visible HTML on the server — no `motion.*`, no `useEffect`-gated
+ * conditionals. The parent Chapters island loads `lite-youtube-embed` once,
+ * which auto-upgrades any <lite-youtube> elements rendered here.
+ */
 export function Chapter({ name, note, accent, cover, youtube, images, children }: ChapterProps) {
   const accentKey: AccentName = accent ?? "amber";
-  const [embedReady, setEmbedReady] = useState(false);
-
-  useEffect(() => {
-    if (!youtube) return;
-    let cancelled = false;
-    import("lite-youtube-embed").then(() => {
-      if (!cancelled) setEmbedReady(true);
-    });
-    import("lite-youtube-embed/src/lite-yt-embed.css");
-    return () => {
-      cancelled = true;
-    };
-  }, [youtube]);
 
   return (
-    <motion.section
+    <section
       data-chapter-name={name}
-      {...fadeBlurIn(0)}
       className="mx-auto max-w-6xl px-8 py-16 md:px-16 lg:px-20"
     >
       <div className="mb-8">
@@ -58,7 +48,7 @@ export function Chapter({ name, note, accent, cover, youtube, images, children }
 
       <div className="liquid-glass relative mb-8 aspect-video overflow-hidden rounded-[1.25rem]">
         {youtube ? (
-          embedReady && <lite-youtube videoid={youtube} class="h-full w-full" />
+          <lite-youtube videoid={youtube} class="h-full w-full" />
         ) : cover ? (
           <img
             src={cover}
@@ -88,10 +78,9 @@ export function Chapter({ name, note, accent, cover, youtube, images, children }
 
       {images && images.length > 0 && (
         <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-          {images.map((img, i) => (
-            <motion.figure
+          {images.map((img) => (
+            <figure
               key={img.src}
-              {...fadeBlurIn(0.05 + Math.min(i * 0.04, 0.3))}
               className="liquid-glass relative aspect-[3/4] overflow-hidden rounded-[1rem]"
             >
               <img
@@ -106,10 +95,10 @@ export function Chapter({ name, note, accent, cover, youtube, images, children }
                   {img.caption}
                 </figcaption>
               )}
-            </motion.figure>
+            </figure>
           ))}
         </div>
       )}
-    </motion.section>
+    </section>
   );
 }

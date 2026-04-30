@@ -31,6 +31,12 @@ export function Chapters({ variant, chapters, children }: ChaptersProps) {
     });
   }, [activeName, variant]);
 
+  // Load lite-youtube-embed once so any <lite-youtube> in static-rendered Chapter HTML upgrades.
+  useEffect(() => {
+    import("lite-youtube-embed");
+    import("lite-youtube-embed/src/lite-yt-embed.css");
+  }, []);
+
   const tabs: PillTab[] = chapters.map((c) => ({ id: c.name, label: c.name }));
 
   return (
