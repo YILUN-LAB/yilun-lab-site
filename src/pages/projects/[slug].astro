@@ -1,0 +1,33 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "@components/BaseLayout.astro";
+import CaseStudyLayout from "@components/CaseStudyLayout.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects", ({ data }: CollectionEntry<"projects">) => !data.draft);
+  entries.sort((a: CollectionEntry<"projects">, b: CollectionEntry<"projects">) => (a.data.order ?? 9999) - (b.data.order ?? 9999));
+
+  return entries.map((entry: CollectionEntry<"projects">, i: number) => {
+    const next = entries[(i + 1) % entries.length];
+    return {
+      params: { slug: entry.slug },
+      props: { entry, next },
+    };
+  });
+}
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+  next: CollectionEntry<"projects">;
+}
+
+const { entry, next } = Astro.props;
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.tagline}
+  canonical={`/projects/${entry.slug}`}
+>
+  <CaseStudyLayout entry={entry} next={next} />
+</BaseLayout>
