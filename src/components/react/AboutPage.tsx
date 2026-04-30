@@ -39,7 +39,7 @@ export function AboutPage() {
           <motion.div {...fadeBlurIn(0)} className="mx-auto max-w-7xl">
             <div className="mb-6 font-body text-sm text-white/80">// About</div>
             <h1 className="font-heading text-6xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[8rem]">
-              Yilun (Yilia) Zhan.
+              Yilun Zhan.
             </h1>
             <p className="mt-8 max-w-2xl font-body text-base font-light text-white/85 md:text-xl">
               Lighting artist, lighting designer, and founder of YILUN LAB — a creative lighting lab

@@ -7,7 +7,7 @@ export function Footer() {
       <div className="flex flex-wrap items-end justify-between gap-6 font-body text-xs uppercase tracking-[0.18em] text-white/55">
         <div>
           <div className="text-white/85">YILUN LAB · est. 2022</div>
-          <div>Yilun (Yilia) Zhan, Founder</div>
+          <div>Yilun Zhan, Founder</div>
         </div>
         <div className="text-right">
           <div className="text-white/85">© 2026 — All rights reserved.</div>
