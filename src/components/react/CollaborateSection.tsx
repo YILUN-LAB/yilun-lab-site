@@ -80,12 +80,16 @@ export function CollaborateSection() {
           </a>
           <a
             href="https://instagram.com/yilun.lab"
+            target="_blank"
+            rel="noopener noreferrer"
             className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/90 font-body"
           >
             @yilun.lab — Instagram
           </a>
           <a
             href="https://www.linkedin.com/in/yilun-zhan"
+            target="_blank"
+            rel="noopener noreferrer"
             className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/90 font-body"
           >
             linkedin / yilun-zhan
