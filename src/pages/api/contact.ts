@@ -49,7 +49,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const data = parsed.data;
 
   // Honeypot tripped — return silent 200 so bots don't retry with new evasion.
-  if (data.company.length > 0) {
+  if (data._gotcha && data._gotcha.length > 0) {
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
 
@@ -95,7 +95,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   ].join("");
 
   try {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "YILUN LAB Studio <studio@yilunlab.com>",
       to: ["yilun@yilunlab.com"],
       replyTo: data.email,
@@ -103,9 +103,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       html: htmlBody,
       text: textBody,
     });
+    if (error) {
+      // Resend SDK 6.x resolves with { data: null, error } instead of throwing
+      console.error("contact form: resend returned error", { data, error });
+      return new Response(JSON.stringify({ ok: false, error: "send_failed" }), {
+        status: 502,
+      });
+    }
   } catch (err) {
-    // Recovery trail: log full payload + error only on Resend failure.
-    console.error("contact form: resend failed", { data, err });
+    // Defensive: SDK-internal exceptions (network, DNS, abort, etc.)
+    console.error("contact form: resend threw", { data, err });
     return new Response(JSON.stringify({ ok: false, error: "send_failed" }), {
       status: 502,
     });

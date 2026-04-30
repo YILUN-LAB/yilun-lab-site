@@ -21,7 +21,7 @@ export const ContactFormSchema = z.object({
   venue: z.string().trim().max(200, "Too long").optional(),
   timeline: z.string().trim().max(100, "Too long").optional(),
   budgetNotes: z.string().trim().max(200, "Too long").optional(),
-  company: z.string().max(0), // honeypot — must be empty
+  _gotcha: z.string().optional(), // honeypot — should be empty/undefined for real submissions
 });
 
 export type ContactFormInput = z.infer<typeof ContactFormSchema>;

@@ -69,7 +69,7 @@ export function ContactForm() {
       venue: (fd.get("venue") as string) || undefined,
       timeline: (fd.get("timeline") as string) || undefined,
       budgetNotes: (fd.get("budgetNotes") as string) || undefined,
-      company: (fd.get("company") as string) ?? "",
+      _gotcha: (fd.get("_gotcha") as string) ?? "",
     };
 
     const parsed = ContactFormSchema.safeParse(raw);
@@ -282,10 +282,10 @@ export function ContactForm() {
           overflow: "hidden",
         }}
       >
-        <label htmlFor="contact-company">Company (leave blank)</label>
+        <label htmlFor="contact-gotcha">Leave this field empty</label>
         <input
-          id="contact-company"
-          name="company"
+          id="contact-gotcha"
+          name="_gotcha"
           type="text"
           tabIndex={-1}
           autoComplete="off"
