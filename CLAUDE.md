@@ -71,12 +71,117 @@ when a regression is suspected, compare against the prototype rendered locally.
 
 - Schema validation runs during `astro build` — broken frontmatter fails
   the build
-- For visual changes, run `npm run dev` and compare against the prototype
-  served from `migration/yilun-lab-website/project/index.html` (open in a
-  separate tab or browser)
+- For visual changes, run the **Browser Verification Workflow** below
+  instead of asking the human to walk through manually
 - Lighthouse target: 90+ on `/`, 95+ on text pages
 - Sanity checks: `prefers-reduced-motion` (DevTools → Rendering), mobile
   viewports 375/768/1280
+
+## Browser Verification Workflow
+
+When the build/lint can't catch a regression — animation timing, hover
+states, click-through flows, layout breakage — drive a real browser
+through the Playwright MCP tools rather than asking the human.
+
+### Tools
+
+The Playwright MCP tools are deferred. Load them once at the start of a
+verification run via `ToolSearch`:
+
+```
+ToolSearch query: "select:mcp__plugin_playwright_playwright__browser_navigate,mcp__plugin_playwright_playwright__browser_snapshot,mcp__plugin_playwright_playwright__browser_take_screenshot,mcp__plugin_playwright_playwright__browser_click,mcp__plugin_playwright_playwright__browser_hover,mcp__plugin_playwright_playwright__browser_console_messages,mcp__plugin_playwright_playwright__browser_resize,mcp__plugin_playwright_playwright__browser_network_requests,mcp__plugin_playwright_playwright__browser_close,mcp__plugin_playwright_playwright__browser_evaluate,mcp__plugin_playwright_playwright__browser_wait_for"
+```
+
+The browser maintains a single shared session — do **not** dispatch
+multiple browser tools in parallel; navigations and clicks must run
+sequentially. Server commands (dev server, prototype http server) are
+the only thing to put in `run_in_background: true`.
+
+### Run order
+
+1. **Start the dev server in the background**
+
+   ```bash
+   npm run dev
+   ```
+
+   Use `Bash` with `run_in_background: true`. Wait ~3 seconds for it to
+   bind to `http://localhost:4321`.
+
+2. **(Optional) Start the prototype as a comparison reference**
+
+   ```bash
+   cd migration/yilun-lab-website/project && python3 -m http.server 8000
+   ```
+
+   Also `run_in_background: true`. Use only when validating fidelity to
+   the original handoff design — skip for routine regression checks.
+
+3. **Walk each route**
+
+   For each URL: `browser_navigate` → `browser_snapshot` (text-based
+   accessibility tree, cheap, captures structure) → `browser_console_messages`
+   (catch JS errors). Use `browser_take_screenshot` only when a visual
+   reference will go in the report or compare against the prototype.
+
+   Standard routes for this site:
+
+   | Route | What to check |
+   | --- | --- |
+   | `/` | Hero video plays, headline word-by-word reveal, Works grid populates with 13 cards, all sections present |
+   | `/about` | Full bio, practice block, selected credits list, "Start a Collaboration" CTA links to `/contact` |
+   | `/contact` | 4 collab area cards, contact card with email + IG + LinkedIn pills, external pills have `target="_blank"` |
+   | `/projects/human-permeability` | `chapters-tabbed` variant — **click each tab** (Drift / Eon / Mortal); after each click, take a snapshot and confirm only the active chapter's body is visible |
+   | `/projects/true-self` (or any `image-wall`) | 3-col grid of gradient placeholder tiles, intro paragraph centered |
+   | `/some-bad-slug` | Redirects to or renders the 404 page ("Lost in the dark.") |
+
+4. **Test interactions where they exist**
+
+   - **Chapter tabs** (`/projects/human-permeability`): click each
+     `[data-chapter-name]` toggling tab. Confirm `display: none` is
+     applied to inactive sections by reading the snapshot.
+   - **Works filter** (`/`): click each filter pill (All Works / Light &
+     Art / Light & Dance / Light & Tech). Confirm grid card count matches
+     the badge.
+   - **Hover effects**: `browser_hover` on a work card or navbar pill —
+     the liquid-glass lensing should track the cursor. Verify visually
+     via screenshot.
+
+5. **Multi-viewport check**
+
+   `browser_resize` → 375 (mobile) → snapshot → 768 (tablet) → snapshot
+   → 1280 (desktop) → snapshot. Confirm:
+   - The center nav pill hides below 768px (`hidden md:flex`)
+   - Works grid reflows (single column on mobile, multi-column above)
+
+6. **Network sanity**
+
+   After each page load (or once at the end on the homepage),
+   `browser_network_requests` and grep for 4xx / 5xx. Missing video,
+   image, or font requests are immediate red flags.
+
+7. **Tear down**
+
+   - `browser_close`
+   - `KillShell` the dev server background process
+   - `KillShell` the prototype HTTP server (if started)
+
+### Reporting findings
+
+Classify by severity:
+
+- **Critical** — console errors, broken interactions, missing content
+- **Important** — visual divergence from the prototype that affects
+  brand identity
+- **Minor** — small layout / spacing / font-weight tolerances
+
+Always include in the report:
+
+- Which routes were visited
+- 0 to ~6 screenshots (key views only — don't flood the report)
+- Console error log (or "0 errors")
+- Specific interactions tested + results
+- Multi-viewport behavior summary
 
 ---
 
