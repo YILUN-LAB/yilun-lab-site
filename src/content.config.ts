@@ -34,7 +34,7 @@ const projects = defineCollection({
           caption: z.string().optional(),
         })
       )
-      .optional(),
+      .default([]),
 
     youtube: z.string().optional(),
     youtubeAlt: z.array(z.string()).optional(),
