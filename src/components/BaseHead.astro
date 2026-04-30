@@ -1,0 +1,39 @@
+---
+import "@styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const {
+  title,
+  description = "A creative lighting lab shaping emotion, space, and future experiences through light.",
+  ogImage = "/og-image.jpg",
+  canonical = Astro.url.pathname,
+} = Astro.props;
+
+const fullTitle = title === "YILUN LAB" ? title : `${title} — YILUN LAB`;
+const canonicalURL = new URL(canonical, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImageURL} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
