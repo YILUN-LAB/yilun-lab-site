@@ -119,32 +119,31 @@ before review — saving review iterations.
 
 ## Per-task model selection
 
-Use the cheapest model that can handle each task. Reviewers always run on
-the standard model unless otherwise noted.
+Quality bar over cost. Implementation tasks use Sonnet or Opus only —
+never Haiku. Reviewers always use Opus.
 
 | Task category | Implementation model | Examples |
 |---|---|---|
-| Mechanical port (copy from prototype with rename / minor edits) | **Haiku 4.5** (`claude-haiku-4-5-20251001`) | Most of Tasks 1–16, 22–23, 34–36, 38–39 |
-| Multi-file integration (assembly + wiring across React + Astro) | **Sonnet 4.6** (`claude-sonnet-4-6`) | Tasks 17 (Hero, complex), 24 (HomePage assembly), 25–27 (other pages), 28–33 (case study system), 37, 40 |
-| Architecture / non-trivial debugging | **Opus 4.7** (`claude-opus-4-7`) | Reserved for unblocking failed tasks; not used by default |
+| Mechanical port + assembly + most feature work | **Sonnet 4.6** (`claude-sonnet-4-6`) | Default for nearly all tasks |
+| Architecture, complex integration, debugging unblocking | **Opus 4.7** (`claude-opus-4-7`) | Tasks that touch multiple subsystems, require design judgment, or have failed once on Sonnet |
 
 **Reviewer model defaults:**
 
 | Reviewer role | Model |
 |---|---|
-| Spec compliance reviewer | **Sonnet 4.6** |
-| Code quality reviewer | **Sonnet 4.6** |
+| Spec compliance reviewer | **Opus 4.7** |
+| Code quality reviewer | **Opus 4.7** |
 | Final whole-implementation reviewer | **Opus 4.7** |
 
 **Triage rules:**
 
-- If an implementer subagent returns `BLOCKED` or `NEEDS_CONTEXT` after a
-  cheap-model run, escalate to Sonnet 4.6 with the same task. If still
-  blocked, escalate to Opus 4.7.
-- If a reviewer (spec or quality) finds substantive issues twice on the
-  same task, escalate the next implementer attempt to Opus 4.7.
-- Don't escalate just to be safe — start at the lowest tier and go up only
-  when the lower tier demonstrably fails.
+- Default to Sonnet 4.6 for implementation. Reach for Opus 4.7 when the task
+  involves multi-file integration with non-obvious cross-file invariants,
+  architecture/design decisions, or debugging an unfamiliar regression.
+- If an implementer returns `BLOCKED` or `NEEDS_CONTEXT` on Sonnet, escalate
+  the next attempt to Opus.
+- If a reviewer finds substantive issues twice on the same task, escalate
+  the next implementer attempt to Opus.
 
 ## Reviewers
 
