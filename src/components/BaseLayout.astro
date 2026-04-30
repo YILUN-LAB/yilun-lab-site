@@ -1,0 +1,29 @@
+---
+import BaseHead from "./BaseHead.astro";
+import Analytics from "@vercel/analytics/astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead {...props} />
+  </head>
+  <body class="bg-black text-white font-body">
+    <noscript class="block p-6 font-body text-white/70">
+      This page is best experienced with JavaScript enabled.
+    </noscript>
+    <slot />
+    <Analytics />
+    <SpeedInsights />
+  </body>
+</html>
