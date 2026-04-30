@@ -35,14 +35,23 @@ when a regression is suspected, compare against the prototype rendered locally.
 
 ## Useful commands
 
-| Command           | What                                      |
-| ----------------- | ----------------------------------------- |
-| `npm run dev`     | Astro dev server with HMR                 |
-| `npm run build`   | Static + Vercel adapter build             |
-| `npm run preview` | Preview the built site locally            |
-| `npm run check`   | `astro check` + `tsc --noEmit`            |
-| `npm run format`  | Prettier (Astro + Tailwind plugins) write |
-| `npm run lint`    | ESLint with jsx-a11y                      |
+| Command                   | What                                                                          |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `npm run dev`             | Astro dev server with HMR                                                     |
+| `npm run build`           | Static + Vercel adapter build                                                 |
+| `npm run preview`         | Preview the built site locally                                                |
+| `npm run check`           | `astro check` + `tsc --noEmit`                                                |
+| `npm run format`          | Prettier (Astro + Tailwind plugins) write                                     |
+| `npm run lint`            | ESLint with jsx-a11y                                                          |
+| `npm run assets:optimize` | One-shot WebP migration from `migration/YILUN LAB Assets/` → `public/assets/` |
+
+Asset pipeline: source images live in `migration/YILUN LAB Assets/`
+(gitignored, never committed). `npm run assets:optimize` reads them,
+converts to WebP at max 1920 px wide / quality 80, and writes
+`public/assets/images/projects/<slug>/01.webp` … `NN.webp` plus
+`public/assets/images/founder/headshot.webp`. The script is idempotent;
+re-run it whenever assets change. Skips the 289 MB
+`Tao Cave Final.mp4` — TAO CAVE uses its YouTube embed instead.
 
 ## Don't
 
