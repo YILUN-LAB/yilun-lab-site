@@ -1,7 +1,8 @@
 import { motion } from "motion/react";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
-import { MailIcon, InstagramIcon, LinkedInIcon } from "./icons";
+import { InstagramIcon, LinkedInIcon } from "./icons";
+import { ContactForm } from "./ContactForm";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { COLLAB_AREAS as AREAS } from "@lib/data/collab-areas";
 
@@ -72,35 +73,33 @@ export function ContactPage() {
                 Let's talk about light.
               </h2>
               <p className="mb-8 font-body text-base font-light leading-relaxed text-white/85 md:text-lg">
-                Email is the fastest way to reach the studio. Tell us about your space, your
-                timeline, and what you want it to feel like — we'll write back within a few days.
+                Tell us about your space, your timeline, and what you want it to feel like — we'll
+                write back within a few days.
               </p>
 
-              <div className="flex items-center gap-3">
-                <a
-                  href="mailto:yilun@yilunlab.com"
-                  aria-label="Email the studio"
-                  className="liquid-glass-strong liquid-glass-tint flex h-14 w-14 items-center justify-center rounded-full"
-                >
-                  <MailIcon className="h-6 w-6" />
-                </a>
+              <ContactForm />
+
+              <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6">
+                <span className="font-body text-xs uppercase tracking-[0.18em] text-white/55">
+                  or find us on
+                </span>
                 <a
                   href="https://www.instagram.com/yilunlab/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="liquid-glass flex h-14 w-14 items-center justify-center rounded-full text-white transition-colors hover:text-white/90"
+                  className="liquid-glass flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:text-white/90"
                 >
-                  <InstagramIcon className="h-6 w-6" />
+                  <InstagramIcon className="h-5 w-5" />
                 </a>
                 <a
                   href="https://www.linkedin.com/in/yilun-zhan"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
-                  className="liquid-glass flex h-14 w-14 items-center justify-center rounded-full text-white transition-colors hover:text-white/90"
+                  className="liquid-glass flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:text-white/90"
                 >
-                  <LinkedInIcon className="h-6 w-6" />
+                  <LinkedInIcon className="h-5 w-5" />
                 </a>
               </div>
             </motion.div>
