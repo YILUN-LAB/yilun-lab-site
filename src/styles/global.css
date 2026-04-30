@@ -331,3 +331,10 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* lite-youtube ships with `max-width: 720px` by default — override so it fills
+   our wider 16:9 case-study containers. */
+lite-youtube {
+  max-width: 100% !important;
+  width: 100%;
+}
