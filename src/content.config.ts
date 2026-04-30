@@ -11,6 +11,21 @@ const accentEnum = z.enum([
   "spectrum",
 ]);
 
+const imageSchema = z.object({
+  src: z.string(),
+  alt: z.string(),
+  caption: z.string().optional(),
+});
+
+const chapterSchema = z.object({
+  name: z.string(),
+  note: z.string(),
+  accent: accentEnum.optional(),
+  cover: z.string().optional(),
+  youtube: z.string().optional(),
+  images: z.array(imageSchema).optional(),
+});
+
 const projects = defineCollection({
   type: "content",
   schema: z
@@ -30,32 +45,17 @@ const projects = defineCollection({
       cover: z.string().optional(),
 
       variant: z
-        .enum(["image-wall", "video-hero", "chapters", "chapters-tabbed"])
+        .enum(["image-wall", "video-hero", "image-poster", "chapters", "chapters-tabbed"])
         .default("image-wall"),
 
-      images: z
-        .array(
-          z.object({
-            src: z.string(),
-            alt: z.string(),
-            caption: z.string().optional(),
-          })
-        )
-        .default([]),
+      images: z.array(imageSchema).default([]),
 
       youtube: z.string().optional(),
       youtubeAlt: z.array(z.string()).optional(),
 
-      chapters: z
-        .array(
-          z.object({
-            name: z.string(),
-            note: z.string(),
-            accent: accentEnum.optional(),
-            cover: z.string().optional(),
-          })
-        )
-        .optional(),
+      chapters: z.array(chapterSchema).optional(),
+
+      featured: z.number().int().min(1).max(3).optional(),
 
       order: z.number().optional(),
       draft: z.boolean().default(false),
