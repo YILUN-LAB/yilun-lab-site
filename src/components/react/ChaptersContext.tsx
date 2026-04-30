@@ -1,9 +1,10 @@
 import { createContext, useContext } from "react";
+import type { AccentName } from "@lib/accent-gradients";
 
 export interface ChapterMeta {
   name: string;
   note: string;
-  accent?: string;
+  accent?: AccentName;
   cover?: string;
 }
 
