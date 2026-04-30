@@ -17,7 +17,10 @@ export function BlurText({ text, className = "", staggerMs = 100 }: BlurTextProp
     const obs = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {
-          if (e.isIntersecting) setVisible(true);
+          if (e.isIntersecting) {
+            setVisible(true);
+            obs.unobserve(e.target);
+          }
         }),
       { threshold: 0.1 }
     );
