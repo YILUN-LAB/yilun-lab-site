@@ -29,17 +29,20 @@ export function Hero() {
         <div className="h-24" />
 
         <div className="flex flex-1 flex-col items-center justify-center px-4 pt-12 text-center">
-          <motion.div
+          <motion.a
             {...fadeBlurInImmediate(0.4)}
-            className="liquid-glass inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3"
+            href="https://litawards.com/winners/winner.php?id=4274&mode=win"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="liquid-glass inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:text-white"
           >
-            <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
-              New
+            <span className="rounded-full bg-[#F5C22D] px-3 py-1 text-xs font-semibold text-black">
+              Winner
             </span>
             <span className="font-body text-sm text-white/90">
-              Studio open for 2026 commissions
+              LIT Awards 2026 — A Human Permeability
             </span>
-          </motion.div>
+          </motion.a>
 
           <div className="mt-6 max-w-3xl">
             <BlurText
