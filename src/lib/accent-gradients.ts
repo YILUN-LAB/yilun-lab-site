@@ -20,7 +20,7 @@ export const ACCENT_GRADIENTS = {
 export type AccentName = keyof typeof ACCENT_GRADIENTS;
 
 export function gradientFor(accent: string | undefined): string {
-  if (accent && accent in ACCENT_GRADIENTS) {
+  if (accent && Object.hasOwn(ACCENT_GRADIENTS, accent)) {
     return ACCENT_GRADIENTS[accent as AccentName];
   }
   return ACCENT_GRADIENTS.amber;
