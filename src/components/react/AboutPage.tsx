@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
+import { AuroraBackground } from "./AuroraBackground";
 import { ArrowUpRight } from "./icons";
 import { fadeBlurIn } from "@lib/motion-presets";
 
@@ -33,9 +34,10 @@ const SELECTED_CREDITS = [
 export function AboutPage() {
   return (
     <div>
+      <AuroraBackground />
       <Navbar mode="page" activePage="about" />
       <main className="pt-28">
-        <section className="relative bg-black px-8 pb-20 md:px-16 lg:px-20">
+        <section className="relative bg-black/65 px-8 pb-20 md:px-16 lg:px-20">
           <motion.div {...fadeBlurIn(0)} className="mx-auto max-w-7xl">
             <div className="mb-6 font-body text-sm text-white/80">// About</div>
             <h1 className="font-heading text-6xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[8rem]">
@@ -48,7 +50,7 @@ export function AboutPage() {
           </motion.div>
         </section>
 
-        <section className="relative bg-black px-8 pb-28 md:px-16 lg:px-20">
+        <section className="relative bg-black/65 px-8 pb-28 md:px-16 lg:px-20">
           <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 md:grid-cols-2 md:gap-16">
             <motion.div
               {...fadeBlurIn(0.1)}
@@ -95,7 +97,7 @@ export function AboutPage() {
           </div>
         </section>
 
-        <section className="relative bg-black px-8 pb-28 md:px-16 lg:px-20">
+        <section className="relative bg-black/65 px-8 pb-28 md:px-16 lg:px-20">
           <div className="mx-auto max-w-7xl">
             <motion.div {...fadeBlurIn(0)} className="mb-10">
               <div className="mb-4 font-body text-sm text-white/80">// Practice</div>
@@ -125,7 +127,7 @@ export function AboutPage() {
           </div>
         </section>
 
-        <section className="relative bg-black px-8 pb-28 md:px-16 lg:px-20">
+        <section className="relative bg-black/65 px-8 pb-28 md:px-16 lg:px-20">
           <div className="mx-auto max-w-7xl">
             <motion.div {...fadeBlurIn(0)} className="mb-10">
               <div className="mb-4 font-body text-sm text-white/80">// Selected credits</div>
@@ -155,7 +157,7 @@ export function AboutPage() {
           </div>
         </section>
 
-        <section className="relative bg-black px-8 pb-28 md:px-16 lg:px-20">
+        <section className="relative bg-black/65 px-8 pb-28 md:px-16 lg:px-20">
           <div className="mx-auto max-w-3xl text-center">
             <motion.div {...fadeBlurIn(0)}>
               <h2 className="font-heading text-4xl italic leading-[0.9] tracking-[-2px] text-white md:text-5xl lg:text-6xl">
