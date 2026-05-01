@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import { Resend } from "resend";
 import { ContactFormSchema } from "@lib/contact-schema";
 
-const resend = new Resend(import.meta.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
