@@ -32,6 +32,8 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   // parent passes a new function reference on each render.
   const onFlipStartRef = useRef(onFlipStart);
   onFlipStartRef.current = onFlipStart;
+  const dialogCancelBtnRef = useRef<HTMLButtonElement>(null);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   // Initial state is false (matches SSR). On mount, if reduced motion is set,
   // we land directly on the back face instead of running the auto-flip + rotation.
@@ -58,6 +60,17 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
     }, AUTO_FLIP_DELAY_MS);
     return () => clearTimeout(t);
   }, [reducedMotion, hasFlippedOnce]);
+
+  // Focus management for the discard-confirm alertdialog.
+  useEffect(() => {
+    if (showDiscardConfirm) {
+      lastFocusedRef.current = document.activeElement as HTMLElement | null;
+      dialogCancelBtnRef.current?.focus();
+    } else if (lastFocusedRef.current) {
+      lastFocusedRef.current.focus();
+      lastFocusedRef.current = null;
+    }
+  }, [showDiscardConfirm]);
 
   function performFlip() {
     if (!reducedMotion) onFlipStartRef.current?.();
@@ -154,12 +167,24 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
             </button>
 
             {showDiscardConfirm && (
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- alertdialog with onKeyDown is correct ARIA; jsx-a11y 6.x incorrectly classifies alertdialog as non-interactive
               <div
                 role="alertdialog"
-                aria-label="Discard message?"
+                aria-modal="true"
+                aria-labelledby="discard-confirm-title"
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    setShowDiscardConfirm(false);
+                  }
+                }}
                 className="absolute left-4 right-4 top-12 z-10 flex flex-col gap-2 rounded-2xl border border-white/10 bg-black/60 p-4 backdrop-blur-md"
               >
-                <p className="font-body text-sm text-white">
+                <p
+                  id="discard-confirm-title"
+                  className="font-body text-sm text-white"
+                >
                   Discard your message and flip the card?
                 </p>
                 <div className="flex gap-2">
@@ -171,6 +196,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
                     Yes, discard
                   </button>
                   <button
+                    ref={dialogCancelBtnRef}
                     type="button"
                     onClick={() => setShowDiscardConfirm(false)}
                     className="rounded-full border border-white/15 px-4 py-1.5 font-body text-xs text-white/85 hover:text-white"
