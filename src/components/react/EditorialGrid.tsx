@@ -39,6 +39,22 @@ const ASPECT_LG_OVERRIDE: Record<AspectRatio, string> = {
 
 const ASPECT_BASE = "aspect-[4/3]";
 
+const WEIGHT_TITLE_CLASS: Record<Weight, string> = {
+  lead: "font-heading text-4xl italic leading-[0.9] tracking-[-1.5px] text-white md:text-5xl lg:text-6xl",
+  feature:
+    "font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-4xl",
+  column:
+    "font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-3xl",
+  tile: "font-heading text-xl italic leading-none tracking-[-0.5px] text-white md:text-2xl",
+};
+
+const WEIGHT_OVERLAY_PADDING: Record<Weight, string> = {
+  lead: "p-6 md:p-10",
+  feature: "p-5 md:p-7",
+  column: "p-5 md:p-6",
+  tile: "p-5 md:p-6",
+};
+
 function resolveWeight(declared: Weight, position: number, totalItems: number): Weight {
   // Position 0 is always promoted to lead, regardless of declared weight.
   if (position === 0) return "lead";
@@ -80,19 +96,11 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
   const aspect = aspectClasses(weight, item.aspect);
   const staggerClass = stagger ? "lg:mt-12" : "";
 
-  const titleClass =
-    weight === "lead"
-      ? "font-heading text-4xl italic leading-[0.9] tracking-[-1.5px] text-white md:text-5xl lg:text-6xl"
-      : weight === "feature"
-        ? "font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-4xl"
-        : weight === "column"
-          ? "font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-3xl"
-          : "font-heading text-xl italic leading-none tracking-[-0.5px] text-white md:text-2xl";
+  const titleClass = WEIGHT_TITLE_CLASS[weight];
 
   // For lead/feature: title + tagline + CTA inside the image overlay.
   // For column/tile: title only inside the image; tagline + category below the image.
-  const showOverlayTagline = weight === "lead" || weight === "feature";
-  const showOverlayCta = weight === "lead" || weight === "feature";
+  const showOverlay = weight === "lead" || weight === "feature";
   const showBelowTagline = weight === "column" || (weight === "tile" && !!item.tagline);
 
   return (
@@ -137,22 +145,20 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
           {item.year || "—"}
         </div>
 
-        {showFeaturedBadge && weight === "lead" && (
+        {showFeaturedBadge && (
           <div className="liquid-glass absolute right-4 top-4 rounded-full px-3 py-1 font-body text-[10px] uppercase tracking-wider text-white/85">
             // Featured
           </div>
         )}
 
-        <div
-          className={`absolute bottom-0 left-0 right-0 ${weight === "lead" ? "p-6 md:p-10" : weight === "feature" ? "p-5 md:p-7" : "p-5 md:p-6"}`}
-        >
+        <div className={`absolute bottom-0 left-0 right-0 ${WEIGHT_OVERLAY_PADDING[weight]}`}>
           <h3 className={titleClass}>{item.title}</h3>
 
           {item.subtitle && weight !== "tile" && (
             <div className="mt-1 font-body text-sm font-light text-white/70">{item.subtitle}</div>
           )}
 
-          {showOverlayTagline && (
+          {showOverlay && (
             <p
               className={
                 weight === "lead"
@@ -164,7 +170,7 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
             </p>
           )}
 
-          {showOverlayCta && (
+          {showOverlay && (
             <span
               className={
                 weight === "lead"
