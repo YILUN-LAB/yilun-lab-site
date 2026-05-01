@@ -52,6 +52,23 @@
   will-change: transform, box-shadow;
 }
 
+/* Tailwind's positioning utilities and .liquid-glass have equal specificity,
+   so the global .liquid-glass rule above silently overrides them and forces
+   position: relative. Re-apply each non-relative position with two-class
+   specificity so utilities like `liquid-glass absolute left-4 top-4` work. */
+.liquid-glass.absolute,
+.liquid-glass-strong.absolute {
+  position: absolute;
+}
+.liquid-glass.fixed,
+.liquid-glass-strong.fixed {
+  position: fixed;
+}
+.liquid-glass.sticky,
+.liquid-glass-strong.sticky {
+  position: sticky;
+}
+
 .liquid-glass {
   background: radial-gradient(
     120% 80% at var(--gx) var(--gy),
