@@ -56,11 +56,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
   const data = parsed.data;
 
-  // Honeypot tripped — return silent 200 so bots don't retry with new evasion.
-  if (data._gotcha && data._gotcha.length > 0) {
-    return new Response(JSON.stringify({ ok: true }), { status: 200 });
-  }
-
   // Vercel's edge prepends the real client IP to x-forwarded-for, but a
   // malicious client can append junk so the whole comma-list differs every
   // request — bypassing the rate limiter. Take only the leftmost segment,
@@ -70,6 +65,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return new Response(JSON.stringify({ ok: false, error: "rate_limited" }), {
       status: 429,
     });
+  }
+
+  // Honeypot tripped — return silent 200 so bots don't retry with new evasion.
+  // Checked AFTER rate-limit so honeypot-tripped bots still increment the
+  // bucket; otherwise they could hammer the parse path forever for free.
+  if (data._gotcha && data._gotcha.length > 0) {
+    return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
 
   const optionalRows: Array<[string, string | undefined]> = [
