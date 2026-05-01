@@ -67,12 +67,7 @@ export function MorphPill({
         return prev;
       return next;
     });
-    active.scrollIntoView({
-      block: "nearest",
-      inline: "nearest",
-      behavior: reducedMotion ? "auto" : "smooth",
-    });
-  }, [activeId, items, reducedMotion]);
+  }, [activeId, items]);
 
   const containerClass = bare
     ? "no-scrollbar relative inline-flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto"
@@ -108,7 +103,14 @@ export function MorphPill({
             key={item.id}
             type="button"
             data-active={isActive}
-            onClick={() => onChange?.(item.id)}
+            onClick={(e) => {
+              onChange?.(item.id);
+              e.currentTarget.scrollIntoView({
+                block: "nearest",
+                inline: "nearest",
+                behavior: reducedMotion ? "auto" : "smooth",
+              });
+            }}
             aria-current={isActive ? "true" : undefined}
             className={
               "relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-medium transition-colors duration-300 " +
