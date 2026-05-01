@@ -1,14 +1,26 @@
 import { motion } from "motion/react";
-import { ArrowUpRight } from "./icons";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { selectHighlights, type HighlightInput } from "@lib/data/highlights";
+import { EditorialGrid } from "./EditorialGrid";
+import type { WorkCardData } from "./WorkCard";
+
+type LabProjectInput = WorkCardData & Pick<HighlightInput, "cover" | "featured">;
 
 interface LabSectionProps {
-  projects: HighlightInput[];
+  projects: LabProjectInput[];
 }
 
 export function LabSection({ projects }: LabSectionProps) {
   const { lead, supporting } = selectHighlights(projects);
+
+  // selectHighlights returns the HighlightInput subset (slug + title + tagline +
+  // accent + cover + featured). Re-attach the full WorkCardData fields by looking
+  // up each highlight's slug in the input projects array, so EditorialGrid gets
+  // the weight + aspect + category + year fields it needs.
+  const bySlug = new Map(projects.map((p) => [p.slug, p]));
+  const items = [lead, supporting[0], supporting[1]]
+    .map((h) => bySlug.get(h.slug))
+    .filter((p): p is LabProjectInput => p !== undefined);
 
   return (
     <section
@@ -34,86 +46,7 @@ export function LabSection({ projects }: LabSectionProps) {
         experience — across performance, installation, and tech.
       </motion.p>
 
-      <div className="grid grid-cols-12 gap-5">
-        <LeadCard project={lead} />
-        <div className="col-span-12 grid grid-cols-2 gap-5 lg:col-span-5 lg:grid-cols-1">
-          <SupportingCard project={supporting[0]} delay={0.12} />
-          <SupportingCard project={supporting[1]} delay={0.24} />
-        </div>
-      </div>
+      <EditorialGrid items={items} mode="lab" />
     </section>
-  );
-}
-
-function LeadCard({ project }: { project: HighlightInput }) {
-  return (
-    <motion.a
-      {...fadeBlurIn(0)}
-      href={`/projects/${project.slug}`}
-      className="group col-span-12 block lg:col-span-7"
-    >
-      <div className="liquid-glass relative aspect-[4/5] w-full overflow-hidden rounded-[1.25rem]">
-        <img
-          src={project.cover}
-          alt={`${project.title} — cover`}
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
-        <div className="liquid-glass absolute left-4 top-4 rounded-full px-3 py-1 font-body text-[10px] uppercase tracking-wider text-white/85">
-          // Featured
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-          <h3 className="font-heading text-4xl italic leading-[0.9] tracking-[-1.5px] text-white md:text-5xl lg:text-6xl">
-            {project.title}
-          </h3>
-          <p className="mt-3 max-w-xl font-body text-base font-light text-white/85 md:text-lg">
-            {project.tagline}
-          </p>
-          <span className="liquid-glass-strong liquid-glass-tint mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-semibold transition-transform group-hover:translate-x-0.5">
-            View case study <ArrowUpRight className="h-4 w-4" />
-          </span>
-        </div>
-      </div>
-    </motion.a>
-  );
-}
-
-function SupportingCard({
-  project,
-  delay,
-}: {
-  project: HighlightInput;
-  delay: number;
-}) {
-  return (
-    <motion.a
-      {...fadeBlurIn(delay)}
-      href={`/projects/${project.slug}`}
-      className="group block"
-    >
-      <div className="liquid-glass relative aspect-[16/10] w-full overflow-hidden rounded-[1.25rem]">
-        <img
-          src={project.cover}
-          alt={`${project.title} — cover`}
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
-          <h3 className="font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-4xl">
-            {project.title}
-          </h3>
-          <p className="mt-2 max-w-md font-body text-sm font-light text-white/85 md:text-base">
-            {project.tagline}
-          </p>
-          <span className="liquid-glass mt-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5">
-            View case study <ArrowUpRight className="h-3.5 w-3.5" />
-          </span>
-        </div>
-      </div>
-    </motion.a>
   );
 }
