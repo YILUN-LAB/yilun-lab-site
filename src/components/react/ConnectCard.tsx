@@ -25,24 +25,40 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   const [flipped, setFlipped] = useState(false);
   const [hasFlippedOnce, setHasFlippedOnce] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   // Keep a stable ref so the auto-flip timer doesn't reschedule when the
   // parent passes a new function reference on each render.
   const onFlipStartRef = useRef(onFlipStart);
   onFlipStartRef.current = onFlipStart;
 
+  // Initial state is false (matches SSR). On mount, if reduced motion is set,
+  // we land directly on the back face instead of running the auto-flip + rotation.
+  // Listens for runtime OS setting changes (e.g. DevTools mid-session).
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mql.matches) {
+      setReducedMotion(true);
+      setFlipped(true);
+      setHasFlippedOnce(true);
+    }
+    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
   // One-shot auto-flip on first mount only.
   useEffect(() => {
-    if (hasFlippedOnce) return;
+    if (reducedMotion || hasFlippedOnce) return;
     const t = setTimeout(() => {
       onFlipStartRef.current?.();
       setHasFlippedOnce(true);
       setFlipped(true);
     }, AUTO_FLIP_DELAY_MS);
     return () => clearTimeout(t);
-  }, [hasFlippedOnce]);
+  }, [reducedMotion, hasFlippedOnce]);
 
   function triggerFlip() {
-    onFlipStart?.();
+    if (!reducedMotion) onFlipStartRef.current?.();
     setHasFlippedOnce(true);
     setFlipped((v) => !v);
   }
@@ -50,14 +66,27 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   const showHint = !flipped && hasFlippedOnce;
 
   return (
-    <div className="perspective-1200">
+    <div className={reducedMotion ? "" : "perspective-1200"}>
       <motion.div
-        className="preserve-3d relative h-[540px] w-[min(calc(100vw-48px),400px)] md:h-[580px] md:w-[440px] lg:h-[640px] lg:w-[480px]"
-        animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: FLIP_DURATION_S, ease: [0.2, 0.9, 0.2, 1] }}
+        className={`relative h-[540px] w-[min(calc(100vw-48px),400px)] md:h-[580px] md:w-[440px] lg:h-[640px] lg:w-[480px] ${
+          reducedMotion ? "" : "preserve-3d"
+        }`}
+        animate={reducedMotion ? undefined : { rotateY: flipped ? 180 : 0 }}
+        transition={
+          reducedMotion
+            ? undefined
+            : { duration: FLIP_DURATION_S, ease: [0.2, 0.9, 0.2, 1] }
+        }
       >
         {/* FRONT FACE */}
-        <div className="backface-hidden absolute inset-0" {...inertAttr(flipped)}>
+        <motion.div
+          className={`absolute inset-0 ${reducedMotion ? "" : "backface-hidden"}`}
+          animate={reducedMotion ? { opacity: flipped ? 0 : 1 } : undefined}
+          transition={
+            reducedMotion ? { duration: 0.25, ease: easeOut } : undefined
+          }
+          {...inertAttr(flipped)}
+        >
           <button
             type="button"
             onClick={triggerFlip}
@@ -79,18 +108,22 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
             <p className="font-body text-sm italic font-light text-white/65">
               To you, from the studio.
             </p>
-            {showHint && (
+            {showHint && !reducedMotion && (
               <p className="mt-6 font-body text-xs uppercase tracking-[0.18em] text-white/45">
                 Tap to flip ↻
               </p>
             )}
           </button>
-        </div>
+        </motion.div>
 
         {/* BACK FACE */}
-        <div
-          className="backface-hidden absolute inset-0"
-          style={{ transform: "rotateY(180deg)" }}
+        <motion.div
+          className={`absolute inset-0 ${reducedMotion ? "" : "backface-hidden"}`}
+          style={reducedMotion ? undefined : { transform: "rotateY(180deg)" }}
+          animate={reducedMotion ? { opacity: flipped ? 1 : 0 } : undefined}
+          transition={
+            reducedMotion ? { duration: 0.25, ease: easeOut } : undefined
+          }
           {...inertAttr(!flipped)}
         >
           <div className="liquid-glass-strong liquid-glass-tint relative h-full w-full overflow-y-auto rounded-[1.5rem] p-8">
@@ -162,7 +195,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );
