@@ -14,7 +14,7 @@ interface NavbarProps {
 }
 
 const NAV_ITEMS = [
-  { id: "selected", label: "Selected" },
+  { id: "lab", label: "Lab" },
   { id: "works", label: "Works" },
   { id: "about", label: "About" },
 ];

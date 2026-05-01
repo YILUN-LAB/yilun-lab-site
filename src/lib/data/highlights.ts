@@ -28,7 +28,7 @@ export function selectHighlights(projects: HighlightInput[]): ResolvedHighlights
 
   if (featured.length !== 3) {
     throw new Error(
-      `FeaturedHighlights expects exactly 3 projects with a \`featured\` value. ` +
+      `Homepage highlights expects exactly 3 projects with a \`featured\` value. ` +
         `Got ${featured.length}: ${slugs}`
     );
   }
@@ -36,7 +36,7 @@ export function selectHighlights(projects: HighlightInput[]): ResolvedHighlights
   const values = featured.map((p) => p.featured);
   if (values[0] !== 1 || values[1] !== 2 || values[2] !== 3) {
     throw new Error(
-      `FeaturedHighlights expects featured values to be exactly {1, 2, 3}. ` +
+      `Homepage highlights expects featured values to be exactly {1, 2, 3}. ` +
         `Got [${values.join(", ")}] from [${slugs}]`
     );
   }

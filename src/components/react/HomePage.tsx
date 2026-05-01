@@ -1,8 +1,7 @@
 import { Navbar } from "./Navbar";
 import { Hero } from "./Hero";
 import { AuroraBackground } from "./AuroraBackground";
-import { FeaturedHighlights } from "./FeaturedHighlights";
-import { ManifestoSection } from "./ManifestoSection";
+import { LabSection } from "./LabSection";
 import { WorksSection } from "./WorksSection";
 import { AboutSection } from "./AboutSection";
 import { CollaborateSection } from "./CollaborateSection";
@@ -23,8 +22,7 @@ export function HomePage({ projects }: HomePageProps) {
       <Navbar mode="scroll" activePage="home" />
       <main>
         <Hero />
-        <FeaturedHighlights projects={projects} />
-        <ManifestoSection />
+        <LabSection projects={projects} />
         <WorksSection projects={projects} />
         <AboutSection />
         <CollaborateSection />
