@@ -90,7 +90,7 @@ export function Hero() {
 
           <motion.div {...fadeBlurInImmediate(1.1)} className="mt-6 flex items-center gap-6">
             <a
-              href="#works"
+              href="#lab"
               className="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-2 whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-semibold"
             >
               Enter the Lab <ArrowUpRight className="h-5 w-5" />
