@@ -98,7 +98,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
               type="button"
               onClick={triggerFlip}
               aria-label="Flip the card to view the studio brand"
-              className="absolute left-4 top-4 font-body text-xs uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-white focus-visible:text-white"
+              className="absolute left-2 top-2 inline-flex min-h-11 items-center px-3 py-2 font-body text-xs uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-white focus-visible:text-white"
             >
               ← View card
             </button>
