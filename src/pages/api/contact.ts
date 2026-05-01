@@ -120,14 +120,22 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     });
     if (error) {
       // Resend SDK 6.x resolves with { data: null, error } instead of throwing
-      console.error("contact form: resend returned error", { data, error });
+      console.error("contact form: resend returned error", {
+        error,
+        nameLen: data.name.length,
+        messageLen: data.message.length,
+      });
       return new Response(JSON.stringify({ ok: false, error: "send_failed" }), {
         status: 502,
       });
     }
   } catch (err) {
     // Defensive: SDK-internal exceptions (network, DNS, abort, etc.)
-    console.error("contact form: resend threw", { data, err });
+    console.error("contact form: resend threw", {
+      err,
+      nameLen: data.name.length,
+      messageLen: data.message.length,
+    });
     return new Response(JSON.stringify({ ok: false, error: "send_failed" }), {
       status: 502,
     });
