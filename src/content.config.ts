@@ -1,4 +1,6 @@
-import { z, defineCollection } from "astro:content";
+import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
+import { glob } from "astro/loaders";
 
 const accentEnum = z.enum([
   "amber",
@@ -27,7 +29,7 @@ const chapterSchema = z.object({
 });
 
 const projects = defineCollection({
-  type: "content",
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/projects" }),
   schema: z
     .object({
       title: z.string(),
@@ -63,7 +65,7 @@ const projects = defineCollection({
     .superRefine((data, ctx) => {
       if (data.variant === "video-hero" && !data.youtube) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ["youtube"],
           message: 'variant "video-hero" requires a youtube ID',
         });
@@ -73,7 +75,7 @@ const projects = defineCollection({
         (!data.chapters || data.chapters.length === 0)
       ) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ["chapters"],
           message: `variant "${data.variant}" requires at least one entry in chapters`,
         });

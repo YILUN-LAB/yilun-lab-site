@@ -1,7 +1,6 @@
 import { defineConfig, envField } from "astro/config";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
-import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 import remarkSmartypants from "remark-smartypants";
@@ -21,7 +20,6 @@ export default defineConfig({
       remarkPlugins: [remarkSmartypants],
       rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
     }),
-    tailwind({ applyBaseStyles: false }),
     sitemap(),
   ],
   vite: {

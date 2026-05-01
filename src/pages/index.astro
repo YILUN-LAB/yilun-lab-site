@@ -10,7 +10,7 @@ entries.sort(
 );
 
 const projects = entries.map((e: CollectionEntry<"projects">) => ({
-  slug: e.slug,
+  slug: e.id,
   title: e.data.title,
   subtitle: e.data.subtitle,
   tagline: e.data.tagline,
@@ -19,7 +19,7 @@ const projects = entries.map((e: CollectionEntry<"projects">) => ({
   accent: e.data.accent,
   size: e.data.size,
   featured: e.data.featured,
-  cover: e.data.cover ?? `/assets/images/projects/${e.slug}/01.webp`,
+  cover: e.data.cover ?? `/assets/images/projects/${e.id}/01.webp`,
 }));
 ---
 

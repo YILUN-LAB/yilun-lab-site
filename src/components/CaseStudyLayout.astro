@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry } from "astro:content";
+import { render, type CollectionEntry } from "astro:content";
 import { Navbar } from "@components/react/Navbar";
 import { Footer } from "@components/react/Footer";
 import { ImageWallVariant } from "@components/react/ImageWallVariant";
@@ -16,7 +16,7 @@ interface Props {
 
 const { entry, next } = Astro.props;
 const { data } = entry;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 
 const categoryRail = data.category
   .map((c: string) => `Light & ${c[0].toUpperCase() + c.slice(1)}`)
@@ -107,7 +107,7 @@ const categoryRail = data.category
         <div class="flex items-center justify-between border-t border-white/10 pt-10">
           <span class="font-body text-xs uppercase tracking-[0.18em] text-white/55">Next work</span>
           <a
-            href={`/projects/${next.slug}`}
+            href={`/projects/${next.id}`}
             class="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
           >
             {next.data.title} <ArrowUpRight className="h-4 w-4" />
