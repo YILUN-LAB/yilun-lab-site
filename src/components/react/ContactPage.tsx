@@ -65,7 +65,10 @@ export function ContactPage() {
           </div>
         </section>
 
-        <section className="relative bg-black px-8 pb-28 md:px-16 lg:px-20">
+        <section
+          id="get-in-touch"
+          className="relative scroll-mt-28 bg-black px-8 pb-28 md:px-16 lg:px-20"
+        >
           <div className="mx-auto max-w-3xl">
             <motion.div {...fadeBlurIn(0)} className="liquid-glass rounded-[1.5rem] p-8 md:p-12">
               <div className="mb-4 font-body text-sm text-white/80">// Get in touch</div>

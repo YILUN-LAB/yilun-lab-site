@@ -31,28 +31,12 @@ const ERROR_COPY: Record<string, string> = {
   network: "Couldn't reach the server. Check your connection and try again.",
 };
 
-interface ContactFormProps {
-  /** Optional callback. Fires on every input event with `true` when at
-   *  least one of name/email/message has non-whitespace content,
-   *  `false` otherwise. Used by /connect to gate the flip-back guard. */
-  onContentChange?: (hasContent: boolean) => void;
-}
-
-export function ContactForm({ onContentChange }: ContactFormProps = {}) {
+export function ContactForm() {
   const [expanded, setExpanded] = useState(false);
   const [status, setStatus] = useState<FormStatus>({ kind: "idle" });
   const [errors, setErrors] = useState<FormErrors>({});
 
   const submitting = status.kind === "submitting";
-
-  function handleFormInput(e: FormEvent<HTMLFormElement>) {
-    if (!onContentChange) return;
-    const fd = new FormData(e.currentTarget);
-    const hasContent = ["name", "email", "message"].some(
-      (k) => String(fd.get(k) ?? "").trim().length > 0
-    );
-    onContentChange(hasContent);
-  }
 
   if (status.kind === "success") {
     return (
@@ -122,12 +106,7 @@ export function ContactForm({ onContentChange }: ContactFormProps = {}) {
   }
 
   return (
-    <form
-      className="space-y-5"
-      noValidate
-      onSubmit={handleSubmit}
-      onInput={handleFormInput}
-    >
+    <form className="space-y-5" noValidate onSubmit={handleSubmit}>
       <div>
         <label htmlFor="contact-name" className={labelClass}>
           Name <span aria-hidden="true">*</span>

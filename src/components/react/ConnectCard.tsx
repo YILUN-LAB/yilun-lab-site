@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { ArrowUpRight, ChevronDownIcon } from "./icons";
-import { ContactForm } from "./ContactForm";
+import { motion } from "motion/react";
+import { ArrowUpRight, MailIcon } from "./icons";
 import { easeOut } from "@lib/motion-presets";
 import { SOCIAL_LINKS } from "@lib/data/social-links";
 
@@ -24,16 +23,11 @@ interface ConnectCardProps {
 export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   const [flipped, setFlipped] = useState(false);
   const [hasFlippedOnce, setHasFlippedOnce] = useState(false);
-  const [emailOpen, setEmailOpen] = useState(false);
-  const [emailHasContent, setEmailHasContent] = useState(false);
-  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   // Keep a stable ref so the auto-flip timer doesn't reschedule when the
   // parent passes a new function reference on each render.
   const onFlipStartRef = useRef(onFlipStart);
   onFlipStartRef.current = onFlipStart;
-  const dialogCancelBtnRef = useRef<HTMLButtonElement>(null);
-  const lastFocusedRef = useRef<HTMLElement | null>(null);
 
   // Initial state is false (matches SSR). On mount, if reduced motion is set,
   // we land directly on the back face instead of running the auto-flip + rotation.
@@ -61,41 +55,14 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
     return () => clearTimeout(t);
   }, [reducedMotion, hasFlippedOnce]);
 
-  // Focus management for the discard-confirm alertdialog.
-  useEffect(() => {
-    if (showDiscardConfirm) {
-      lastFocusedRef.current = document.activeElement as HTMLElement | null;
-      dialogCancelBtnRef.current?.focus();
-    } else if (lastFocusedRef.current) {
-      lastFocusedRef.current.focus();
-      lastFocusedRef.current = null;
-    }
-  }, [showDiscardConfirm]);
-
-  function performFlip() {
-    if (!reducedMotion) onFlipStartRef.current?.();
-    setHasFlippedOnce(true);
-    setFlipped((v) => !v);
-  }
-
   function triggerFlip() {
     // Block manual flips before the initial auto-flip has fired so every
     // visitor sees the entrance rotation animation. Under reduced motion
     // hasFlippedOnce is set synchronously by the detection effect, so the
     // gate releases on first paint.
     if (!hasFlippedOnce) return;
-    if (emailOpen && emailHasContent) {
-      setShowDiscardConfirm(true);
-      return;
-    }
-    performFlip();
-  }
-
-  function handleDiscardConfirm() {
-    setShowDiscardConfirm(false);
-    setEmailOpen(false);
-    setEmailHasContent(false);
-    performFlip();
+    if (!reducedMotion) onFlipStartRef.current?.();
+    setFlipped((v) => !v);
   }
 
   const showHint = !flipped && hasFlippedOnce;
@@ -103,7 +70,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   return (
     <div className={reducedMotion ? "" : "perspective-1200"}>
       <motion.div
-        className={`relative h-[540px] w-[min(calc(100vw-48px),400px)] md:h-[580px] md:w-[440px] lg:h-[640px] lg:w-[480px] ${
+        className={`relative h-[440px] w-[min(calc(100vw-48px),400px)] md:h-[480px] md:w-[440px] lg:h-[540px] lg:w-[480px] ${
           reducedMotion ? "" : "preserve-3d"
         }`}
         animate={reducedMotion ? undefined : { rotateY: flipped ? 180 : 0 }}
@@ -158,7 +125,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
           }
           {...inertAttr(!flipped)}
         >
-          <div className="liquid-glass-strong liquid-glass-tint relative h-full w-full overflow-y-auto rounded-[1.5rem] p-8">
+          <div className="liquid-glass-strong liquid-glass-tint relative flex h-full w-full flex-col justify-center rounded-[1.5rem] px-8 pb-8 pt-14">
             <button
               type="button"
               onClick={triggerFlip}
@@ -168,48 +135,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
               ← View card
             </button>
 
-            {showDiscardConfirm && (
-              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- alertdialog with onKeyDown is correct ARIA; jsx-a11y 6.x incorrectly classifies alertdialog as non-interactive
-              <div
-                role="alertdialog"
-                aria-modal="true"
-                aria-labelledby="discard-confirm-title"
-                tabIndex={-1}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    e.preventDefault();
-                    setShowDiscardConfirm(false);
-                  }
-                }}
-                className="absolute left-4 right-4 top-12 z-10 flex flex-col gap-2 rounded-2xl border border-white/10 bg-black/60 p-4 backdrop-blur-md"
-              >
-                <p
-                  id="discard-confirm-title"
-                  className="font-body text-sm text-white"
-                >
-                  Discard your message and flip the card?
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={handleDiscardConfirm}
-                    className="liquid-glass-strong liquid-glass-tint rounded-full px-4 py-1.5 font-body text-xs font-semibold"
-                  >
-                    Yes, discard
-                  </button>
-                  <button
-                    ref={dialogCancelBtnRef}
-                    type="button"
-                    onClick={() => setShowDiscardConfirm(false)}
-                    className="rounded-full border border-white/15 px-4 py-1.5 font-body text-xs text-white/85 hover:text-white"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="pt-10">
+            <div>
               <div className="mb-4 font-body text-sm text-white/80">
                 // Follow the lab
               </div>
@@ -236,39 +162,14 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
 
               <div className="my-6 h-px w-full bg-white/10" />
 
-              <div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (emailOpen) setEmailHasContent(false);
-                    setEmailOpen((v) => !v);
-                  }}
-                  aria-expanded={emailOpen}
-                  className="font-body text-sm text-white/70 transition-colors hover:text-white focus-visible:text-white"
-                >
-                  {emailOpen ? "Hide email form" : "Email instead"}
-                  <ChevronDownIcon
-                    className={`ml-1 inline-block h-4 w-4 transition-transform ${
-                      emailOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {emailOpen && (
-                    <motion.div
-                      key="email-expander"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: easeOut }}
-                      className="overflow-hidden pt-4"
-                    >
-                      <ContactForm onContentChange={setEmailHasContent} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <a
+                href="/contact#get-in-touch"
+                className="group inline-flex items-center gap-2 font-body text-sm text-white/65 transition-colors hover:text-white focus-visible:text-white"
+              >
+                <MailIcon className="h-4 w-4 shrink-0" />
+                <span>Or write to us</span>
+                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:translate-x-0.5" />
+              </a>
             </div>
           </div>
         </motion.div>
