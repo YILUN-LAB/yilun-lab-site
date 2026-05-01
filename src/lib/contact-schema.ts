@@ -7,7 +7,12 @@ export const PROJECT_TYPE_OPTIONS = [
 ] as const;
 
 export const ContactFormSchema = z.object({
-  name: z.string().trim().min(1, "Required").max(100, "Too long"),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Required")
+    .max(100, "Too long")
+    .regex(/^[^\r\n]*$/, "Invalid characters"),
   email: z
     .string()
     .trim()
