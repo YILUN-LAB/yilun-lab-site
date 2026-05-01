@@ -1,28 +1,56 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { FadingVideo } from "./FadingVideo";
 import { BlurText } from "./BlurText";
 import { ArrowUpRight, PlayIcon, ClockIcon, GlobeIcon } from "./icons";
 import { fadeBlurInImmediate } from "@lib/motion-presets";
-
-const HERO_VIDEO_SRC = "/assets/videos/hero.mp4";
+import { pickHeroVideo } from "@lib/hero-video";
 
 export function Hero() {
+  const glowRef = useRef<HTMLDivElement>(null);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    setVideoSrc(pickHeroVideo());
+  }, []);
+
   return (
     <section
       data-screen-label="Home"
       id="top"
       className="relative flex min-h-screen w-full flex-col overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(60% 50% at 50% 35%, rgba(245,175,60,0.28), transparent 60%)," +
-          "radial-gradient(80% 60% at 50% 100%, rgba(140,80,20,0.35), transparent 60%)," +
-          "linear-gradient(to bottom, #0a0705 0%, #050302 100%)",
-      }}
+      style={{ background: "linear-gradient(to bottom, #0a0705 0%, #050302 100%)" }}
     >
-      <FadingVideo
-        src={HERO_VIDEO_SRC}
-        className="absolute left-1/2 top-0 z-0 -translate-x-1/2 object-cover object-top"
-        style={{ width: "120%", height: "120%" }}
+      <div
+        ref={glowRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          opacity: 0,
+          background:
+            "radial-gradient(60% 50% at 50% 35%, rgba(245,175,60,0.28), transparent 60%)," +
+            "radial-gradient(80% 60% at 50% 100%, rgba(140,80,20,0.35), transparent 60%)",
+        }}
+      />
+      {videoSrc && (
+        <FadingVideo
+          src={videoSrc}
+          className="absolute left-1/2 top-0 z-0 -translate-x-1/2 object-cover object-top"
+          style={{ width: "120%", height: "120%" }}
+          glowRef={glowRef}
+        />
+      )}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            "linear-gradient(180deg," +
+            "rgba(0,0,0,0.2) 0%," +
+            "rgba(0,0,0,0.55) 30%," +
+            "rgba(0,0,0,0.55) 75%," +
+            "rgba(0,0,0,0.7) 100%)",
+        }}
       />
 
       <div className="relative z-10 flex flex-1 flex-col">
