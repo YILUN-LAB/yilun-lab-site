@@ -36,7 +36,7 @@ export function LabSection({ projects }: LabSectionProps) {
 
       <div className="grid grid-cols-12 gap-5">
         <LeadCard project={lead} />
-        <div className="col-span-12 flex flex-col gap-5 md:col-span-5">
+        <div className="col-span-12 grid grid-cols-2 gap-5 lg:col-span-5 lg:grid-cols-1">
           <SupportingCard project={supporting[0]} delay={0.12} />
           <SupportingCard project={supporting[1]} delay={0.24} />
         </div>
@@ -50,7 +50,7 @@ function LeadCard({ project }: { project: HighlightInput }) {
     <motion.a
       {...fadeBlurIn(0)}
       href={`/projects/${project.slug}`}
-      className="group col-span-12 block md:col-span-7"
+      className="group col-span-12 block lg:col-span-7"
     >
       <div className="liquid-glass relative aspect-[4/5] w-full overflow-hidden rounded-[1.25rem]">
         <img
