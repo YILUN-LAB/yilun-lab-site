@@ -79,6 +79,11 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   }
 
   function triggerFlip() {
+    // Block manual flips before the initial auto-flip has fired so every
+    // visitor sees the entrance rotation animation. Under reduced motion
+    // hasFlippedOnce is set synchronously by the detection effect, so the
+    // gate releases on first paint.
+    if (!hasFlippedOnce) return;
     if (emailOpen && emailHasContent) {
       setShowDiscardConfirm(true);
       return;
