@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 export interface MorphPillItem {
   id: string;
@@ -67,15 +67,22 @@ export function MorphPill({
         return prev;
       return next;
     });
-  }, [activeId, items]);
+  }, [activeId, items.length]);
 
   const containerClass = bare
     ? "no-scrollbar relative inline-flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto"
     : "liquid-glass no-scrollbar relative inline-flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-full p-1.5";
 
-  const transition = reducedMotion
-    ? "none"
-    : "left 420ms cubic-bezier(.2,.9,.2,1), width 420ms cubic-bezier(.2,.9,.2,1), top 420ms cubic-bezier(.2,.9,.2,1), height 420ms cubic-bezier(.2,.9,.2,1), opacity 240ms ease";
+  const spring = { type: "spring" as const, stiffness: 520, damping: 40, mass: 1 };
+  const indicatorTransition = reducedMotion
+    ? { duration: 0 }
+    : {
+        x: spring,
+        y: spring,
+        width: spring,
+        height: spring,
+        opacity: { duration: 0.24, ease: "easeOut" as const },
+      };
 
   return (
     <div
@@ -84,17 +91,18 @@ export function MorphPill({
       aria-label={ariaLabel}
       className={[containerClass, className].filter(Boolean).join(" ")}
     >
-      <span
-        className="liquid-glass-tint pointer-events-none absolute rounded-full"
-        style={{
-          left: indicator.left,
-          top: indicator.top,
+      <motion.span
+        className="liquid-glass-tint pointer-events-none absolute rounded-full will-change-transform"
+        initial={false}
+        animate={{
+          x: indicator.left,
+          y: indicator.top,
           width: indicator.width,
           height: indicator.height,
           opacity: indicator.opacity,
-          transition,
-          zIndex: 0,
         }}
+        transition={indicatorTransition}
+        style={{ left: 0, top: 0, zIndex: 0 }}
       />
       {items.map((item) => {
         const isActive = activeId === item.id;
