@@ -216,6 +216,26 @@ interface EditorialGridProps {
   mode: "lab" | "works";
 }
 
+/**
+ * Shared editorial grid for the homepage's Lab + Works sections.
+ *
+ * Two contracts that aren't obvious from the props:
+ *
+ * 1. **Hero promotion.** The first item in `items` is always rendered as
+ *    `lead` regardless of its declared `weight`. Items 2+ render at their
+ *    declared weights as-is. So MDX `weight` is editorial intent for any
+ *    non-first slot — putting the editorial weight `tile` on the project
+ *    sorted first by `order` will still render it as `lead`. See
+ *    `resolveWeight()`.
+ *
+ * 2. **Low-count adaptive promotion.** With 1 item, the lead spans the full
+ *    row at every breakpoint. With 2-3 items, positions 1+ are auto-promoted
+ *    to `feature` so a tight cluster doesn't bottom out as orphan tiles.
+ *    Kicks in for sparse Works filter views (e.g. "tech" with one match).
+ *
+ * `mode="lab"` enables the "// Featured" pill on the lead card; `mode="works"`
+ * keeps the lead chrome (size, CTA) but suppresses the pill.
+ */
 export function EditorialGrid({ items, mode }: EditorialGridProps) {
   // Walk items once, computing the resolved weight + staggering per position.
   // Counter for column/tile cards → every 3rd one gets a top offset at lg+.
