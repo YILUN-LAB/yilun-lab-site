@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/10 bg-black px-8 pb-10 pt-16 md:px-16 lg:px-20">
+    <footer className="relative border-t border-white/10 bg-black px-8 pb-32 pt-16 md:px-16 md:pb-10 lg:px-20">
       <div className="mb-12 font-heading text-6xl italic leading-[0.85] tracking-[-3px] text-white md:text-7xl lg:text-[8rem]">
         Light. Emotion. Future.
       </div>
