@@ -1,4 +1,6 @@
 import { useGlassLensing } from "@lib/glass-lensing";
+import { useActiveSection } from "@lib/use-active-section";
+import { MorphPill } from "./MorphPill";
 import { ArrowUpRight } from "./icons";
 
 interface NavbarProps {
@@ -11,8 +13,27 @@ interface NavbarProps {
   activePage?: "home" | "about" | "contact" | null;
 }
 
+const NAV_ITEMS = [
+  { id: "selected", label: "Selected" },
+  { id: "works", label: "Works" },
+  { id: "about", label: "About" },
+];
+
+const NAV_SECTION_IDS = NAV_ITEMS.map((item) => item.id);
+
 export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
   useGlassLensing();
+
+  const homepageActive = useActiveSection(
+    mode === "scroll" ? NAV_SECTION_IDS : []
+  );
+
+  const navActiveId =
+    mode === "scroll"
+      ? homepageActive
+      : activePage === "about"
+        ? "about"
+        : null;
 
   function jumpTo(target: string) {
     if (mode === "scroll") {
@@ -33,56 +54,57 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
     }
   }
 
-  const links = [
-    { id: "selected", label: "Selected" },
-    { id: "works", label: "Works" },
-    { id: "about", label: "About" },
-  ];
-
-  function isLinkActive(id: string) {
-    return id === "about" && activePage === "about";
-  }
-
   return (
     <>
       <div className="scroll-edge" aria-hidden="true" />
-      <nav className="fixed left-0 right-0 top-4 z-50 flex items-center justify-between px-8 font-body lg:px-16">
-        <button
-          onClick={() => jumpTo("top")}
-          className="liquid-glass flex h-12 w-12 items-center justify-center rounded-full"
-          aria-label="Yilun Lab home"
-        >
-          <img
-            src="/assets/brand/logos/svg/yilun-lab-mark-white.svg"
-            alt=""
-            className="h-12 w-12"
-          />
-        </button>
 
-        <div className="liquid-glass hidden items-center rounded-full px-1.5 py-1.5 md:flex">
-          {links.map((l) => (
-            <button
-              key={l.id}
-              onClick={() => jumpTo(l.id)}
-              className={
-                "glass-link rounded-full px-3 py-2 font-body text-sm font-medium " +
-                (isLinkActive(l.id) ? "text-[#fff5e0]" : "text-white/85")
-              }
-            >
-              {l.label}
-            </button>
-          ))}
+      <nav
+        aria-label="Site navigation"
+        className="fixed left-0 right-0 top-4 z-50 hidden items-center justify-center px-8 font-body md:flex lg:px-16"
+      >
+        <div className="liquid-glass flex items-center gap-3 rounded-full p-1.5">
+          <button
+            onClick={() => jumpTo("top")}
+            className="glass-link flex h-12 w-12 items-center justify-center rounded-full"
+            aria-label="Yilun Lab home"
+          >
+            <img
+              src="/assets/brand/logos/svg/yilun-lab-mark-white.svg"
+              alt=""
+              className="h-12 w-12"
+            />
+          </button>
+
+          <MorphPill
+            bare
+            items={NAV_ITEMS}
+            activeId={navActiveId}
+            onChange={jumpTo}
+          />
+
           <button
             onClick={() => jumpTo("collaborate")}
-            className={
-              "liquid-glass-strong liquid-glass-tint ml-1 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold"
-            }
+            className="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold"
           >
             Collaborate <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>
+      </nav>
 
-        <div className="invisible h-12 w-12" aria-hidden="true" />
+      <nav aria-label="Site navigation" className="md:hidden">
+        <div className="fixed left-4 top-4 z-50">
+          <button
+            onClick={() => jumpTo("top")}
+            className="liquid-glass flex h-12 w-12 items-center justify-center rounded-full"
+            aria-label="Yilun Lab home"
+          >
+            <img
+              src="/assets/brand/logos/svg/yilun-lab-mark-white.svg"
+              alt=""
+              className="h-12 w-12"
+            />
+          </button>
+        </div>
       </nav>
     </>
   );
