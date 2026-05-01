@@ -6,6 +6,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   canonical?: string;
+  noOgPreview?: boolean;
 }
 
 const {
@@ -13,6 +14,7 @@ const {
   description = "A creative lighting lab shaping emotion, space, and future experiences through light.",
   ogImage = "/og-image.jpg",
   canonical = Astro.url.pathname,
+  noOgPreview = false,
 } = Astro.props;
 
 const fullTitle = title === "YILUN LAB" ? title : `${title} — YILUN LAB`;
@@ -31,13 +33,21 @@ const ogImageURL = new URL(ogImage, Astro.site);
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
 <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
 
-<meta property="og:type" content="website" />
-<meta property="og:url" content={canonicalURL} />
-<meta property="og:title" content={fullTitle} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={ogImageURL} />
+{noOgPreview && <meta name="robots" content="noindex,nofollow" />}
 
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={fullTitle} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={ogImageURL} />
+{
+  !noOgPreview && (
+    <>
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={canonicalURL} />
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={ogImageURL} />
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImageURL} />
+    </>
+  )
+}
