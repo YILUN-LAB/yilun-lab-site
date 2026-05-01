@@ -9,6 +9,9 @@ docs/superpowers/
 # Git worktrees for isolated feature work — local only.
 .worktrees/
 
+# Claude Code local artifacts (worktree state, scheduled task locks).
+.claude/
+
 # ── Astro / Node build output ───────────────────────────────────────────────
 dist/
 .astro/
