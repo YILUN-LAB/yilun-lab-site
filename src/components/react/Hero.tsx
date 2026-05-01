@@ -36,7 +36,7 @@ export function Hero() {
             rel="noopener noreferrer"
             className="liquid-glass inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:text-white"
           >
-            <span className="rounded-full bg-[#F5C22D] px-3 py-1 text-xs font-semibold text-black">
+            <span className="rounded-full bg-[#F5AF3C] px-3 py-1 text-xs font-semibold text-black">
               Winner
             </span>
             <span className="font-body text-sm text-white/90">

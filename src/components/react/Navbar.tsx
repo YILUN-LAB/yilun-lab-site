@@ -1,6 +1,5 @@
 import { useGlassLensing } from "@lib/glass-lensing";
 import { ArrowUpRight } from "./icons";
-import { YilunLogo } from "./YilunLogo";
 
 interface NavbarProps {
   /**
@@ -50,10 +49,14 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
       <nav className="fixed left-0 right-0 top-4 z-50 flex items-center justify-between px-8 font-body lg:px-16">
         <button
           onClick={() => jumpTo("top")}
-          className="liquid-glass flex h-12 w-12 items-center justify-center rounded-full text-[#F5C22D]"
+          className="liquid-glass flex h-12 w-12 items-center justify-center rounded-full"
           aria-label="Yilun Lab home"
         >
-          <YilunLogo className="h-9 w-9" />
+          <img
+            src="/assets/brand/logos/svg/yilun-lab-mark-white.svg"
+            alt=""
+            className="h-12 w-12"
+          />
         </button>
 
         <div className="liquid-glass hidden items-center rounded-full px-1.5 py-1.5 md:flex">
