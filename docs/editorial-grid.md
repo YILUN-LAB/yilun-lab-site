@@ -49,13 +49,13 @@ sits first, the system re-promotes automatically.
 
 ## Low-count adaptive promotion
 
-For sparse views (a Works filter that returns 1-3 cards), span values adapt
-so the row reads cleanly:
+For very sparse views, span values adapt so the row reads cleanly:
 
 - 1 item: lead spans the full row at every breakpoint.
-- 2 items: lead (7-col) + feature (5-col).
-- 3 items: lead (7-col) + 2 features (5-col stacked in the right column).
-- 4+ items: full editorial layout per declared weights.
+- 2 items: lead (7-col) + feature (5-col), even if position 1 declared
+  `column` or `tile` (otherwise a 7+4 row leaves a stranded gap).
+- 3+ items: declared weights are honored. Use this to differentiate
+  emphasis — e.g., the Lab section's `lead + feature + tile` ranking.
 
 ## Vertical staggering
 

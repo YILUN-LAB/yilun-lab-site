@@ -71,10 +71,11 @@ function resolveWeight(declared: Weight, position: number, totalItems: number): 
   // Position 0 is always promoted to lead, regardless of declared weight.
   if (position === 0) return "lead";
 
-  // Low-count adaptive promotion: with only 2-3 items, promote positions 1+ to feature
-  // so the row reads cleanly (lead 7-cols + feature 5-cols at lg+).
+  // 2-item adaptive promotion: lead (7-col) + a column/tile (4-col) leaves a
+  // stranded col gap. Promote position 1 to feature (5-col) so the row reads
+  // cleanly. From 3 items onward, the curator's declared weight wins — the
+  // hierarchy we want (lead > feature > column > tile) requires honoring it.
   if (totalItems === 2 && position === 1) return "feature";
-  if (totalItems === 3 && (position === 1 || position === 2)) return "feature";
 
   // Otherwise honor the declared weight from MDX.
   return declared;
@@ -229,9 +230,10 @@ interface EditorialGridProps {
  *    `resolveWeight()`.
  *
  * 2. **Low-count adaptive promotion.** With 1 item, the lead spans the full
- *    row at every breakpoint. With 2-3 items, positions 1+ are auto-promoted
- *    to `feature` so a tight cluster doesn't bottom out as orphan tiles.
- *    Kicks in for sparse Works filter views (e.g. "tech" with one match).
+ *    row at every breakpoint. With 2 items, position 1 is auto-promoted to
+ *    `feature` so the row tiles cleanly (7+5=12 cols). From 3 items onward,
+ *    declared weights are honored — the curator's intended hierarchy
+ *    (lead > feature > column > tile) wins.
  *
  * `mode="lab"` enables the "// Featured" pill on the lead card; `mode="works"`
  * keeps the lead chrome (size, CTA) but suppresses the pill.
