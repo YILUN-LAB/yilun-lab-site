@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { PillTabs, type PillTab } from "./PillTabs";
-import { WorkCard, type WorkCardData } from "./WorkCard";
+import { EditorialGrid } from "./EditorialGrid";
+import type { WorkCardData } from "./WorkCard";
 import { fadeBlurIn } from "@lib/motion-presets";
 
 const CATEGORIES: PillTab[] = [
@@ -58,11 +59,7 @@ export function WorksSection({ projects }: WorksSectionProps) {
         {filtered.length} {filtered.length === 1 ? "work" : "works"}
       </div>
 
-      <div className="grid grid-cols-12 gap-5">
-        {filtered.map((p, i) => (
-          <WorkCard key={p.slug} project={p} idx={i} />
-        ))}
-      </div>
+      <EditorialGrid items={filtered} mode="works" />
     </section>
   );
 }
