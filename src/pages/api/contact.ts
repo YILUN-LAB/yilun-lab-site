@@ -61,7 +61,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   }
 
-  if (isRateLimited(clientAddress)) {
+  // Vercel's edge prepends the real client IP to x-forwarded-for, but a
+  // malicious client can append junk so the whole comma-list differs every
+  // request — bypassing the rate limiter. Take only the leftmost segment,
+  // which is the one the edge guarantees.
+  const ip = clientAddress.split(",")[0]?.trim() || clientAddress;
+  if (isRateLimited(ip)) {
     return new Response(JSON.stringify({ ok: false, error: "rate_limited" }), {
       status: 429,
     });
