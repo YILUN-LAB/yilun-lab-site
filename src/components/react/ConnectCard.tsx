@@ -129,14 +129,11 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
             className="liquid-glass-strong liquid-glass-tint flex h-full w-full flex-col items-center justify-center rounded-[1.5rem] p-10 text-center"
           >
             <img
-              src="/assets/brand/logos/svg/yilun-lab-mark-white.svg"
-              alt=""
-              className="mb-6 h-16 w-16"
+              src="/assets/brand/logos/svg/yilun-lab-lockup-stacked-white.svg"
+              alt="Yilun Lab"
+              className="h-32 w-auto"
             />
-            <div className="font-heading text-4xl italic leading-none tracking-[-1px] text-white">
-              YILUN LAB
-            </div>
-            <p className="mt-4 font-body text-lg italic font-light text-white/85">
+            <p className="mt-6 font-body text-lg italic font-light text-white/85">
               Light. Emotion. Future.
             </p>
             <div className="my-8 h-px w-16 bg-white/20" />
