@@ -25,6 +25,8 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
   const [flipped, setFlipped] = useState(false);
   const [hasFlippedOnce, setHasFlippedOnce] = useState(false);
   const [emailOpen, setEmailOpen] = useState(false);
+  const [emailHasContent, setEmailHasContent] = useState(false);
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   // Keep a stable ref so the auto-flip timer doesn't reschedule when the
   // parent passes a new function reference on each render.
@@ -57,10 +59,25 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
     return () => clearTimeout(t);
   }, [reducedMotion, hasFlippedOnce]);
 
-  function triggerFlip() {
+  function performFlip() {
     if (!reducedMotion) onFlipStartRef.current?.();
     setHasFlippedOnce(true);
     setFlipped((v) => !v);
+  }
+
+  function triggerFlip() {
+    if (emailOpen && emailHasContent) {
+      setShowDiscardConfirm(true);
+      return;
+    }
+    performFlip();
+  }
+
+  function handleDiscardConfirm() {
+    setShowDiscardConfirm(false);
+    setEmailOpen(false);
+    setEmailHasContent(false);
+    performFlip();
   }
 
   const showHint = !flipped && hasFlippedOnce;
@@ -136,6 +153,34 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
               ← View card
             </button>
 
+            {showDiscardConfirm && (
+              <div
+                role="alertdialog"
+                aria-label="Discard message?"
+                className="absolute left-4 right-4 top-12 z-10 flex flex-col gap-2 rounded-2xl border border-white/10 bg-black/60 p-4 backdrop-blur-md"
+              >
+                <p className="font-body text-sm text-white">
+                  Discard your message and flip the card?
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleDiscardConfirm}
+                    className="liquid-glass-strong liquid-glass-tint rounded-full px-4 py-1.5 font-body text-xs font-semibold"
+                  >
+                    Yes, discard
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowDiscardConfirm(false)}
+                    className="rounded-full border border-white/15 px-4 py-1.5 font-body text-xs text-white/85 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="pt-10">
               <div className="mb-4 font-body text-sm text-white/80">
                 // Follow the lab
@@ -166,7 +211,10 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
               <div>
                 <button
                   type="button"
-                  onClick={() => setEmailOpen((v) => !v)}
+                  onClick={() => {
+                    if (emailOpen) setEmailHasContent(false);
+                    setEmailOpen((v) => !v);
+                  }}
                   aria-expanded={emailOpen}
                   className="font-body text-sm text-white/70 transition-colors hover:text-white focus-visible:text-white"
                 >
@@ -188,7 +236,7 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
                       transition={{ duration: 0.4, ease: easeOut }}
                       className="overflow-hidden pt-4"
                     >
-                      <ContactForm />
+                      <ContactForm onContentChange={setEmailHasContent} />
                     </motion.div>
                   )}
                 </AnimatePresence>
