@@ -18,20 +18,17 @@ export function PillTabs({ tabs, activeId, onChange, className = "" }: PillTabsP
   const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
 
   useEffect(() => {
-    const c = containerRef.current;
-    if (!c) return;
-    const active = c.querySelector<HTMLElement>('[data-active="true"]');
+    const active = containerRef.current?.querySelector<HTMLElement>('[data-active="true"]');
     if (!active) return;
-    const cR = c.getBoundingClientRect();
-    const aR = active.getBoundingClientRect();
-    setIndicator({ left: aR.left - cR.left, width: aR.width, opacity: 1 });
+    setIndicator({ left: active.offsetLeft, width: active.offsetWidth, opacity: 1 });
+    active.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
   }, [activeId, tabs]);
 
   return (
     <div
       ref={containerRef}
       className={
-        "liquid-glass relative inline-flex flex-wrap items-center gap-1 rounded-full p-1.5 " +
+        "liquid-glass no-scrollbar relative inline-flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-full p-1.5 " +
         className
       }
     >
