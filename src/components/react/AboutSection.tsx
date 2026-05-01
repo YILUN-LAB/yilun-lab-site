@@ -7,6 +7,7 @@ const FACTS: Array<[string, string]> = [
   ["Disciplines", "Spatial · Stage · Installation"],
   ["Recent", "MIT AI Filmmaking Hackathon 2025"],
   ["Open to", "Commission · Collaboration"],
+  ["Status", "Available — 2026"],
 ];
 
 export function AboutSection() {
