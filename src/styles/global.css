@@ -244,7 +244,6 @@
     0 4px 14px rgba(0, 0, 0, 0.35),
     0 0 50px rgba(255, 196, 110, 0.55);
 }
-
 .glass-link {
   position: relative;
   transition:
@@ -272,9 +271,12 @@
 .glass-link:hover::before {
   opacity: 1;
 }
-.glass-link:focus-visible {
+.glass-link:focus-visible,
+.liquid-glass-tint:focus-visible {
   outline: 2px solid rgba(255, 220, 160, 0.6);
   outline-offset: 2px;
+}
+.glass-link:focus-visible {
   border-radius: 9999px;
 }
 
