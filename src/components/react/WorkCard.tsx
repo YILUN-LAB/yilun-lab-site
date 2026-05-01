@@ -11,6 +11,8 @@ export interface WorkCardData {
   year?: string;
   accent: AccentName;
   size: "xl" | "lg" | "md" | "sm";
+  weight: "lead" | "feature" | "column" | "tile";
+  aspect?: "4/5" | "16/10" | "1/1" | "5/4" | "4/3" | "21/9";
   cover?: string;
 }
 
