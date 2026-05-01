@@ -1,4 +1,4 @@
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import react from "@astrojs/react";
 import mdx from "@astrojs/mdx";
 import tailwind from "@astrojs/tailwind";
@@ -26,5 +26,10 @@ export default defineConfig({
   ],
   vite: {
     ssr: { noExternal: ["motion"] },
+  },
+  env: {
+    schema: {
+      RESEND_API_KEY: envField.string({ context: "server", access: "secret" }),
+    },
   },
 });
