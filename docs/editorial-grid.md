@@ -7,12 +7,18 @@ per project in MDX frontmatter.
 
 ## The four weights
 
-| Weight    | Col-span (lg+) | Default aspect | Chrome                                                                              |
-| --------- | -------------- | -------------- | ----------------------------------------------------------------------------------- |
-| `lead`    | 7              | `4/5` portrait | Largest title + subtitle + tagline + "View case study" CTA, all inside the overlay. |
-| `feature` | 5              | `16/10` cinema | Title + subtitle + tagline + CTA inside the overlay.                                |
-| `column`  | 4              | `4/5` portrait | Title inside the overlay; tagline + category caption *below* the image.             |
-| `tile`    | 4              | `1/1` square   | Title + truncated 2-line tagline inside the overlay (no CTA, nothing below).        |
+| Weight    | Col-span (lg+) | Default aspect | Role                                                            |
+| --------- | -------------- | -------------- | --------------------------------------------------------------- |
+| `lead`    | 7              | `4/5` portrait | Section hero — biggest type, biggest CTA pill.                  |
+| `feature` | 5              | `16/10` cinema | Strong supporting — pairs next to a `lead`.                     |
+| `column`  | 4              | `4/5` portrait | The workhorse weight in dense Works grids.                      |
+| `tile`    | 4              | `1/1` square   | Smallest, most textural — tightest type/CTA scale.              |
+
+Every weight uses the same chrome inside the image overlay (year pill, title,
+optional subtitle, tagline, "View case study" CTA). Visual hierarchy comes
+from card *size* (col-span × aspect) and *text scale* — never by hiding
+content. So a `tile` and a `lead` show the same elements; the tile's are
+just smaller.
 
 At smaller breakpoints the grid simplifies: 2-col at tablet (lead spans both
 columns full-width); 1-col stack at mobile with all aspects flattened to

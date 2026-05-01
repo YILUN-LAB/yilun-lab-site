@@ -67,6 +67,29 @@ const WEIGHT_OVERLAY_PADDING: Record<Weight, string> = {
   tile: "p-5 md:p-6",
 };
 
+const WEIGHT_TAGLINE_CLASS: Record<Weight, string> = {
+  lead: "mt-3 max-w-xl font-body text-base font-light text-white/85 md:text-lg",
+  feature: "mt-2 max-w-md font-body text-sm font-light text-white/85 md:text-base",
+  column: "mt-2 max-w-[40ch] font-body text-sm font-light leading-snug text-white/85",
+  tile: "mt-1.5 max-w-[32ch] font-body text-xs font-light leading-snug text-white/80",
+};
+
+const WEIGHT_CTA_CLASS: Record<Weight, string> = {
+  lead: "liquid-glass-strong liquid-glass-tint mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-semibold transition-transform group-hover:translate-x-0.5",
+  feature:
+    "liquid-glass mt-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5",
+  column:
+    "liquid-glass mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5",
+  tile: "liquid-glass mt-2 inline-flex items-center gap-2 rounded-full px-2.5 py-1 font-body text-[11px] font-medium text-white transition-transform group-hover:translate-x-0.5",
+};
+
+const WEIGHT_CTA_ICON_CLASS: Record<Weight, string> = {
+  lead: "h-4 w-4",
+  feature: "h-3.5 w-3.5",
+  column: "h-3 w-3",
+  tile: "h-3 w-3",
+};
+
 function resolveWeight(declared: Weight, position: number, totalItems: number): Weight {
   // Position 0 is always promoted to lead, regardless of declared weight.
   if (position === 0) return "lead";
@@ -118,16 +141,12 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
 
   const titleClass = WEIGHT_TITLE_CLASS[weight];
 
-  // Lead / feature: full chrome inside the image (subtitle + tagline + CTA).
-  // Tile: title + a small truncated tagline inside the image, no CTA — keeps
-  //   the card self-contained so it doesn't break asymmetric compositions
-  //   like the Lab T-grid where a trailing description would dangle below.
-  // Column: title inside the image, tagline + category as a textural caption
-  //   below the image — works in the dense Works grid where context aids
-  //   scanning.
-  const showOverlayTagline = weight !== "column";
-  const showOverlayCta = weight === "lead" || weight === "feature";
-  const showBelowCaption = weight === "column";
+  // All weights render the same chrome inside the image overlay
+  // (title + optional subtitle + tagline + "View case study" CTA), so every
+  // card is self-contained regardless of which composition it lands in.
+  // The visual hierarchy comes from card size (col-span + aspect) and the
+  // weight-specific text/CTA scales below — not from showing different
+  // content per weight.
 
   return (
     <motion.a
@@ -184,45 +203,13 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
             <div className="mt-1 font-body text-sm font-light text-white/70">{item.subtitle}</div>
           )}
 
-          {showOverlayTagline && (
-            <p
-              className={
-                weight === "lead"
-                  ? "mt-3 max-w-xl font-body text-base font-light text-white/85 md:text-lg"
-                  : weight === "feature"
-                    ? "mt-2 max-w-md font-body text-sm font-light text-white/85 md:text-base"
-                    : "mt-1.5 line-clamp-2 max-w-[32ch] font-body text-xs font-light leading-snug text-white/75"
-              }
-            >
-              {item.tagline}
-            </p>
-          )}
+          <p className={WEIGHT_TAGLINE_CLASS[weight]}>{item.tagline}</p>
 
-          {showOverlayCta && (
-            <span
-              className={
-                weight === "lead"
-                  ? "liquid-glass-strong liquid-glass-tint mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-semibold transition-transform group-hover:translate-x-0.5"
-                  : "liquid-glass mt-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5"
-              }
-            >
-              View case study{" "}
-              <ArrowUpRight className={weight === "lead" ? "h-4 w-4" : "h-3.5 w-3.5"} />
-            </span>
-          )}
+          <span className={WEIGHT_CTA_CLASS[weight]}>
+            View case study <ArrowUpRight className={WEIGHT_CTA_ICON_CLASS[weight]} />
+          </span>
         </div>
       </div>
-
-      {showBelowCaption && (
-        <div className="mt-4 flex items-start justify-between gap-3">
-          <p className="max-w-[42ch] font-body text-sm font-light leading-snug text-white/85">
-            {item.tagline}
-          </p>
-          <div className="whitespace-nowrap pt-0.5 font-body text-[10px] uppercase tracking-[0.18em] text-white/55">
-            {item.category.map((c) => `Light & ${c[0].toUpperCase() + c.slice(1)}`).join(" · ")}
-          </div>
-        </div>
-      )}
     </motion.a>
   );
 }
