@@ -44,6 +44,7 @@ when a regression is suspected, compare against the prototype rendered locally.
 | `npm run format`          | Prettier (Astro + Tailwind plugins) write                                     |
 | `npm run lint`            | ESLint with jsx-a11y                                                          |
 | `npm run assets:optimize` | One-shot WebP migration from `migration/YILUN LAB Assets/` → `public/assets/` |
+| `npm run qr:make`         | Generate the /connect QR code (PNG + SVG) into `public/assets/brand/qr/`      |
 
 Asset pipeline: source images live in `migration/YILUN LAB Assets/`
 (gitignored, never committed). `npm run assets:optimize` reads them,

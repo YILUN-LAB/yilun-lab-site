@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
-    "assets:optimize": "tsx scripts/optimize-images.ts"
+    "assets:optimize": "tsx scripts/optimize-images.ts",
+    "qr:make": "node scripts/make-connect-qr.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
@@ -49,6 +50,7 @@
     "prettier": "^3.4.0",
     "prettier-plugin-astro": "^0.14.0",
     "prettier-plugin-tailwindcss": "^0.6.0",
+    "qrcode": "^1.5.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
