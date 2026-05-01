@@ -16,6 +16,7 @@ interface HomePageProps {
 }
 
 export function HomePage({ projects }: HomePageProps) {
+  const nonFeatured = projects.filter((p) => typeof p.featured !== "number");
   return (
     <div>
       <AuroraBackground />
@@ -23,7 +24,7 @@ export function HomePage({ projects }: HomePageProps) {
       <main>
         <Hero />
         <LabSection projects={projects} />
-        <WorksSection projects={projects} />
+        <WorksSection projects={nonFeatured} />
         <AboutSection />
         <CollaborateSection />
       </main>
