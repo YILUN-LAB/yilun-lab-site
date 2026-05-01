@@ -83,6 +83,11 @@ export function ConnectCard({ onFlipStart }: ConnectCardProps) {
         {/* FRONT FACE */}
         <motion.div
           className={`absolute inset-0 ${reducedMotion ? "" : "backface-hidden"}`}
+          // Explicit rotateY(0deg) keeps iOS Safari from flattening the
+          // front face into 2D, which would defeat backface-visibility
+          // and reveal the mirrored front after the auto-flip rotates
+          // the parent. Both faces need their own explicit transform.
+          style={reducedMotion ? undefined : { transform: "rotateY(0deg)" }}
           animate={reducedMotion ? { opacity: flipped ? 0 : 1 } : undefined}
           transition={
             reducedMotion ? { duration: 0.25, ease: easeOut } : undefined

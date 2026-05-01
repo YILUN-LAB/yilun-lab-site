@@ -363,11 +363,17 @@ lite-youtube {
 }
 
 /* ====== 3D flip card primitives — used by ConnectCard ====== */
+/* iOS Safari requires the -webkit- prefixes on perspective and
+   transform-style; without them the children flatten into 2D and
+   backface-visibility silently no-ops, leaving the mirrored front
+   face visible after the auto-flip. */
 .perspective-1200 {
   perspective: 1200px;
+  -webkit-perspective: 1200px;
 }
 .preserve-3d {
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 .backface-hidden {
   backface-visibility: hidden;
