@@ -118,10 +118,16 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
 
   const titleClass = WEIGHT_TITLE_CLASS[weight];
 
-  // For lead/feature: title + tagline + CTA inside the image overlay.
-  // For column/tile: title only inside the image; tagline + category below the image.
-  const showOverlay = weight === "lead" || weight === "feature";
-  const showBelowTagline = weight === "column" || (weight === "tile" && !!item.tagline);
+  // Lead / feature: full chrome inside the image (subtitle + tagline + CTA).
+  // Tile: title + a small truncated tagline inside the image, no CTA — keeps
+  //   the card self-contained so it doesn't break asymmetric compositions
+  //   like the Lab T-grid where a trailing description would dangle below.
+  // Column: title inside the image, tagline + category as a textural caption
+  //   below the image — works in the dense Works grid where context aids
+  //   scanning.
+  const showOverlayTagline = weight !== "column";
+  const showOverlayCta = weight === "lead" || weight === "feature";
+  const showBelowCaption = weight === "column";
 
   return (
     <motion.a
@@ -178,19 +184,21 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
             <div className="mt-1 font-body text-sm font-light text-white/70">{item.subtitle}</div>
           )}
 
-          {showOverlay && (
+          {showOverlayTagline && (
             <p
               className={
                 weight === "lead"
                   ? "mt-3 max-w-xl font-body text-base font-light text-white/85 md:text-lg"
-                  : "mt-2 max-w-md font-body text-sm font-light text-white/85 md:text-base"
+                  : weight === "feature"
+                    ? "mt-2 max-w-md font-body text-sm font-light text-white/85 md:text-base"
+                    : "mt-1.5 line-clamp-2 max-w-[32ch] font-body text-xs font-light leading-snug text-white/75"
               }
             >
               {item.tagline}
             </p>
           )}
 
-          {showOverlay && (
+          {showOverlayCta && (
             <span
               className={
                 weight === "lead"
@@ -205,7 +213,7 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
         </div>
       </div>
 
-      {showBelowTagline && (
+      {showBelowCaption && (
         <div className="mt-4 flex items-start justify-between gap-3">
           <p className="max-w-[42ch] font-body text-sm font-light leading-snug text-white/85">
             {item.tagline}

@@ -7,12 +7,12 @@ per project in MDX frontmatter.
 
 ## The four weights
 
-| Weight    | Col-span (lg+) | Default aspect | Role                                                             |
-| --------- | -------------- | -------------- | ---------------------------------------------------------------- |
-| `lead`    | 7              | `4/5` portrait | Section hero — largest title, "View case study" CTA, big image.  |
-| `feature` | 5              | `16/10` cinema | Strong supporting — pairs next to a `lead`, CTA in the overlay.  |
-| `column`  | 4              | `4/5` portrait | The workhorse — title in overlay, tagline + category below.     |
-| `tile`    | 4              | `1/1` square   | Textural piece — title only, optional below-image tagline.       |
+| Weight    | Col-span (lg+) | Default aspect | Chrome                                                                              |
+| --------- | -------------- | -------------- | ----------------------------------------------------------------------------------- |
+| `lead`    | 7              | `4/5` portrait | Largest title + subtitle + tagline + "View case study" CTA, all inside the overlay. |
+| `feature` | 5              | `16/10` cinema | Title + subtitle + tagline + CTA inside the overlay.                                |
+| `column`  | 4              | `4/5` portrait | Title inside the overlay; tagline + category caption *below* the image.             |
+| `tile`    | 4              | `1/1` square   | Title + truncated 2-line tagline inside the overlay (no CTA, nothing below).        |
 
 At smaller breakpoints the grid simplifies: 2-col at tablet (lead spans both
 columns full-width); 1-col stack at mobile with all aspects flattened to
