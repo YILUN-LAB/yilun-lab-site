@@ -89,9 +89,16 @@ function aspectClasses(weight: Weight, aspectOverride: AspectRatio | undefined):
   return `${ASPECT_BASE} ${md} ${lg}`;
 }
 
-function leadColSpanForCount(totalItems: number): string {
+function leadGridClasses(totalItems: number): string {
   // When only 1 item, the "lead" spans the full row at every breakpoint.
   if (totalItems === 1) return "md:col-span-2 lg:col-span-12";
+
+  // 3-item composition: span the lead across two grid rows so position 1
+  // (top-right) and position 2 (bottom-right) stack in the right column,
+  // producing the conventional T-shaped editorial layout instead of leaving
+  // the bottom-right empty and orphaning position 2 below the lead.
+  if (totalItems === 3) return `${WEIGHT_COLSPAN.lead} lg:row-span-2`;
+
   return WEIGHT_COLSPAN.lead;
 }
 
@@ -105,7 +112,7 @@ interface CardProps {
 }
 
 function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: CardProps) {
-  const colSpan = weight === "lead" ? leadColSpanForCount(totalItems) : WEIGHT_COLSPAN[weight];
+  const colSpan = weight === "lead" ? leadGridClasses(totalItems) : WEIGHT_COLSPAN[weight];
   const aspect = aspectClasses(weight, item.aspect);
   const staggerClass = stagger ? "lg:mt-12" : "";
 
