@@ -361,3 +361,15 @@ lite-youtube {
   max-width: 100% !important;
   width: 100%;
 }
+
+/* ====== 3D flip card primitives — used by ConnectCard ====== */
+.perspective-1200 {
+  perspective: 1200px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

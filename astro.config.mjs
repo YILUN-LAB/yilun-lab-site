@@ -20,7 +20,11 @@ export default defineConfig({
       remarkPlugins: [remarkSmartypants],
       rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
     }),
-    sitemap(),
+    sitemap({
+      // /connect is QR-only — keep it out of crawler indexes.
+      filter: (page) =>
+        !page.endsWith("/connect/") && !page.endsWith("/connect"),
+    }),
   ],
   vite: {
     ssr: { noExternal: ["motion"] },
