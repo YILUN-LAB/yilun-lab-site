@@ -105,6 +105,27 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
             />
           </button>
         </div>
+
+        <div
+          className="fixed inset-x-4 bottom-0 z-50 flex justify-center"
+          style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
+        >
+          <div className="liquid-glass flex max-w-full items-center gap-2 rounded-full p-1.5">
+            <MorphPill
+              bare
+              items={NAV_ITEMS}
+              activeId={navActiveId}
+              onChange={jumpTo}
+              className="min-w-0 flex-1"
+            />
+            <button
+              onClick={() => jumpTo("collaborate")}
+              className="liquid-glass-strong liquid-glass-tint inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-xs font-semibold"
+            >
+              Collab. <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
       </nav>
     </>
   );
