@@ -6,6 +6,9 @@ migration/
 # Superpowers brainstorming + planning artifacts — local only.
 docs/superpowers/
 
+# Git worktrees for isolated feature work — local only.
+.worktrees/
+
 # ── Astro / Node build output ───────────────────────────────────────────────
 dist/
 .astro/
