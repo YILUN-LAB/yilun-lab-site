@@ -1,8 +1,20 @@
 import { motion, AnimatePresence } from "motion/react";
-import { gradientFor } from "@lib/accent-gradients";
+import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import { easeOut } from "@lib/motion-presets";
 import { ArrowUpRight } from "./icons";
-import type { WorkCardData } from "./WorkCard";
+
+export interface WorkCardData {
+  slug: string;
+  title: string;
+  subtitle?: string;
+  tagline: string;
+  category: string[];
+  year?: string;
+  accent: AccentName;
+  weight: "lead" | "feature" | "column" | "tile";
+  aspect?: "4/5" | "16/10" | "1/1" | "5/4" | "4/3" | "21/9";
+  cover?: string;
+}
 
 type Weight = "lead" | "feature" | "column" | "tile";
 type AspectRatio = "4/5" | "16/10" | "1/1" | "5/4" | "4/3" | "21/9";

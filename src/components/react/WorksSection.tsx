@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { PillTabs, type PillTab } from "./PillTabs";
-import { EditorialGrid } from "./EditorialGrid";
-import type { WorkCardData } from "./WorkCard";
+import { EditorialGrid, type WorkCardData } from "./EditorialGrid";
 import { fadeBlurIn } from "@lib/motion-presets";
 
 const CATEGORIES: PillTab[] = [

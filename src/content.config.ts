@@ -46,7 +46,6 @@ const projects = defineCollection({
       date: z.string().optional(),
 
       accent: accentEnum,
-      size: z.enum(["xl", "lg", "md", "sm"]).default("md"),
       weight: weightEnum.default("column"),
       aspect: aspectEnum.optional(),
       cover: z.string().optional(),

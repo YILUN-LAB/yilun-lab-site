@@ -1,8 +1,7 @@
 import { motion } from "motion/react";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { selectHighlights, type HighlightInput } from "@lib/data/highlights";
-import { EditorialGrid } from "./EditorialGrid";
-import type { WorkCardData } from "./WorkCard";
+import { EditorialGrid, type WorkCardData } from "./EditorialGrid";
 
 type LabProjectInput = WorkCardData & Pick<HighlightInput, "cover" | "featured">;
 
