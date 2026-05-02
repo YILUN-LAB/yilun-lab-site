@@ -50,9 +50,15 @@ Asset pipeline: source images live in `migration/YILUN LAB Assets/`
 (gitignored, never committed). `npm run assets:optimize` reads them,
 converts to WebP at max 1920 px wide / quality 80, and writes
 `public/assets/images/projects/<slug>/01.webp` … `NN.webp` plus
-`public/assets/images/founder/headshot.webp`. The script is idempotent;
-re-run it whenever assets change. Skips the 289 MB
-`Tao Cave Final.mp4` — TAO CAVE uses its YouTube embed instead.
+`public/assets/images/founder/headshot.webp`. It also emits a
+1200×630 JPG OG variant (`cover.jpg` per project, `headshot.jpg`
+for the founder) derived from the WebP — used by per-page
+`og:image` meta tags. The script is idempotent; re-run it whenever
+assets change. The OG-generation step reads from the public WebPs,
+so the script runs successfully even without migration source
+assets present (only the WebP regeneration step is skipped). Skips
+the 289 MB `Tao Cave Final.mp4` — TAO CAVE uses its YouTube embed
+instead.
 
 ## Don't
 
