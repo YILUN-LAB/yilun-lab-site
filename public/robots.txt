@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /api/
 Disallow: /connect
 
-Sitemap: https://yilunlab.com/sitemap-index.xml
+Sitemap: https://www.yilunlab.com/sitemap-index.xml

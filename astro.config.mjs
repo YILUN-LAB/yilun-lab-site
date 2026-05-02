@@ -8,7 +8,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 export default defineConfig({
-  site: "https://yilunlab.com",
+  site: "https://www.yilunlab.com",
   output: "static",
   adapter: vercel({
     webAnalytics: { enabled: true },

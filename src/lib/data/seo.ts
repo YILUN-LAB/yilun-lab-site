@@ -1,6 +1,6 @@
 // Centralized SEO/structured-data constants. SITE_URL must match the `site`
 // value in astro.config.mjs.
-export const SITE_URL = "https://yilunlab.com";
+export const SITE_URL = "https://www.yilunlab.com";
 
 export const ORGANIZATION_LD = {
   "@context": "https://schema.org",
