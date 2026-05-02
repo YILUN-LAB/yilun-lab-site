@@ -74,6 +74,7 @@ export function Hero() {
 
           <div className="mt-6 max-w-3xl">
             <BlurText
+              as="h1"
               text="Light is my language."
               className="font-heading text-6xl italic leading-[0.85] text-white md:text-7xl lg:text-[5.5rem]"
             />

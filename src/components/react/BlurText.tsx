@@ -1,15 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
 import { motion } from "motion/react";
 import { blurInWord, blurInWordTransition } from "@lib/motion-presets";
+
+const containerStyle: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  justifyContent: "center",
+  rowGap: "0.1em",
+  margin: 0,
+};
 
 interface BlurTextProps {
   text: string;
   className?: string;
   staggerMs?: number;
+  as?: "p" | "h1" | "h2";
 }
 
-export function BlurText({ text, className = "", staggerMs = 100 }: BlurTextProps) {
-  const ref = useRef<HTMLParagraphElement>(null);
+export function BlurText({ text, className = "", staggerMs = 100, as = "p" }: BlurTextProps) {
+  const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -30,30 +39,48 @@ export function BlurText({ text, className = "", staggerMs = 100 }: BlurTextProp
 
   const words = text.split(" ");
 
-  return (
-    <p
-      ref={ref}
-      className={className}
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        rowGap: "0.1em",
-        margin: 0,
-      }}
+  const children = words.map((w, i) => (
+    <motion.span
+      key={i}
+      variants={blurInWord}
+      initial="hidden"
+      animate={visible ? "visible" : "hidden"}
+      transition={blurInWordTransition(i * staggerMs)}
+      style={{ display: "inline-block", marginRight: "0.32em" }}
     >
-      {words.map((w, i) => (
-        <motion.span
-          key={i}
-          variants={blurInWord}
-          initial="hidden"
-          animate={visible ? "visible" : "hidden"}
-          transition={blurInWordTransition(i * staggerMs)}
-          style={{ display: "inline-block", marginRight: "0.32em" }}
-        >
-          {w}
-        </motion.span>
-      ))}
-    </p>
+      {w}
+    </motion.span>
+  ));
+
+  if (as === "h1") {
+    return (
+      <motion.h1
+        ref={ref as RefObject<HTMLHeadingElement>}
+        className={className}
+        style={containerStyle}
+      >
+        {children}
+      </motion.h1>
+    );
+  }
+  if (as === "h2") {
+    return (
+      <motion.h2
+        ref={ref as RefObject<HTMLHeadingElement>}
+        className={className}
+        style={containerStyle}
+      >
+        {children}
+      </motion.h2>
+    );
+  }
+  return (
+    <motion.p
+      ref={ref as RefObject<HTMLParagraphElement>}
+      className={className}
+      style={containerStyle}
+    >
+      {children}
+    </motion.p>
   );
 }
