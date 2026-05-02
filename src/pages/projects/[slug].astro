@@ -62,6 +62,7 @@ const breadcrumbLd = {
   title={entry.data.title}
   description={entry.data.tagline}
   canonical={`/projects/${entry.id}`}
+  ogImage={`/assets/images/projects/${entry.id}/cover.jpg`}
 >
   <JsonLd data={creativeWorkLd} slot="head" />
   <JsonLd data={breadcrumbLd} slot="head" />
