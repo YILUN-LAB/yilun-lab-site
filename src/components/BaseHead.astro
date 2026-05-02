@@ -1,5 +1,7 @@
 ---
 import "@styles/global.css";
+import JsonLd from "./JsonLd.astro";
+import { ORGANIZATION_LD } from "@lib/data/seo";
 
 interface Props {
   title: string;
@@ -48,6 +50,8 @@ const ogImageURL = new URL(ogImage, Astro.site);
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImageURL} />
+
+      <JsonLd data={ORGANIZATION_LD} />
     </>
   )
 }
