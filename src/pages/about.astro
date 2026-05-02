@@ -1,11 +1,14 @@
 ---
 import BaseLayout from "@components/BaseLayout.astro";
+import JsonLd from "@components/JsonLd.astro";
 import { AboutPage } from "@components/react/AboutPage";
+import { PERSON_LD } from "@lib/data/seo";
 ---
 
 <BaseLayout
   title="About"
   description="Yilun Zhan, founder of YILUN LAB — lighting artist and designer."
 >
+  <JsonLd data={PERSON_LD} slot="head" />
   <AboutPage client:load />
 </BaseLayout>
