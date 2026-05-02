@@ -2,6 +2,8 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "@components/BaseLayout.astro";
 import CaseStudyLayout from "@components/CaseStudyLayout.astro";
+import JsonLd from "@components/JsonLd.astro";
+import { SITE_URL } from "@lib/data/seo";
 
 export async function getStaticPaths() {
   const entries = await getCollection(
@@ -28,6 +30,32 @@ interface Props {
 }
 
 const { entry, next } = Astro.props;
+const projectUrl = `${SITE_URL}/projects/${entry.id}`;
+
+const creativeWorkLd = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": `${projectUrl}#work`,
+  name: entry.data.title,
+  description: entry.data.tagline,
+  url: projectUrl,
+  image: `${SITE_URL}/assets/images/projects/${entry.id}/cover.jpg`,
+  dateCreated: entry.data.year,
+  creator: { "@id": `${SITE_URL}/about#person` },
+  keywords: entry.data.category.map(
+    (c: string) => `Light & ${c[0].toUpperCase() + c.slice(1)}`
+  ),
+};
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+    { "@type": "ListItem", position: 2, name: "Works", item: `${SITE_URL}/#works` },
+    { "@type": "ListItem", position: 3, name: entry.data.title },
+  ],
+};
 ---
 
 <BaseLayout
@@ -35,5 +63,7 @@ const { entry, next } = Astro.props;
   description={entry.data.tagline}
   canonical={`/projects/${entry.id}`}
 >
+  <JsonLd data={creativeWorkLd} slot="head" />
+  <JsonLd data={breadcrumbLd} slot="head" />
   <CaseStudyLayout entry={entry} next={next} />
 </BaseLayout>
