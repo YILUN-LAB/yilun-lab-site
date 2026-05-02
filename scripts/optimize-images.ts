@@ -3,6 +3,10 @@
  * `migration/YILUN LAB Assets/` and emits WebP outputs to
  * `public/assets/images/projects/<slug>/` and `public/assets/images/founder/`.
  *
+ * Also emits 1200x630 JPG variants (cover.jpg / headshot.jpg) for use
+ * as og:image meta tags. The OG step reads from the public WebPs so it
+ * runs successfully even without the migration source bundle present.
+ *
  * Run via: `npm run assets:optimize`
  *
  * Idempotent: re-runs overwrite outputs, and remove any stale `.webp`
@@ -35,6 +39,15 @@ const SKIP_FILES = new Set([".DS_Store", "Tao Cave Final.mp4"]);
 
 async function ensureDir(dir: string) {
   await fs.mkdir(dir, { recursive: true });
+}
+
+async function pathExists(p: string): Promise<boolean> {
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function listImageSources(folder: string): Promise<string[]> {
@@ -94,14 +107,53 @@ async function optimizeFounder() {
   process.stdout.write(`  founder/headshot.webp\n`);
 }
 
-async function main() {
-  process.stdout.write(`Optimizing project assets...\n`);
-  for (const [folderName, slug] of Object.entries(SLUG_BY_FOLDER)) {
-    process.stdout.write(`-> ${slug}\n`);
-    await optimizeProjectFolder(folderName, slug);
+async function generateOgJpeg(sourceWebp: string, outJpg: string, label: string) {
+  if (!(await pathExists(sourceWebp))) {
+    process.stdout.write(`  skip ${label}: source missing (${sourceWebp})\n`);
+    return;
   }
-  process.stdout.write(`Optimizing founder portrait...\n`);
-  await optimizeFounder();
+  await sharp(sourceWebp)
+    .resize({ width: 1200, height: 630, fit: "cover", position: sharp.strategy.attention })
+    .jpeg({ quality: 80, progressive: true, mozjpeg: true })
+    .toFile(outJpg);
+  process.stdout.write(`  ${label}\n`);
+}
+
+async function generateProjectOg(slug: string) {
+  const sourceWebp = path.join(PROJECTS_OUT, slug, "01.webp");
+  const outJpg = path.join(PROJECTS_OUT, slug, "cover.jpg");
+  await generateOgJpeg(sourceWebp, outJpg, `${slug}/cover.jpg`);
+}
+
+async function generateFounderOg() {
+  const sourceWebp = path.join(FOUNDER_OUT, "headshot.webp");
+  const outJpg = path.join(FOUNDER_OUT, "headshot.jpg");
+  await generateOgJpeg(sourceWebp, outJpg, `founder/headshot.jpg`);
+}
+
+async function main() {
+  const hasMigration = await pathExists(ASSETS_ROOT);
+
+  if (hasMigration) {
+    process.stdout.write(`Optimizing project assets...\n`);
+    for (const [folderName, slug] of Object.entries(SLUG_BY_FOLDER)) {
+      process.stdout.write(`-> ${slug}\n`);
+      await optimizeProjectFolder(folderName, slug);
+    }
+    process.stdout.write(`Optimizing founder portrait...\n`);
+    await optimizeFounder();
+  } else {
+    process.stdout.write(
+      `Migration assets not found at ${ASSETS_ROOT}; skipping WebP regeneration.\n`
+    );
+  }
+
+  process.stdout.write(`Generating OG image variants...\n`);
+  for (const slug of Object.values(SLUG_BY_FOLDER)) {
+    await generateProjectOg(slug);
+  }
+  await generateFounderOg();
+
   process.stdout.write(`Done.\n`);
 }
 
