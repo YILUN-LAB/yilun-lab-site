@@ -1,5 +1,16 @@
+import { createElement } from "react";
 import { config, fields, collection } from "@keystatic/core";
 import { copy } from "@lib/keystatic-copy";
+
+const MARK_LIGHT = "/assets/brand/logos/svg/yilun-lab-mark-black.svg";
+const MARK_DARK = "/assets/brand/logos/svg/yilun-lab-mark-white.svg";
+
+const brandMark = ({ colorScheme }: { colorScheme: "light" | "dark" }) =>
+  createElement("img", {
+    src: colorScheme === "dark" ? MARK_DARK : MARK_LIGHT,
+    alt: "",
+    style: { height: "24px", width: "24px", display: "block" },
+  });
 
 const accentOptions = [
   { label: "Amber", value: "amber" },
@@ -38,7 +49,7 @@ export default config({
         }
       : { kind: "local" },
   ui: {
-    brand: { name: copy.signIn.title },
+    brand: { name: copy.signIn.title, mark: brandMark },
   },
   collections: {
     projects: collection({
