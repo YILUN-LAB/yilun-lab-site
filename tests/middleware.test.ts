@@ -53,7 +53,7 @@ describe("preview-auth middleware", () => {
     const onRequest = await load("correct-horse");
     const next = vi.fn(async () => new Response("ok", { status: 200 }));
     const ctx = {
-      request: new Request("https://edit.yilunlab.com/", {
+      request: new Request("https://edit.yilunlab.com/about", {
         headers: { authorization: VALID },
       }),
     } as any;
@@ -66,7 +66,7 @@ describe("preview-auth middleware", () => {
     const onRequest = await load("correct-horse");
     const next = vi.fn(async () => new Response("ok", { status: 200 }));
     const ctx = {
-      request: new Request("https://edit.yilunlab.com/", {
+      request: new Request("https://edit.yilunlab.com/about", {
         headers: { authorization: VALID },
       }),
     } as any;
@@ -80,5 +80,41 @@ describe("preview-auth middleware", () => {
     const ctx = { request: new Request("https://yilunlab.com/") } as any;
     const res = await onRequest(ctx, next);
     expect(res.headers.get("x-robots-tag")).toBeNull();
+  });
+
+  it("redirects edit.yilunlab.com root to /keystatic", async () => {
+    const onRequest = await load("correct-horse");
+    const next = vi.fn();
+    const ctx = {
+      request: new Request("https://edit.yilunlab.com/", {
+        headers: { authorization: VALID },
+      }),
+    } as any;
+    const res = await onRequest(ctx, next);
+    expect(next).not.toHaveBeenCalled();
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toMatch(/\/keystatic$/);
+  });
+
+  it("does not redirect non-root paths on edit.yilunlab.com", async () => {
+    const onRequest = await load("correct-horse");
+    const next = vi.fn(async () => new Response("ok", { status: 200 }));
+    const ctx = {
+      request: new Request("https://edit.yilunlab.com/projects/foo", {
+        headers: { authorization: VALID },
+      }),
+    } as any;
+    const res = await onRequest(ctx, next);
+    expect(next).toHaveBeenCalled();
+    expect(res.status).toBe(200);
+  });
+
+  it("does not redirect yilunlab.com root (production)", async () => {
+    const onRequest = await load(undefined);
+    const next = vi.fn(async () => new Response("ok", { status: 200 }));
+    const ctx = { request: new Request("https://yilunlab.com/") } as any;
+    const res = await onRequest(ctx, next);
+    expect(next).toHaveBeenCalled();
+    expect(res.status).toBe(200);
   });
 });

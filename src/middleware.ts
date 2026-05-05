@@ -46,6 +46,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return unauthorized();
   }
 
+  // Bare-root on the preview subdomain → land in the editor.
+  // Yilun's bookmark is just edit.yilunlab.com; root → /keystatic gets her
+  // straight to the admin (which then redirects to the staging branch).
+  const url = new URL(context.request.url);
+  if (url.pathname === "/" && url.hostname.startsWith("edit.")) {
+    return Response.redirect(new URL("/keystatic", url), 302);
+  }
+
   const response = await next();
   response.headers.set("X-Robots-Tag", "noindex, nofollow");
   return response;
