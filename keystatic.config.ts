@@ -12,36 +12,6 @@ const accentOptions = [
   { label: "Spectrum", value: "spectrum" },
 ] as const;
 
-const categoryOptions = [
-  { label: "Light & Art", value: "art" },
-  { label: "Light & Dance", value: "dance" },
-  { label: "Light & Tech", value: "tech" },
-] as const;
-
-const variantOptions = [
-  { label: "Image wall", value: "image-wall" },
-  { label: "Video hero", value: "video-hero" },
-  { label: "Image poster", value: "image-poster" },
-  { label: "Chapters", value: "chapters" },
-  { label: "Chapters (tabbed)", value: "chapters-tabbed" },
-] as const;
-
-const weightOptions = [
-  { label: "Lead", value: "lead" },
-  { label: "Feature", value: "feature" },
-  { label: "Column", value: "column" },
-  { label: "Tile", value: "tile" },
-] as const;
-
-const aspectOptions = [
-  { label: "4:5", value: "4/5" },
-  { label: "16:10", value: "16/10" },
-  { label: "1:1", value: "1/1" },
-  { label: "5:4", value: "5/4" },
-  { label: "4:3", value: "4/3" },
-  { label: "21:9", value: "21/9" },
-] as const;
-
 const imageItem = fields.object({
   src: fields.text({ label: "Image path", validation: { isRequired: true } }),
   alt: fields.text({
@@ -67,6 +37,9 @@ export default config({
       slugField: "title",
       path: "src/content/projects/*",
       format: { contentField: "body" },
+      // category, accent, weight, aspect, and variant use fields.ignored() so
+      // they stay out of Yilun's form UI but round-trip through parse/serialize,
+      // preserving existing frontmatter on save (per design spec §6).
       schema: {
         title: fields.slug({
           name: { label: copy.fields.title.label, description: copy.fields.title.help },
@@ -81,12 +54,7 @@ export default config({
           multiline: true,
           validation: { isRequired: true, length: { min: 1, max: 280 } },
         }),
-        category: fields.multiselect({
-          label: "Category",
-          description: "Hidden from Yilun's UI; serialized only.",
-          options: categoryOptions,
-          defaultValue: ["art"],
-        }),
+        category: fields.ignored(),
         year: fields.text({
           label: copy.fields.year.label,
           description: copy.fields.year.help,
@@ -110,36 +78,16 @@ export default config({
           label: copy.fields.date.label,
           description: copy.fields.date.help,
         }),
-        accent: fields.select({
-          label: "Accent (project-level)",
-          description: "Hidden from Yilun's UI; serialized only.",
-          options: accentOptions,
-          defaultValue: "amber",
-        }),
-        weight: fields.select({
-          label: "Weight",
-          description: "Hidden from Yilun's UI; serialized only.",
-          options: weightOptions,
-          defaultValue: "column",
-        }),
-        aspect: fields.select({
-          label: "Aspect",
-          description: "Hidden from Yilun's UI; serialized only.",
-          options: [{ label: "(none)", value: "" }, ...aspectOptions],
-          defaultValue: "",
-        }),
+        accent: fields.ignored(),
+        weight: fields.ignored(),
+        aspect: fields.ignored(),
         cover: fields.image({
           label: copy.fields.cover.label,
           description: copy.fields.cover.help,
           directory: "public/assets/images/projects/{slug}",
           publicPath: "/assets/images/projects/{slug}/",
         }),
-        variant: fields.select({
-          label: "Variant",
-          description: "Hidden from Yilun's UI; serialized only.",
-          options: variantOptions,
-          defaultValue: "image-wall",
-        }),
+        variant: fields.ignored(),
         images: fields.array(imageItem, {
           label: copy.fields.images.label,
           description: copy.fields.images.help,
