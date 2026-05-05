@@ -1,0 +1,10 @@
+---
+import { makePage } from "@keystatic/astro/ui";
+import keystaticConfig from "../../../keystatic.config";
+
+export const prerender = false;
+
+const AdminUI = makePage(keystaticConfig);
+---
+
+<AdminUI client:only="react" />
