@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { makePage } from "@keystatic/astro/ui";
 import keystaticConfig from "../../../keystatic.config";
 import { copy } from "@lib/keystatic-copy";
+import { PublishButton } from "./PublishButton";
 import "./admin-overrides.css";
 
 const AdminUI = makePage(keystaticConfig);
@@ -55,6 +56,7 @@ export function AdminShell() {
           {copy.adminShell.mainBranchWarning}
         </div>
       )}
+      <PublishButton />
       <AdminUI />
     </>
   );

@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 vi.mock("@lib/keystatic-auth", () => ({
   fetchGithubUsername: vi.fn(),
   hasEditorAccess: vi.fn(),
+  githubHeaders: (token: string) => ({ Authorization: `Bearer ${token}` }),
 }));
 vi.mock("@lib/github-merge", () => ({
   mergeStagingToMain: vi.fn(),
@@ -76,5 +77,34 @@ describe("/api/publish", () => {
     const res = await POST(makeContext("token-abc"));
     expect(res.status).toBe(409);
     expect(await res.json()).toEqual({ ok: false, error: "merge-conflict" });
+  });
+
+  it("dry-run mode returns count without calling mergeStagingToMain", async () => {
+    (hasEditorAccess as any).mockResolvedValue(true);
+    // Stub global fetch for the username AND the compare API
+    global.fetch = vi.fn(async (url: string) => {
+      if (url.includes("/user")) {
+        return new Response(JSON.stringify({ login: "rudyz" }), {
+          status: 200,
+        });
+      }
+      if (url.includes("/compare/")) {
+        return new Response(JSON.stringify({ ahead_by: 3 }), { status: 200 });
+      }
+      throw new Error(`Unexpected fetch ${url}`);
+    }) as any;
+
+    const ctx = {
+      request: new Request("http://localhost/api/publish?dry-run=1", {
+        method: "POST",
+      }),
+      cookies: { get: () => ({ value: "token-abc" }) },
+      url: new URL("http://localhost/api/publish?dry-run=1"),
+    } as any;
+
+    const res = await POST(ctx);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, count: 3 });
+    expect(mergeStagingToMain).not.toHaveBeenCalled();
   });
 });

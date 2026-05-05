@@ -1,5 +1,9 @@
 import type { APIRoute } from "astro";
-import { fetchGithubUsername, hasEditorAccess } from "@lib/keystatic-auth";
+import {
+  fetchGithubUsername,
+  githubHeaders,
+  hasEditorAccess,
+} from "@lib/keystatic-auth";
 import { mergeStagingToMain } from "@lib/github-merge";
 
 export const prerender = false;
@@ -33,6 +37,20 @@ export const POST: APIRoute = async (ctx) => {
   const allowed = await hasEditorAccess({ token, owner, repo, username });
   if (!allowed) {
     return jsonResponse({ ok: false, error: "forbidden" }, 403);
+  }
+
+  // Dry-run mode: just compare staging to main, return the ahead count.
+  // Used by the UI's polling hook to know whether to show the Publish button.
+  if (new URL(ctx.request.url).searchParams.get("dry-run") === "1") {
+    const compare = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/compare/main...staging`,
+      { headers: githubHeaders(token) }
+    );
+    if (!compare.ok) {
+      return jsonResponse({ ok: false, error: "api-error" }, 500);
+    }
+    const { ahead_by } = (await compare.json()) as { ahead_by: number };
+    return jsonResponse({ ok: true, count: ahead_by }, 200);
   }
 
   const result = await mergeStagingToMain({ owner, repo, token });

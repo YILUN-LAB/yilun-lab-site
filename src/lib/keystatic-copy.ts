@@ -111,6 +111,13 @@ export const copy = {
     saveFailed: "Save failed — Retry",
     publishNow: "Publish now",
   },
+  publish: {
+    ready: (n: number) => `Publish ${n} change${n === 1 ? "" : "s"} →`,
+    publishing: "Publishing…",
+    published: "Published. Live in ~1 minute.",
+    conflict: "Couldn't publish — message Rudy and he'll sort it out.",
+    networkError: "Connection issue — try again.",
+  },
   toasts: {
     youtubeAutoExtracted: "Extracted the video ID for you.",
   },
