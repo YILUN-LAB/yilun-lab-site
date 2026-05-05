@@ -27,7 +27,16 @@ const imageItem = fields.object({
 });
 
 export default config({
-  storage: { kind: "local" },
+  storage:
+    process.env.KEYSTATIC_STORAGE === "github"
+      ? {
+          kind: "github",
+          repo: {
+            owner: process.env.KEYSTATIC_REPO_OWNER ?? "",
+            name: process.env.KEYSTATIC_REPO_NAME ?? "",
+          },
+        }
+      : { kind: "local" },
   ui: {
     brand: { name: copy.signIn.title },
   },
