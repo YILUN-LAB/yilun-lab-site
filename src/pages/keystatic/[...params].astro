@@ -1,4 +1,10 @@
 ---
+import { isAdminEnabled } from "@lib/keystatic-flags";
+
+if (!isAdminEnabled()) {
+  return new Response(null, { status: 404 });
+}
+
 import { AdminShell } from "@components/keystatic/AdminShell";
 
 export const prerender = false;
