@@ -10,6 +10,7 @@ export interface StorageAdapter {
 export interface BatchedStorage {
   commit(payload: Omit<QueuedPayload, "enqueuedAt">): Promise<void>;
   flushNow(): Promise<void>;
+  attachUnloadFlush(target: Window): () => void;
   stateMachine: SaveStateMachine;
 }
 
@@ -57,6 +58,23 @@ export function createBatchedStorage(adapter: StorageAdapter): BatchedStorage {
       scheduleFlush();
     },
     flushNow: flush,
+    attachUnloadFlush(target) {
+      const handler = () => {
+        // Best effort — the browser may not wait for promises here,
+        // but the IndexedDB queue persists, so the recovery banner
+        // will surface on next load if this fires too late.
+        flush().catch(() => undefined);
+      };
+      const visibilityHandler = () => {
+        if (target.document.visibilityState === "hidden") handler();
+      };
+      target.addEventListener("beforeunload", handler);
+      target.addEventListener("visibilitychange", visibilityHandler);
+      return () => {
+        target.removeEventListener("beforeunload", handler);
+        target.removeEventListener("visibilitychange", visibilityHandler);
+      };
+    },
     stateMachine,
   };
 }

@@ -81,4 +81,19 @@ describe("batched storage wrapper", () => {
     expect(states).toContain("publishing");
     expect(states).toContain("building");
   });
+
+  it("flushes immediately on beforeunload", async () => {
+    const adapter = makeAdapter();
+    const wrapped = createBatchedStorage(adapter);
+    wrapped.attachUnloadFlush(window);
+
+    await wrapped.commit({ slug: "p", fields: { a: 1 }, files: {} });
+
+    window.dispatchEvent(new Event("beforeunload"));
+    // Drain fake-indexeddb setImmediate callbacks (same pattern as other tests)
+    await new Promise((resolve) => setImmediate(resolve));
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(adapter.commit).toHaveBeenCalledTimes(1);
+  });
 });
