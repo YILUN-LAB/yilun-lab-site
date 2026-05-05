@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "assets:optimize": "tsx scripts/optimize-images.ts",
     "qr:make": "node scripts/make-connect-qr.mjs",
+    "assets:gc": "node scripts/assets-gc.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui"
