@@ -1,0 +1,5 @@
+---
+// Keystatic's React router hardcodes /keystatic as its base path, so the
+// admin lives there. Redirect /admin → /keystatic for ergonomics.
+return Astro.redirect("/keystatic", 308);
+---

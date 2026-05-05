@@ -27,8 +27,8 @@ export const ALL: APIRoute = async (ctx) => {
   const token = ctx.cookies.get(ACCESS_TOKEN_COOKIE)?.value;
   if (!token) return response;
 
-  const owner = process.env.KEYSTATIC_REPO_OWNER ?? "";
-  const repo = process.env.KEYSTATIC_REPO_NAME ?? "";
+  const owner = process.env.PUBLIC_KEYSTATIC_REPO_OWNER ?? "";
+  const repo = process.env.PUBLIC_KEYSTATIC_REPO_NAME ?? "";
   if (!owner || !repo) return response;
 
   const username = await fetchGithubUsername(token);

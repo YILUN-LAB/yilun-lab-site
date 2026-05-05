@@ -28,12 +28,12 @@ const imageItem = fields.object({
 
 export default config({
   storage:
-    process.env.KEYSTATIC_STORAGE === "github"
+    import.meta.env.PUBLIC_KEYSTATIC_STORAGE === "github"
       ? {
           kind: "github",
           repo: {
-            owner: process.env.KEYSTATIC_REPO_OWNER ?? "",
-            name: process.env.KEYSTATIC_REPO_NAME ?? "",
+            owner: import.meta.env.PUBLIC_KEYSTATIC_REPO_OWNER ?? "",
+            name: import.meta.env.PUBLIC_KEYSTATIC_REPO_NAME ?? "",
           },
         }
       : { kind: "local" },
