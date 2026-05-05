@@ -1,0 +1,21 @@
+---
+import { isAdminEnabled } from "@lib/keystatic-flags";
+import { getKeystaticEntryRedirect } from "@lib/keystatic-entry";
+import { AdminShell } from "@components/keystatic/AdminShell";
+
+export const prerender = false;
+
+if (!isAdminEnabled()) {
+  return new Response(null, { status: 404 });
+}
+
+const redirect = getKeystaticEntryRedirect(
+  Astro.url.pathname,
+  import.meta.env.PUBLIC_KEYSTATIC_BRANCH
+);
+if (redirect) {
+  return Astro.redirect(redirect, 302);
+}
+---
+
+<AdminShell client:only="react" />

@@ -12,7 +12,11 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "assets:optimize": "tsx scripts/optimize-images.ts",
-    "qr:make": "node scripts/make-connect-qr.mjs"
+    "qr:make": "node scripts/make-connect-qr.mjs",
+    "assets:gc": "node scripts/assets-gc.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
@@ -21,9 +25,12 @@
     "@astrojs/vercel": "^10.0.6",
     "@fontsource/barlow": "^5.1.0",
     "@fontsource/instrument-serif": "^5.1.0",
+    "@keystatic/astro": "^5.0.6",
+    "@keystatic/core": "^0.5.50",
     "@vercel/analytics": "^1.4.0",
     "@vercel/speed-insights": "^1.1.0",
     "astro": "^6.2.1",
+    "browser-image-compression": "^2.0.2",
     "lite-youtube-embed": "^0.3.3",
     "motion": "^11.11.0",
     "react": "^18.3.1",
@@ -38,21 +45,28 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.59.1",
     "@typescript-eslint/parser": "^8.59.1",
+    "@vitest/ui": "^4.1.5",
     "autoprefixer": "^10.5.0",
     "eslint": "^9.16.0",
     "eslint-plugin-astro": "^1.3.0",
     "eslint-plugin-jsx-a11y": "^6.10.0",
+    "fake-indexeddb": "^6.2.5",
+    "happy-dom": "^20.9.0",
     "prettier": "^3.4.0",
     "prettier-plugin-astro": "^0.14.0",
     "prettier-plugin-tailwindcss": "^0.6.0",
     "qrcode": "^1.5.4",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
   },
   "overrides": {
     "path-to-regexp": "^6.3.0"

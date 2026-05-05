@@ -1,0 +1,60 @@
+---
+import { copy } from "@lib/keystatic-copy";
+
+export const prerender = false;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{copy.denied.title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <style>
+      body {
+        background: #000;
+        color: rgba(255, 255, 255, 0.9);
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 2rem;
+      }
+      .card {
+        max-width: 28rem;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 1rem;
+        padding: 2rem;
+      }
+      h1 {
+        font-style: italic;
+        font-weight: 400;
+        font-size: 1.5rem;
+        margin: 0 0 1rem;
+      }
+      p {
+        line-height: 1.6;
+        margin: 0 0 1.5rem;
+      }
+      a {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 9999px;
+        color: inherit;
+        text-decoration: none;
+      }
+      a:hover { background: rgba(255, 255, 255, 0.05); }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>{copy.denied.title}</h1>
+      <p>{copy.denied.body}</p>
+      <a href="/api/keystatic/github/oauth/logout">{copy.denied.button}</a>
+    </div>
+  </body>
+</html>

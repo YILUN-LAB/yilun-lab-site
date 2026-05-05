@@ -95,9 +95,7 @@ const categoryRail = data.category
 
   {
     (data.variant === "chapters" || data.variant === "chapters-tabbed") && data.chapters && (
-      <Chapters client:load variant={data.variant} chapters={data.chapters}>
-        <Content components={caseStudyComponents} />
-      </Chapters>
+      <Chapters client:load variant={data.variant} chapters={data.chapters} />
     )
   }
 

@@ -29,6 +29,7 @@ const chapterSchema = z.object({
   cover: z.string().optional(),
   youtube: z.string().optional(),
   images: z.array(imageSchema).optional(),
+  description: z.string(),
 });
 
 const projects = defineCollection({

@@ -1,0 +1,14 @@
+/* Visual overrides for the Keystatic admin.
+ *
+ * Loaded via AdminShell.tsx (an `import "./admin-overrides.css"`) so the
+ * CSS lands in the React island's bundle. We can't use Astro's
+ * `<style is:global>` here because the admin page only mounts a
+ * client:only component — Astro skips per-page CSS in that case.
+ */
+
+/* Give the project-description ProseMirror editor enough vertical room
+ * to feel like a real writing surface instead of a textarea.
+ * The data attribute is stable across Keystatic 0.5.x. */
+[data-keystatic-editor="content"] {
+  min-height: 22rem;
+}

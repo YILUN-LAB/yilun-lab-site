@@ -1,11 +1,5 @@
-import type { ReactNode } from "react";
 import { gradientFor, type AccentName } from "@lib/accent-gradients";
-
-interface ChapterImage {
-  src: string;
-  alt: string;
-  caption?: string;
-}
+import type { ChapterImage } from "./Chapters";
 
 interface ChapterProps {
   name: string;
@@ -14,23 +8,29 @@ interface ChapterProps {
   cover?: string;
   youtube?: string;
   images?: ChapterImage[];
-  children?: ReactNode;
+  description: string;
+  hidden?: boolean;
 }
 
 /**
- * Chapter is rendered inside MDX as a static child of <Chapters client:load>.
- * Because Astro doesn't hydrate slot children, this component must render to
- * fully visible HTML on the server — no `motion.*`, no `useEffect`-gated
- * conditionals. The parent Chapters island loads `lite-youtube-embed` once,
- * which auto-upgrades any <lite-youtube> elements rendered here.
+ * Rendered by <Chapters>, never directly by MDX.
+ * `hidden` uses display:none instead of unmounting to preserve youtube embed state.
  */
-export function Chapter({ name, note, accent, cover, youtube, images, children }: ChapterProps) {
-  const accentKey: AccentName = accent ?? "amber";
-
+export function Chapter({
+  name,
+  note,
+  accent,
+  cover,
+  youtube,
+  images,
+  description,
+  hidden,
+}: ChapterProps) {
   return (
     <section
       data-chapter-name={name}
       className="mx-auto max-w-6xl px-8 py-16 md:px-16 lg:px-20"
+      style={hidden ? { display: "none" } : undefined}
     >
       <div className="mb-8">
         <div className="mb-2 font-body text-[10px] uppercase tracking-[0.18em] text-white/55">
@@ -59,7 +59,7 @@ export function Chapter({ name, note, accent, cover, youtube, images, children }
           />
         ) : (
           <>
-            <div className="absolute inset-0" style={{ background: gradientFor(accentKey) }} />
+            <div className="absolute inset-0" style={{ background: gradientFor(accent) }} />
             <div
               className="absolute inset-0"
               style={{
@@ -73,7 +73,7 @@ export function Chapter({ name, note, accent, cover, youtube, images, children }
       </div>
 
       <div className="prose prose-invert mx-auto max-w-3xl font-body text-base font-light leading-relaxed text-white/90 md:text-lg [&>p]:mb-4">
-        {children}
+        <p>{description}</p>
       </div>
 
       {images && images.length > 0 && (
