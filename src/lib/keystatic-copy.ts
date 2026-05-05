@@ -123,4 +123,8 @@ export const copy = {
   mobileTip: {
     body: "Editing works best on a laptop or tablet. Mobile is fine for quick text fixes — heavier work like adding chapters or uploading images is much smoother on a bigger screen.",
   },
+  adminShell: {
+    mainBranchWarning:
+      "You're editing main directly — these changes go straight to the live site. Switch to 'staging' for drafts.",
+  },
 };
