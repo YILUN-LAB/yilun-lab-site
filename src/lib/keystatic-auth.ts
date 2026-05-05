@@ -1,5 +1,13 @@
 const ALLOWED_PERMISSIONS = new Set(["admin", "maintain", "write"]);
 
+export function githubHeaders(token: string) {
+  return {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+}
+
 interface CheckArgs {
   token: string;
   owner: string;
@@ -20,14 +28,20 @@ export async function hasEditorAccess({
   fetchImpl = fetch,
 }: CheckArgs): Promise<boolean> {
   const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/collaborators/${encodeURIComponent(username)}/permission`;
-  const res = await fetchImpl(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
+  const res = await fetchImpl(url, { headers: githubHeaders(token) });
   if (!res.ok) return false;
   const data = (await res.json()) as { permission?: string };
   return ALLOWED_PERMISSIONS.has(data.permission ?? "");
+}
+
+export async function fetchGithubUsername(
+  token: string,
+  fetchImpl: typeof fetch = fetch
+): Promise<string> {
+  const res = await fetchImpl("https://api.github.com/user", {
+    headers: githubHeaders(token),
+  });
+  if (!res.ok) return "";
+  const data = (await res.json()) as { login?: string };
+  return data.login ?? "";
 }

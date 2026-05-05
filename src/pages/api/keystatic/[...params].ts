@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { makeHandler } from "@keystatic/astro/api";
 import keystaticConfig from "../../../../keystatic.config";
-import { hasEditorAccess } from "@lib/keystatic-auth";
+import { fetchGithubUsername, hasEditorAccess } from "@lib/keystatic-auth";
 
 export const prerender = false;
 
@@ -42,16 +42,3 @@ export const ALL: APIRoute = async (ctx) => {
 
   return response;
 };
-
-async function fetchGithubUsername(token: string): Promise<string> {
-  const res = await fetch("https://api.github.com/user", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
-  if (!res.ok) return "";
-  const data = (await res.json()) as { login?: string };
-  return data.login ?? "";
-}
