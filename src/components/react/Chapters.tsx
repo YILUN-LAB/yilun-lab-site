@@ -1,37 +1,32 @@
-import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { PillTabs, type PillTab } from "./PillTabs";
+import { Chapter } from "./Chapter";
+import type { AccentName } from "@lib/accent-gradients";
 
-export interface ChapterMeta {
+export interface ChapterImage {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+export interface ChapterData {
   name: string;
-  note?: string;
-  accent?: string;
+  note: string;
+  accent?: AccentName;
   cover?: string;
+  youtube?: string;
+  images?: ChapterImage[];
+  description: string;
 }
 
 interface ChaptersProps {
   variant: "chapters" | "chapters-tabbed";
-  chapters: ChapterMeta[];
-  children: ReactNode;
+  chapters: ChapterData[];
 }
 
-export function Chapters({ variant, chapters, children }: ChaptersProps) {
+export function Chapters({ variant, chapters }: ChaptersProps) {
   const [activeName, setActiveName] = useState(chapters[0]?.name ?? "");
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // For chapters-tabbed: imperatively toggle display on the rendered <section data-chapter-name=...>
-  // elements within the children slot. The MDX-rendered Chapter components are in static HTML,
-  // not in the React tree, so we can't reorder them via re-render — only via DOM manipulation.
-  useEffect(() => {
-    if (variant !== "chapters-tabbed") return;
-    if (!containerRef.current) return;
-    const sections = containerRef.current.querySelectorAll<HTMLElement>("[data-chapter-name]");
-    sections.forEach((s) => {
-      s.style.display = s.dataset.chapterName === activeName ? "" : "none";
-    });
-  }, [activeName, variant]);
-
-  // Load lite-youtube-embed once so any <lite-youtube> in static-rendered Chapter HTML upgrades.
   useEffect(() => {
     import("lite-youtube-embed");
     import("lite-youtube-embed/src/lite-yt-embed.css");
@@ -40,13 +35,25 @@ export function Chapters({ variant, chapters, children }: ChaptersProps) {
   const tabs: PillTab[] = chapters.map((c) => ({ id: c.name, label: c.name }));
 
   return (
-    <div ref={containerRef}>
+    <div>
       {variant === "chapters-tabbed" && chapters.length > 0 && (
         <div className="flex justify-center px-8 py-8 md:px-16 lg:px-20">
           <PillTabs tabs={tabs} activeId={activeName} onChange={setActiveName} />
         </div>
       )}
-      {children}
+      {chapters.map((c) => (
+        <Chapter
+          key={c.name}
+          name={c.name}
+          note={c.note}
+          accent={c.accent}
+          cover={c.cover}
+          youtube={c.youtube}
+          images={c.images}
+          description={c.description}
+          hidden={variant === "chapters-tabbed" && c.name !== activeName}
+        />
+      ))}
     </div>
   );
 }
