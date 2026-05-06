@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { makePage } from "@keystatic/astro/ui";
 import keystaticConfig from "../../../keystatic.config";
 import { copy } from "@lib/keystatic-copy";
+import { ProjectPreviewLinks } from "./ProjectPreviewLinks";
 import { PublishButton } from "./PublishButton";
 import "./admin-overrides.css";
 
@@ -56,6 +57,7 @@ export function AdminShell() {
           {copy.adminShell.mainBranchWarning}
         </div>
       )}
+      <ProjectPreviewLinks />
       <PublishButton />
       <AdminUI />
     </>
