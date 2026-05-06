@@ -42,11 +42,19 @@ function signSession(password: string): string {
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  if (!context.isPrerendered) {
-    for (const header of FORBIDDEN_REQUEST_HEADERS) {
-      if (context.request.headers.get(header) !== null) {
-        return new Response("Forbidden", { status: 403 });
-      }
+  // Prerendered pages execute middleware at BUILD time, and whatever the
+  // middleware returns becomes the static HTML asset Vercel serves at
+  // runtime. If we 401 here, "Authentication required" gets baked into the
+  // file — visitors then see that string at status 200. Pass through for
+  // prerendered: the runtime auth gate is irrelevant, and search-engine
+  // privacy is handled by the noindex meta tag in BaseHead.astro.
+  if (context.isPrerendered) {
+    return next();
+  }
+
+  for (const header of FORBIDDEN_REQUEST_HEADERS) {
+    if (context.request.headers.get(header) !== null) {
+      return new Response("Forbidden", { status: 403 });
     }
   }
 
