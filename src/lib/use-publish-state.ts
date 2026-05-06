@@ -3,6 +3,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 type State = "idle" | "ready" | "publishing" | "published" | "error";
 type ErrorKind = "merge-conflict" | "network" | "other";
 
+export interface PendingCommit {
+  sha: string;
+  message: string;
+}
+
 interface Options {
   pollInterval?: number; // ms; 0 = poll once and stop
 }
@@ -19,6 +24,7 @@ interface Options {
 export function usePublishState({ pollInterval = 30_000 }: Options = {}) {
   const [state, setState] = useState<State>("idle");
   const [count, setCount] = useState(0);
+  const [commits, setCommits] = useState<PendingCommit[]>([]);
   const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
   const mounted = useRef(true);
 
@@ -30,9 +36,11 @@ export function usePublishState({ pollInterval = 30_000 }: Options = {}) {
       if (body.ok && body.count > 0) {
         setState("ready");
         setCount(body.count);
+        setCommits(Array.isArray(body.commits) ? body.commits : []);
       } else if (body.ok && body.count === 0) {
         setState("idle");
         setCount(0);
+        setCommits([]);
       }
     } catch {
       // Swallow; will retry on next poll.
@@ -64,6 +72,7 @@ export function usePublishState({ pollInterval = 30_000 }: Options = {}) {
       if (body.ok) {
         setState("published");
         setCount(0);
+        setCommits([]);
         setTimeout(() => {
           if (mounted.current) setState("idle");
         }, 3000);
@@ -80,5 +89,5 @@ export function usePublishState({ pollInterval = 30_000 }: Options = {}) {
     }
   }, []);
 
-  return { state, count, errorKind, publish, refresh };
+  return { state, count, commits, errorKind, publish, refresh };
 }

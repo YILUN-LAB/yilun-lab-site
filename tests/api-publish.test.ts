@@ -79,17 +79,26 @@ describe("/api/publish", () => {
     expect(await res.json()).toEqual({ ok: false, error: "merge-conflict" });
   });
 
-  it("dry-run mode returns count without calling mergeStagingToMain", async () => {
+  it("dry-run mode returns count + commit summaries without calling mergeStagingToMain", async () => {
     (hasEditorAccess as any).mockResolvedValue(true);
-    // Stub global fetch for the username AND the compare API
     global.fetch = vi.fn(async (url: string) => {
-      if (url.includes("/user")) {
-        return new Response(JSON.stringify({ login: "rudyz" }), {
-          status: 200,
-        });
-      }
       if (url.includes("/compare/")) {
-        return new Response(JSON.stringify({ ahead_by: 3 }), { status: 200 });
+        return new Response(
+          JSON.stringify({
+            ahead_by: 2,
+            commits: [
+              {
+                sha: "abc1234567",
+                commit: { message: "Update src/content/projects/true-self" },
+              },
+              {
+                sha: "def8901234",
+                commit: { message: "Update src/content/projects/her\n\nbody" },
+              },
+            ],
+          }),
+          { status: 200 }
+        );
       }
       throw new Error(`Unexpected fetch ${url}`);
     }) as any;
@@ -104,7 +113,15 @@ describe("/api/publish", () => {
 
     const res = await POST(ctx);
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true, count: 3 });
+    expect(await res.json()).toEqual({
+      ok: true,
+      count: 2,
+      commits: [
+        { sha: "abc1234567", message: "Update src/content/projects/true-self" },
+        // Body lines stripped — first line only.
+        { sha: "def8901234", message: "Update src/content/projects/her" },
+      ],
+    });
     expect(mergeStagingToMain).not.toHaveBeenCalled();
   });
 });
