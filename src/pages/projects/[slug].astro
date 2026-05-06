@@ -5,6 +5,12 @@ import CaseStudyLayout from "@components/CaseStudyLayout.astro";
 import JsonLd from "@components/JsonLd.astro";
 import { SITE_URL } from "@lib/data/seo";
 
+// In preview-deploy mode (`output: "server"` per astro.config.mjs), Astro
+// otherwise treats getStaticPaths as a dynamic SSR route and 500s. Forcing
+// prerender ensures the page builds as static HTML for both modes; the
+// `noindex` meta in BaseHead keeps preview-build HTML out of search.
+export const prerender = true;
+
 export async function getStaticPaths() {
   const entries = await getCollection(
     "projects",
