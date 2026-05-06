@@ -25,7 +25,8 @@ function useProjectSlug(): string | null {
 
 /**
  * Renders "Open draft preview" and "Open live page" links when the editor
- * is on a project's edit page. Hidden everywhere else.
+ * is on a project's edit page. Hidden everywhere else. Styled to match
+ * Keystatic's light UI (subtle slate palette, restrained type).
  *
  * - Draft preview points to a relative URL on the same origin (the gated
  *   preview deploy at edit.yilunlab.com); the editor's session cookie
@@ -37,22 +38,26 @@ export function ProjectPreviewLinks() {
   const slug = useProjectSlug();
   if (!slug) return null;
   return (
-    <div className="flex items-center gap-3 border-b border-white/10 bg-white/[0.02] px-4 py-2 text-xs">
-      <span className="text-white/50">{copy.adminShell.previewLabel}:</span>
+    <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-4 py-2 text-xs text-slate-600">
+      <span className="font-medium uppercase tracking-wide text-slate-500">
+        {copy.adminShell.previewLabel}
+      </span>
       <a
         href={`/projects/${slug}`}
         target="_blank"
         rel="noreferrer"
-        className="text-emerald-300 underline underline-offset-2 hover:no-underline"
+        className="text-blue-700 underline underline-offset-2 hover:no-underline"
       >
         {copy.adminShell.openDraft}
       </a>
-      <span className="text-white/30">·</span>
+      <span aria-hidden className="text-slate-300">
+        ·
+      </span>
       <a
         href={`${LIVE_ORIGIN}/projects/${slug}`}
         target="_blank"
         rel="noreferrer"
-        className="text-white/60 underline underline-offset-2 hover:no-underline"
+        className="text-slate-600 underline underline-offset-2 hover:text-slate-900 hover:no-underline"
       >
         {copy.adminShell.openLive}
       </a>

@@ -22,14 +22,27 @@ describe("usePublishState", () => {
     expect(result.current.count).toBe(0);
   });
 
-  it("transitions to 'ready' when staging is ahead", async () => {
+  it("transitions to 'ready' and exposes commits when staging is ahead", async () => {
     (global.fetch as any).mockResolvedValue({
       ok: true,
-      json: async () => ({ ok: true, count: 3 }),
+      json: async () => ({
+        ok: true,
+        count: 3,
+        commits: [
+          { sha: "a1", message: "Update src/content/projects/true-self" },
+          { sha: "b2", message: "Update src/content/projects/her" },
+          { sha: "c3", message: "Update src/content/projects/mo-gu" },
+        ],
+      }),
     });
     const { result } = renderHook(() => usePublishState({ pollInterval: 0 }));
     await waitFor(() => expect(result.current.state).toBe("ready"));
     expect(result.current.count).toBe(3);
+    expect(result.current.commits).toHaveLength(3);
+    expect(result.current.commits[0]).toEqual({
+      sha: "a1",
+      message: "Update src/content/projects/true-self",
+    });
   });
 
   it("publish() transitions to 'publishing' then 'published' on success", async () => {

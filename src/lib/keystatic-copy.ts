@@ -113,6 +113,9 @@ export const copy = {
   },
   publish: {
     ready: (n: number) => `Publish ${n} change${n === 1 ? "" : "s"} →`,
+    pendingLabel: (n: number) => `${n} unpublished change${n === 1 ? "" : "s"}`,
+    showDetails: "Show details",
+    hideDetails: "Hide details",
     publishing: "Publishing…",
     published: "Published. Live in ~1 minute.",
     conflict: "Couldn't publish — message Rudy and he'll sort it out.",
