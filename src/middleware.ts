@@ -82,9 +82,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Bare-root on the preview subdomain → land in the editor.
   // Yilun's bookmark is just edit.yilunlab.com; root → /keystatic gets her
   // straight to the admin (which then redirects to the staging branch).
+  //
+  // Use new Response(null, ...) instead of Response.redirect() so the
+  // response has mutable headers — Astro injects the Set-Cookie minted
+  // above by mutating the response, and Response.redirect() returns a
+  // frozen Headers (TypeError: immutable).
   const url = new URL(context.request.url);
   if (url.pathname === "/" && url.hostname.startsWith("edit.")) {
-    return Response.redirect(new URL("/keystatic", url), 302);
+    return new Response(null, {
+      status: 302,
+      headers: { Location: new URL("/keystatic", url).toString() },
+    });
   }
 
   const response = await next();
