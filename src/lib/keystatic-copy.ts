@@ -133,5 +133,8 @@ export const copy = {
   adminShell: {
     mainBranchWarning:
       "You're editing main directly — these changes go straight to the live site. Switch to 'staging' for drafts.",
+    previewLabel: "Preview",
+    openDraft: "Open draft preview ↗",
+    openLive: "Open live page ↗",
   },
 };
