@@ -1,10 +1,45 @@
+import { useEffect, useRef } from "react";
+
 /**
- * Page-wide GPU-friendly aurora background.
+ * Page-wide aurora background with visibility-aware animation.
  * Three large radial blobs drift in slow CSS keyframe loops.
  * - position: fixed; z-index: -1; pointer-events: none — bleeds behind every section.
  * - prefers-reduced-motion: animation is disabled, blobs stay at their phase 0 positions.
  */
-export function AuroraBackground() {
+export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const background = ref.current;
+    if (!background) return;
+    const hero = occludedByHero ? document.getElementById("top") : null;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rect = hero?.getBoundingClientRect();
+      const covered = !!rect && rect.top <= 0 && rect.bottom >= window.innerHeight;
+      const heroVisible = !!rect && rect.bottom > 0 && rect.top < window.innerHeight;
+      background.dataset.sleeping = String(document.hidden || heroVisible);
+      background.dataset.covered = String(document.hidden || covered);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    const observer = new ResizeObserver(schedule);
+    if (hero) observer.observe(hero);
+    if (hero) {
+      window.addEventListener("scroll", schedule, { passive: true });
+      window.addEventListener("resize", schedule);
+    }
+    document.addEventListener("visibilitychange", update);
+    update();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      document.removeEventListener("visibilitychange", update);
+    };
+  }, [occludedByHero]);
   return (
     <>
       <style>{`
@@ -50,11 +85,21 @@ export function AuroraBackground() {
           background: radial-gradient(circle, #22d3ee 0%, transparent 70%);
           animation: auroraDrift3 80s ease-in-out infinite;
         }
+        [data-sleeping=true] .aurora-blob {
+          animation-play-state: paused;
+          will-change: auto;
+        }
+        [data-covered=true] .aurora-blob {
+          visibility: hidden;
+        }
         @media (prefers-reduced-motion: reduce) {
           .aurora-blob { animation: none; }
         }
       `}</style>
       <div
+        ref={ref}
+        data-sleeping={occludedByHero}
+        data-covered={occludedByHero}
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       >

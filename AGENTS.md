@@ -80,6 +80,7 @@ underlying npm commands.
 | `npm run assets:gc`         | Report images not explicitly referenced in project MDX                   |
 | `npm run qr:make`           | Generate the `/connect` QR assets                                        |
 | `npm run ashlar:playground` | Run the Ashlar tuning playground (Vite, `http://localhost:4400`)         |
+| `npm run assets:hero`       | Generate hashed hero videos and posters (requires local FFmpeg)          |
 
 Use a development server for local browser checks when adapter preview is unavailable.
 
@@ -162,8 +163,23 @@ through per-card overrides. See `docs/ashlar.md` for the full reference.
 - Keep `motion` as the animation library. Reuse `fadeBlurIn`, `BlurText`, and
   `PillTabs`. The shared `easeOut` curve is `[0, 0, 0.58, 1]`.
 - `useGlassLensing` must run once per public page; it currently runs in `Navbar`.
-- Hero video selection and fading are shared through `hero-video.ts` and
-  `FadingVideo.tsx`; preserve playback, looping, and storage-failure behavior.
+- Hero rotation uses `hero-video.ts`; `hero-video-assets.ts` maps original clip IDs
+  to hashed optimized videos and first-frame posters. Regenerate with `assets:hero`.
+  `hero-scroll.ts` owns the Hero / Lab boundary, shared navbar/anchor navigation,
+  and a continuous exposure MotionValue. Hero and Lab are its only resting
+  positions; later content scrolls normally. Preserve nested content scrolling,
+  keyboard/touch input, reduced motion, viewport changes and handler cleanup.
+  `FadingVideo.tsx` uses exposure to slow/pause on exit and resume/accelerate from
+  the held frame on return. Assets bake a forward/return cycle from source frames
+  `0..96,95..1` at 24 fps, excluding the source fade-to-black outro. Use native
+  looping; do not restore end fades, restart timers or end-of-clip entry holds.
+  Select one clip per page mount and retain it through scroll transitions.
+  Preserve storage-failure and poster fallbacks.
+  This decorative background must have no manual playback controls. Hero content
+  replays its staggered reveal only after a normal-speed video frame is presented
+  on return, and is inert while hidden. Static/error fallbacks must remain usable.
+  `AuroraBackground` sleeps when occluded by Hero or when the tab is hidden.
+  See `docs/hero-video-performance.md` for evidence and the dev-only readout.
 - `/api/contact` validates with `ContactFormSchema`, applies an in-memory per-IP
   rate limit and honeypot, escapes email HTML, and sends through Resend. Preserve
   its input limits and both resolved-error and thrown-error handling. The rate
