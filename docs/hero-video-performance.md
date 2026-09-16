@@ -1,7 +1,7 @@
 # Hero media performance investigation
 
 Date: 2026-09-16. Base commit: `5cfc073`. Branch: `codex/hero-video-performance`.
-This is an isolated local implementation and design experiment, not a production deployment.
+Implementation and investigation record. Release validation against main `aa8bbf9` is recorded below.
 
 ## Findings
 
@@ -175,9 +175,9 @@ is preserved. Verify `moov` order, 24 fps, 1920×1080, no audio, and visual qual
    but cannot generate extra source frames: very slow motion can visibly step.
    The current branch makes that tradeoff directly reviewable before editing source art.
 
-No CDN migration, account upgrade, production deployment, or telemetry expansion
-was performed. Country-level video-start data and a quiet-machine Chrome power
-trace remain the useful next measurements.
+No CDN migration, account upgrade, or telemetry expansion was performed.
+Country-level video-start data and a quiet-machine Chrome power trace remain
+useful next measurements. See the release validation below for the later Chrome A/B run.
 
 ## Verification
 
@@ -242,3 +242,57 @@ and byte counts; check, lint, 45 tests, build, formatting and diff checks passed
 Production output includes the three new loops and excludes the debug readout.
 Physical Safari touch behavior and controlled GPU/regional measurements remain
 outside this verification.
+
+## Release validation after integrating main
+
+On 2026-09-16, merged main `aa8bbf9` (including Ashlar and mobile filter fixes)
+into the Hero branch at `b5a9425`. Check completed with zero diagnostics; lint,
+91 tests across 11 files, and the production build passed.
+
+A native Chrome window on the user's M3 Max compared two local production builds:
+main `aa8bbf9` on port 4334 and candidate `b5a9425` on port 4335. The same window
+and 1674×997 CSS-pixel viewport were used throughout, with Bubble 1 selected in
+both builds and its normal 0.65× playback rate. A temporary, local-only HTTP
+fixture seeded that clip and logged media state once per second; this diagnostic
+script, its readout and its local collection endpoint are not in the deployed app.
+No builds or encodes ran during sampling. Existing user applications were left open.
+
+Each condition waited three seconds, then collected 25 approximately one-second
+IOGPU samples. These are whole-device utilization readings, not per-tab GPU time
+or power measurements. Runs alternated old → new → old → new. The small sample
+size and shared machine limit generalization; the consistent difference supports
+this Hero regression check without promising the same percentage on every device.
+
+| Condition                                     | GPU median | Sample p95 |  Range |
+| --------------------------------------------- | ---------: | ---------: | -----: |
+| Blank before                                  |        14% |        18% |  0–19% |
+| Old Hero, run 1                               |        71% |        72% | 67–79% |
+| New Hero, run 1                               |        21% |        24% | 19–27% |
+| Old Hero, run 2                               |        70% |        73% |  0–75% |
+| New Hero, run 2                               |        24% |        29% | 21–29% |
+| New page, Hero offscreen / Lab visible        |        70% |        73% | 68–77% |
+| Blank after the additional Aurora experiments |        33% |        36% | 30–37% |
+
+The final blank-page reading rose from 14% to 33%, demonstrating background
+load drift during the session. Do not subtract one blank value to claim a
+precise per-site GPU percentage. The adjacent, repeated Hero comparisons are
+the useful evidence; a quiet-machine power trace is still unmeasured.
+
+The two new-Hero intervals advanced 374 and 389 video frames respectively, with
+zero dropped-frame increments. Both old intervals also reported zero drops.
+After scrolling out, the new video stayed paused at 7.10514 seconds and frame
+750 for all 25 media samples, with no further decoded frames and Hero content
+inert. This verifies that the Hero's reduced GPU load is not an accidental
+failure to play, and that its offscreen decoder actually stops.
+
+The Lab reading is a remaining limitation: its visible, drifting Aurora still
+has substantial GPU cost. Local fixture experiments with compositing isolation
+(69% median) and an SVG blur texture (69%) did not help. Quantized CSS movement
+reduced the median to 52% but changed the motion timing, so none of these
+experiments is included in the release. This is a Hero performance improvement,
+not a claim that the whole site now has low GPU utilization. A separate Aurora
+redesign/renderer optimization needs visual review and further measurement.
+
+Raw timestamped IOGPU samples, local fixture scripts and media observations are
+retained in ignored `.playwright-mcp/gpu-review/`. The instrumentation, temporary
+SVGs and benchmark worktree are excluded from tracked release files.
