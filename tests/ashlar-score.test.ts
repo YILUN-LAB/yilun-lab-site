@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { SCORE_WEIGHTS, scorePlacement } from "../src/lib/editorial-layout/score";
-import type { Placement, Tier } from "../src/lib/editorial-layout/types";
+import { SCORE_WEIGHTS, scorePlacement } from "../src/lib/ashlar/score";
+import type { Placement, Tier } from "../src/lib/ashlar/types";
 
 function card(x: number, y: number, w: number, h: number, tier: Tier = "tile"): Placement {
   return { x, y, w, h, tier };

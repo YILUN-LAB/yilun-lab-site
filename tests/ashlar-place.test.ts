@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { UnitGrid, placeItems } from "../src/lib/editorial-layout/place";
-import type { Placement, Size } from "../src/lib/editorial-layout/types";
+import { UnitGrid, placeItems } from "../src/lib/ashlar/place";
+import type { Placement, Size } from "../src/lib/ashlar/types";
 
 function overlaps(a: Placement, b: Placement): boolean {
   return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;

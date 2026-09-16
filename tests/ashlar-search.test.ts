@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { computeEditorialLayout, searchLayout } from "../src/lib/editorial-layout";
-import { COLUMNS, targetFeatureCount } from "../src/lib/editorial-layout/vocabulary";
-import type { Breakpoint, LayoutItem } from "../src/lib/editorial-layout/types";
+import { computeAshlarLayout, searchLayout } from "../src/lib/ashlar";
+import { COLUMNS, targetFeatureCount } from "../src/lib/ashlar/vocabulary";
+import type { Breakpoint, LayoutItem } from "../src/lib/ashlar/types";
 
 const BREAKPOINTS: Breakpoint[] = ["sm", "md", "lg"];
 
@@ -130,9 +130,9 @@ describe("searchLayout", () => {
   });
 });
 
-describe("computeEditorialLayout", () => {
+describe("computeAshlarLayout", () => {
   it("returns one result per breakpoint", () => {
-    const result = computeEditorialLayout(lab);
+    const result = computeAshlarLayout(lab);
     expect(Object.keys(result).sort()).toEqual(["lg", "md", "sm"]);
     expect(result.sm.cols).toBe(4);
     expect(result.lg.best.placements).toHaveLength(3);
@@ -140,7 +140,7 @@ describe("computeEditorialLayout", () => {
 
   it("runs quickly for the largest set", () => {
     const start = performance.now();
-    computeEditorialLayout(fakeItems(12));
+    computeAshlarLayout(fakeItems(12));
     expect(performance.now() - start).toBeLessThan(200);
   });
 });

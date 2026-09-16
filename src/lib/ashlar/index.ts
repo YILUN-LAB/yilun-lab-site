@@ -14,7 +14,7 @@ const BREAKPOINTS: Breakpoint[] = ["sm", "md", "lg"];
  * Computes the best layout for every breakpoint. Deterministic for a given
  * slug order, so server and client renders agree.
  */
-export function computeEditorialLayout(
+export function computeAshlarLayout(
   items: LayoutItem[],
   options: SearchOptions = {}
 ): Record<Breakpoint, LayoutResult> {
