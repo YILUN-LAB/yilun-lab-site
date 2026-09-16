@@ -2,7 +2,6 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FadingVideo } from "../src/components/react/FadingVideo";
 import { motionValue } from "motion/react";
-import { pickHeroVideo } from "../src/lib/hero-video";
 
 let intersect: (entries: { isIntersecting: boolean }[]) => void;
 let reduced = false;
@@ -292,26 +291,5 @@ describe("hero media lifecycle", () => {
     await visible(false);
     await visible();
     expect(video.paused).toBe(false);
-  });
-});
-
-describe("hero selection storage", () => {
-  it.each(["null", '"oops"', "{}", "invalid"])("recovers from malformed queue %s", (value) => {
-    localStorage.setItem("yilun-hero-queue", value);
-    expect(pickHeroVideo()).toMatch(/^\/assets\/videos\/hero-[123]\.mp4$/);
-  });
-  it("rotates all three clips and avoids repeating across queue boundaries", () => {
-    const first = Array.from({ length: 3 }, () => pickHeroVideo());
-    expect(new Set(first).size).toBe(3);
-    expect(pickHeroVideo()).not.toBe(first[2]);
-  });
-  it("works when storage throws", () => {
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
-      throw new Error("denied");
-    });
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new Error("denied");
-    });
-    expect(pickHeroVideo()).toContain("/assets/videos/hero-");
   });
 });

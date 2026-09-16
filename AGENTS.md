@@ -163,7 +163,11 @@ through per-card overrides. See `docs/ashlar.md` for the full reference.
 - Keep `motion` as the animation library. Reuse `fadeBlurIn`, `BlurText`, and
   `PillTabs`. The shared `easeOut` curve is `[0, 0, 0.58, 1]`.
 - `useGlassLensing` must run once per public page; it currently runs in `Navbar`.
-- Hero rotation uses `hero-video.ts`; `hero-video-assets.ts` maps original clip IDs
+- Hero rotation runs once in `hero-bootstrap.js`, inlined as a synchronous homepage
+  head script. It selects and preloads the matching CSS poster before body paint;
+  `hero-video.ts` reuses that document selection during hydration. Do not select
+  again in React or restore a fixed SSR image URL that can flash another clip.
+  `hero-video-assets.ts` maps original clip IDs
   to hashed optimized videos and first-frame posters. Regenerate with `assets:hero`.
   `hero-scroll.ts` owns the Hero / Lab boundary, shared navbar/anchor navigation,
   and a continuous exposure MotionValue. Hero and Lab are its only resting
