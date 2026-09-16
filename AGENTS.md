@@ -75,6 +75,7 @@ underlying npm commands.
 | `npm run format:check`    | Check formatting across the repository                                   |
 | `npm run format`          | Rewrite formatting across the repository; prefer targeting changed files |
 | `npm run assets:optimize` | Regenerate migration-derived WebP and Open Graph images                  |
+| `npm run assets:hero`     | Generate hashed hero videos and posters (requires local FFmpeg)          |
 | `npm run assets:gc`       | Report images not explicitly referenced in project MDX                   |
 | `npm run qr:make`         | Generate the `/connect` QR assets                                        |
 
@@ -153,8 +154,15 @@ pairs, with any final orphan full-width. Media stretches to each row's height.
 - Keep `motion` as the animation library. Reuse `fadeBlurIn`, `BlurText`, and
   `PillTabs`. The shared `easeOut` curve is `[0, 0, 0.58, 1]`.
 - `useGlassLensing` must run once per public page; it currently runs in `Navbar`.
-- Hero video selection and fading are shared through `hero-video.ts` and
-  `FadingVideo.tsx`; preserve playback, looping, and storage-failure behavior.
+- Hero rotation uses `hero-video.ts`; `hero-video-assets.ts` maps original clip IDs
+  to hashed 1080p videos and SSR posters. `FadingVideo.tsx` defers requests for
+  reduced motion, Save-Data, and 2G connections, and pauses outside the viewport
+  or a visible tab. The homepage default settles on the first meaningful
+  scroll or focus in Hero content; explicit playback resumes from that frame.
+  Keep the loop option, playback controls, and storage-failure behavior.
+  Homepage Aurora animation sleeps while any Hero is visible and is hidden only
+  when fully covered. Other pages pause Aurora only in hidden tabs.
+  See `docs/hero-video-performance.md` for evidence and the dev-only comparison UI.
 - `/api/contact` validates with `ContactFormSchema`, applies an in-memory per-IP
   rate limit and honeypot, escapes email HTML, and sends through Resend. Preserve
   its input limits and both resolved-error and thrown-error handling. The rate

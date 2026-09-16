@@ -12,7 +12,8 @@ export function pickHeroVideo(): string {
   let last: string | null = null;
 
   try {
-    queue = JSON.parse(localStorage.getItem(QUEUE_KEY) ?? "[]");
+    const stored: unknown = JSON.parse(localStorage.getItem(QUEUE_KEY) ?? "[]");
+    queue = Array.isArray(stored) ? stored : [];
     last = localStorage.getItem(LAST_KEY);
   } catch {
     /* corrupted storage — fall through to a fresh shuffle */

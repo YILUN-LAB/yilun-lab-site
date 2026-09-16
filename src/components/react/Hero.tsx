@@ -1,19 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { FadingVideo } from "./FadingVideo";
+import type { HeroPlaybackMode } from "./FadingVideo";
+import { HERO_VIDEO_ASSETS } from "@lib/hero-video-assets";
 import { BlurText } from "./BlurText";
 import { ArrowUpRight, PlayIcon, ClockIcon, GlobeIcon } from "./icons";
 import { fadeBlurInImmediate } from "@lib/motion-presets";
 import { pickHeroVideo } from "@lib/hero-video";
 import { softBoundaryAnnouncement } from "@lib/data/soft-boundary";
 
-export function Hero() {
+export function Hero({
+  mode = "settle",
+  clip,
+  original = false,
+}: {
+  mode?: HeroPlaybackMode;
+  clip?: number;
+  original?: boolean;
+}) {
   const glowRef = useRef<HTMLDivElement>(null);
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    setVideoSrc(pickHeroVideo());
-  }, []);
+    setVideoSrc(clip === undefined ? pickHeroVideo() : HERO_VIDEO_ASSETS[clip].original);
+  }, [clip]);
+  const asset =
+    HERO_VIDEO_ASSETS.find((asset) => asset.original === videoSrc) ?? HERO_VIDEO_ASSETS[0];
 
   return (
     <section
@@ -27,15 +39,27 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          opacity: 0,
+          opacity: 1,
           background:
             "radial-gradient(60% 50% at 50% 35%, rgba(245,175,60,0.28), transparent 60%)," +
             "radial-gradient(80% 60% at 50% 100%, rgba(140,80,20,0.35), transparent 60%)",
         }}
       />
+      <img
+        src={asset.poster}
+        alt=""
+        aria-hidden="true"
+        width="1920"
+        height="1080"
+        loading="eager"
+        className="pointer-events-none absolute left-1/2 top-0 z-0 -translate-x-1/2 object-cover object-top"
+        style={{ width: "120%", height: "120%" }}
+      />
       {videoSrc && (
         <FadingVideo
-          src={videoSrc}
+          src={original ? asset.original : asset.src}
+          poster={asset.poster}
+          mode={mode}
           className="absolute left-1/2 top-0 z-0 -translate-x-1/2 object-cover object-top"
           style={{ width: "120%", height: "120%" }}
           glowRef={glowRef}
