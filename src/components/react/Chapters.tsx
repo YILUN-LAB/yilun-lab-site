@@ -1,3 +1,4 @@
+import "lite-youtube-embed/src/lite-yt-embed.css";
 import { useEffect, useState } from "react";
 import { PillTabs, type PillTab } from "./PillTabs";
 import { ProjectPhotoGallery } from "./ProjectPhotoGallery";
@@ -32,7 +33,6 @@ export function Chapters({ title, variant, chapters }: ChaptersProps) {
 
   useEffect(() => {
     import("lite-youtube-embed");
-    import("lite-youtube-embed/src/lite-yt-embed.css");
   }, []);
 
   const tabs: PillTab[] = chapters.map((c) => ({ id: c.name, label: c.name }));

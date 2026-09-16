@@ -1,3 +1,4 @@
+import "lite-youtube-embed/src/lite-yt-embed.css";
 import type { LightboxPhoto } from "./PhotoLightbox";
 import { ProjectPhoto, ProjectPhotoGallery } from "./ProjectPhotoGallery";
 import type { ReactNode } from "react";
@@ -27,7 +28,6 @@ export function VideoHeroVariant({
     import("lite-youtube-embed").then(() => {
       if (!cancelled) setEmbedReady(true);
     });
-    import("lite-youtube-embed/src/lite-yt-embed.css");
     return () => {
       cancelled = true;
     };
