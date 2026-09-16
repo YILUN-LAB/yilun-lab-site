@@ -77,4 +77,37 @@ credential backup or a guarantee that the old editor is inaccessible.
 
 ## Service retirement outcome
 
-Pending verification of the Vercel changes and the production deployment.
+- `edit.yilunlab.com` now returns a 307 redirect to `https://www.yilunlab.com/`.
+  Its staging branch binding has been removed; the domain remains as a reversible
+  redirect for old bookmarks.
+- Historical deployments are retained in Vercel. Standard Vercel Authentication
+  now requires team login for non-production-custom-domain access. An anonymous
+  request to the old staging branch URL was verified to redirect to Vercel SSO.
+  This is protected historical hosting, not deletion of the old executable builds.
+- The eight deprecated Preview variables remain unchanged at the owner's request.
+  Current code does not read them. They are not needed for new previews.
+- Both old local branches and their remote branches are retired after the source
+  archive tags were pushed. `main` is the active long-lived branch.
+- The contact form key, production domains, and ordinary feature-branch preview
+  capability remain in place.
+
+## Validation
+
+`npm run check`, `npm run lint`, and `npm test` passed (8 tests). Preview and
+production builds passed. All 15 preview HTML pages contained noindex; only
+`/connect` retained noindex in production. Public routes returned 200 and retired
+editor/API routes returned 404 in local HTTP checks, including POST `/api/publish`.
+Browser checks covered the homepage, functioning Works filters, hero video,
+mobile/tablet/desktop layout widths, and the retired editor's 404 page. A stale
+local dependency cache caused initial hydration errors when build and dev ran
+together; a fresh dev server resolved them, with no errors in the fresh session.
+Project MDX and public assets are unchanged. No real contact email was sent.
+
+Dependency removal pruned 233 packages without changing remaining package versions.
+The package manager still reported 29 audit findings; broad dependency upgrades
+were outside this retirement change.
+
+The implementation was pushed in commit `e2e853f` and deployed successfully to
+Production as [deployment 99qiuZnBB](https://vercel.com/yiilunzhan-4453s-projects/yilun-lab-site/99qiuZnBBWZUE82ibu9b8neH1Bbo).
+Vercel confirmed Ready / Current on `www.yilunlab.com`. GitHub now has only `main`
+as an active branch; both annotated archive tags remain available.
