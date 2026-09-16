@@ -1,17 +1,22 @@
 import { useEffect, useRef } from "react";
+import { createAuroraRenderer } from "@lib/aurora-renderer";
 
 /**
- * Page-wide aurora background with visibility-aware animation.
- * Three large radial blobs drift in slow CSS keyframe loops.
+ * Page-wide aurora with cached blur sprites in one small canvas.
+ * The original CSS blobs provide the SSR / unsupported-browser fallback.
  * - position: fixed; z-index: -1; pointer-events: none — bleeds behind every section.
- * - prefers-reduced-motion: animation is disabled, blobs stay at their phase 0 positions.
+ * - prefers-reduced-motion: one still frame at the original CSS resting positions.
  */
 export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const background = ref.current;
     if (!background) return;
     const hero = occludedByHero ? document.getElementById("top") : null;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const renderer = canvasRef.current ? createAuroraRenderer(canvasRef.current) : null;
+    background.dataset.renderer = renderer ? "canvas" : "fallback";
     let frame = 0;
     const update = () => {
       frame = 0;
@@ -20,6 +25,11 @@ export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: 
       const heroVisible = !!rect && rect.bottom > 0 && rect.top < window.innerHeight;
       background.dataset.sleeping = String(document.hidden || heroVisible);
       background.dataset.covered = String(document.hidden || covered);
+      renderer?.update({
+        covered: document.hidden || covered,
+        sleeping: document.hidden || heroVisible,
+        reduced: motion.matches,
+      });
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -28,9 +38,10 @@ export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: 
     if (hero) observer.observe(hero);
     if (hero) {
       window.addEventListener("scroll", schedule, { passive: true });
-      window.addEventListener("resize", schedule);
     }
+    window.addEventListener("resize", schedule);
     document.addEventListener("visibilitychange", update);
+    motion.addEventListener("change", update);
     update();
     return () => {
       cancelAnimationFrame(frame);
@@ -38,6 +49,8 @@ export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: 
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       document.removeEventListener("visibilitychange", update);
+      motion.removeEventListener("change", update);
+      renderer?.dispose();
     };
   }, [occludedByHero]);
   return (
@@ -92,6 +105,14 @@ export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: 
         [data-covered=true] .aurora-blob {
           visibility: hidden;
         }
+        .aurora-canvas {
+          position: absolute;
+          width: 100%; height: 100%;
+          mix-blend-mode: screen;
+        }
+        [data-renderer=canvas] .aurora-blob { display: none; }
+        [data-renderer=fallback] .aurora-blob { animation-play-state: paused; will-change: auto; }
+        [data-covered=true] .aurora-canvas { visibility: hidden; }
         @media (prefers-reduced-motion: reduce) {
           .aurora-blob { animation: none; }
         }
@@ -103,6 +124,7 @@ export function AuroraBackground({ occludedByHero = false }: { occludedByHero?: 
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       >
+        <canvas ref={canvasRef} className="aurora-canvas" width="0" height="0" />
         {/* No solid base layer here — the html element provides --warm-bg.
             That keeps the blobs blending against the page color directly,
             instead of being dimmed by a stacked dark gradient on top. */}

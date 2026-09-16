@@ -178,7 +178,11 @@ through per-card overrides. See `docs/ashlar.md` for the full reference.
   This decorative background must have no manual playback controls. Hero content
   replays its staggered reveal only after a normal-speed video frame is presented
   on return, and is inert while hidden. Static/error fallbacks must remain usable.
-  `AuroraBackground` sleeps when occluded by Hero or when the tab is hidden.
+  `AuroraBackground` uses `aurora-renderer.ts`: cached blur sprites in a quarter-
+  resolution canvas, with a maximum 12 fps update budget and the original paths
+  and easing. It sleeps when occluded by Hero or when the tab is hidden. Reduced
+  motion draws one still frame; unsupported Canvas filters use static CSS blobs.
+  See `docs/aurora-performance.md` for visual comparisons and measurement limits.
   See `docs/hero-video-performance.md` for evidence and the dev-only readout.
 - `/api/contact` validates with `ContactFormSchema`, applies an in-memory per-IP
   rate limit and honeypot, escapes email HTML, and sends through Resend. Preserve
