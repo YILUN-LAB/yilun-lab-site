@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { placeItems } from "../src/lib/editorial-layout/place";
-import { hashString, mulberry32 } from "../src/lib/editorial-layout/random";
+import { UnitGrid, placeItems } from "../src/lib/editorial-layout/place";
 import type { Placement, Size } from "../src/lib/editorial-layout/types";
 
 function overlaps(a: Placement, b: Placement): boolean {
@@ -52,21 +51,19 @@ describe("placeItems", () => {
   });
 });
 
-describe("random", () => {
-  it("prng is deterministic for a seed", () => {
-    const a = mulberry32(42);
-    const b = mulberry32(42);
-    const seqA = [a(), a(), a()];
-    const seqB = [b(), b(), b()];
-    expect(seqA).toEqual(seqB);
-    for (const v of seqA) {
-      expect(v).toBeGreaterThanOrEqual(0);
-      expect(v).toBeLessThan(1);
-    }
+describe("UnitGrid.lowestGap", () => {
+  it("reports the full width on an empty grid", () => {
+    expect(new UnitGrid(12).lowestGap()).toEqual({ x: 0, y: 0, width: 12 });
   });
 
-  it("hash is stable and differs for different strings", () => {
-    expect(hashString("mo-gu|tao-cave")).toBe(hashString("mo-gu|tao-cave"));
-    expect(hashString("mo-gu|tao-cave")).not.toBe(hashString("tao-cave|mo-gu"));
+  it("reports the lowest, leftmost free cell and its free run", () => {
+    const grid = new UnitGrid(12);
+    grid.place({ w: 7, h: 5 });
+    grid.place({ w: 5, h: 4 });
+    // Under the 5x4 feature, beside the still-running lead.
+    expect(grid.lowestGap()).toEqual({ x: 7, y: 4, width: 5 });
+    grid.place({ w: 5, h: 3 });
+    // The lead ends at row 5; free run stops at the card on its right.
+    expect(grid.lowestGap()).toEqual({ x: 0, y: 5, width: 7 });
   });
 });

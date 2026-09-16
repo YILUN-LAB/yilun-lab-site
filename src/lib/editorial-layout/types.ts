@@ -27,7 +27,9 @@ export interface ScoreBreakdown {
   crossJunction: number;
   holes: number;
   ragged: number;
+  skyline: number;
   twins: number;
+  narrow: number;
   balance: number;
   tierMix: number;
   height: number;
@@ -37,8 +39,6 @@ export interface ScoreBreakdown {
 export interface LayoutCandidate {
   placements: Placement[];
   score: ScoreBreakdown;
-  /** Draw index inside the search; documents the tie-break order. */
-  draw: number;
 }
 
 export interface LayoutResult {
@@ -47,7 +47,6 @@ export interface LayoutResult {
   /** Total occupied rows of the best candidate. */
   rows: number;
   best: LayoutCandidate;
-  /** Best-first, including `best`; length is `options.keep`. */
+  /** Best-first, including `best`; length is at most `options.keep`. */
   candidates: LayoutCandidate[];
-  seed: number;
 }

@@ -8,20 +8,31 @@ export const SCORE_WEIGHTS = {
   seamRow: 1,
   seamCol: 1,
   crossJunction: 3,
-  holes: 4,
+  holes: 10,
   ragged: 2,
+  skyline: 3,
   twins: 1.5,
+  narrow: 1.5,
   balance: 6,
-  tierMix: 2,
+  tierMix: 5,
   height: 0.5,
 } as const;
 
-/** Extra penalty when a seam runs the entire width or height. */
+/** Cards narrower than this (in units) count as narrow on tablet and desktop. */
+const COMFORT_WIDTH = 4;
+
+/** Extra penalty when a vertical seam runs the entire height. */
 const FULL_SEAM_PENALTY = 4;
+/** A full-width seam directly under the lead is a deliberate hero break. */
+const HERO_BREAK_PENALTY = 2;
+/** Any other full-width seam reads as a row. Sized above a 12-wide run's excess². */
+const FULL_ROW_PENALTY = 48;
 /** Fraction of the width a horizontal seam may run before it reads as a row. */
 const SEAM_ROW_FREE_FRACTION = 0.5;
 /** Bottom-edge range (in units) that still reads as intentional. */
 const RAGGED_FREE_UNITS = 2;
+/** Distinct bottom levels that still read as a simple stair. */
+const SKYLINE_FREE_LEVELS = 2;
 
 const EMPTY = -1;
 
@@ -52,20 +63,38 @@ function longestRun(isBoundary: (i: number) => boolean, length: number): number 
   return best;
 }
 
+export interface ScoreOptions {
+  /**
+   * True while a layout is still being built: the bottom edge and the tier
+   * count are not final, so `ragged`, `skyline` and `tierMix` are left at 0.
+   */
+  partial?: boolean;
+}
+
 export function scorePlacement(
   placements: Placement[],
   cols: number,
-  targetFeatures: number
+  targetFeatures: number,
+  options: ScoreOptions = {}
 ): ScoreBreakdown {
+  const partial = options.partial === true;
   const { cells, rows } = buildCellMap(placements, cols);
   const between = (a: number, b: number) => a !== EMPTY && b !== EMPTY && a !== b;
 
-  // Horizontal seams: card meets a different card across line y.
+  // Horizontal seams: card meets a different card across line y. A full-width
+  // seam directly under the lead is a deliberate hero break and stays cheap;
+  // any other full-width seam reads as a row and costs much more.
   let seamRow = 0;
   const rowFree = cols * SEAM_ROW_FREE_FRACTION;
+  const heroBottom = placements.length > 0 ? placements[0].y + placements[0].h : -1;
   for (let y = 1; y < rows; y++) {
     const run = longestRun((x) => between(cells[y - 1][x], cells[y][x]), cols);
-    seamRow += seamPenalty(run, rowFree, cols);
+    if (run >= cols) {
+      seamRow += y === heroBottom ? HERO_BREAK_PENALTY : FULL_ROW_PENALTY;
+      continue;
+    }
+    const excess = Math.max(0, run - rowFree);
+    seamRow += excess * excess;
   }
 
   // Vertical seams: free up to the tallest card (the lead), then penalised.
@@ -111,6 +140,38 @@ export function scorePlacement(
   const raggedExcess = Math.max(0, raggedRange - RAGGED_FREE_UNITS);
   const ragged = raggedExcess * raggedExcess;
 
+  // Skyline: the bottom edge should read as a simple stair. Count empty runs
+  // boxed in by cards on both sides (notches), rows where a card stands alone
+  // with space on both edges (teeth), plus any distinct bottom levels beyond two.
+  let notches = 0;
+  for (let y = 0; y < rows; y++) {
+    let x = 0;
+    let emptyAtLeft = false;
+    let emptyAtRight = false;
+    while (x < cols) {
+      if (cells[y][x] !== EMPTY) {
+        x++;
+        continue;
+      }
+      const start = x;
+      while (x < cols && cells[y][x] === EMPTY) x++;
+      if (start === 0) emptyAtLeft = true;
+      if (x === cols) emptyAtRight = true;
+      if (start > 0 && x < cols) notches++;
+    }
+    if (emptyAtLeft && emptyAtRight) notches++;
+  }
+  const bottoms = new Set<number>();
+  for (let x = 0; x < cols; x++) {
+    for (let y = rows - 1; y >= 0; y--) {
+      if (cells[y][x] !== EMPTY) {
+        bottoms.add(y + 1);
+        break;
+      }
+    }
+  }
+  const skyline = notches + Math.max(0, bottoms.size - SKYLINE_FREE_LEVELS);
+
   // Twins: edge-adjacent pairs with identical footprint.
   const adjacent = new Set<string>();
   const notePair = (a: number, b: number) => {
@@ -141,6 +202,11 @@ export function scorePlacement(
   const featureCount = placements.filter((p) => p.tier === "feature").length;
   const tierMix = Math.abs(featureCount - targetFeatures);
 
+  // Narrow: cards under the comfortable width, only where the grid is wide
+  // enough for that to be a choice (mobile cards always span the grid).
+  const narrow =
+    cols >= 2 * COMFORT_WIDTH ? placements.filter((p) => p.w < COMFORT_WIDTH).length : 0;
+
   const height = rows;
 
   const terms = {
@@ -148,10 +214,12 @@ export function scorePlacement(
     seamCol,
     crossJunction,
     holes,
-    ragged,
+    ragged: partial ? 0 : ragged,
+    skyline: partial ? 0 : skyline,
     twins,
+    narrow,
     balance,
-    tierMix,
+    tierMix: partial ? 0 : tierMix,
     height,
   };
   const total = (Object.keys(SCORE_WEIGHTS) as (keyof typeof SCORE_WEIGHTS)[]).reduce(

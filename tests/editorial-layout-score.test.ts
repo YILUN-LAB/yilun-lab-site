@@ -28,6 +28,35 @@ describe("scorePlacement", () => {
     expect(grid.seamRow).toBeGreaterThan(brick.seamRow);
   });
 
+  it("treats one full seam under the lead as a cheap hero break", () => {
+    const heroBand = [
+      card(0, 0, 6, 4, "lead"),
+      card(6, 0, 6, 4, "feature"),
+      card(0, 4, 6, 3),
+      card(6, 4, 6, 3),
+    ];
+    const rows = [
+      card(0, 0, 4, 3, "lead"),
+      card(4, 0, 4, 3),
+      card(8, 0, 4, 3),
+      card(0, 3, 4, 3),
+      card(4, 3, 4, 3),
+      card(8, 3, 4, 3),
+      card(0, 6, 4, 3),
+      card(4, 6, 4, 3),
+      card(8, 6, 4, 3),
+    ];
+    expect(scorePlacement(heroBand, 12, 1).seamRow).toBeLessThan(5);
+    expect(scorePlacement(rows, 12, 1).seamRow).toBeGreaterThan(40);
+  });
+
+  it("penalises a lone card protruding from the middle of the bottom edge", () => {
+    const tooth = [card(0, 0, 4, 3, "lead"), card(4, 0, 4, 4), card(8, 0, 4, 3)];
+    const edge = [card(0, 0, 4, 4, "lead"), card(4, 0, 4, 3), card(8, 0, 4, 3)];
+    expect(scorePlacement(tooth, 12, 0).skyline).toBe(1);
+    expect(scorePlacement(edge, 12, 0).skyline).toBe(0);
+  });
+
   it("penalises a full-height vertical seam", () => {
     const twoColumns = [card(0, 0, 6, 8, "lead"), card(6, 0, 6, 8)];
     const offset = [card(0, 0, 7, 5, "lead"), card(7, 0, 5, 4), card(4, 5, 8, 3)];
@@ -57,6 +86,25 @@ describe("scorePlacement", () => {
     expect(scorePlacement(wild, 4, 0).ragged).toBeGreaterThan(0);
   });
 
+  it("penalises notched or many-levelled bottom edges", () => {
+    // Two levels, a plain stair: fine.
+    const stair = [card(0, 0, 4, 4, "lead"), card(4, 0, 4, 3), card(8, 0, 4, 3)];
+    // Middle column ends higher than both neighbours: a notch of two cells.
+    const notched = [card(0, 0, 4, 4, "lead"), card(4, 0, 4, 2), card(8, 0, 4, 4)];
+    // Three distinct bottom levels.
+    const levels = [card(0, 0, 4, 4, "lead"), card(4, 0, 4, 3), card(8, 0, 4, 2)];
+    expect(scorePlacement(stair, 12, 0).skyline).toBe(0);
+    expect(scorePlacement(notched, 12, 0).skyline).toBe(2);
+    expect(scorePlacement(levels, 12, 0).skyline).toBe(1);
+  });
+
+  it("counts cards narrower than four units on wide grids only", () => {
+    const layout = [card(0, 0, 6, 4, "lead"), card(6, 0, 3, 3), card(9, 0, 3, 3)];
+    expect(scorePlacement(layout, 12, 0).narrow).toBe(2);
+    const mobile = [card(0, 0, 4, 5, "lead"), card(0, 5, 4, 3)];
+    expect(scorePlacement(mobile, 4, 0).narrow).toBe(0);
+  });
+
   it("counts edge-adjacent cards with identical size as twins", () => {
     const twins = [card(0, 0, 4, 4, "lead"), card(4, 0, 3, 3), card(7, 0, 3, 3)];
     const mixed = [card(0, 0, 4, 4, "lead"), card(4, 0, 3, 3), card(7, 0, 4, 3)];
@@ -80,6 +128,17 @@ describe("scorePlacement", () => {
   it("reports total grid height", () => {
     const layout = [card(0, 0, 7, 5, "lead"), card(7, 0, 5, 4), card(7, 4, 5, 3)];
     expect(scorePlacement(layout, 12, 1).height).toBe(7);
+  });
+
+  it("skips end-state terms when scoring a partial layout", () => {
+    const partial = [card(0, 0, 4, 5, "lead"), card(4, 0, 4, 3), card(8, 0, 4, 1)];
+    const full = scorePlacement(partial, 12, 2);
+    const mid = scorePlacement(partial, 12, 2, { partial: true });
+    expect(full.ragged + full.skyline + full.tierMix).toBeGreaterThan(0);
+    expect(mid.ragged).toBe(0);
+    expect(mid.skyline).toBe(0);
+    expect(mid.tierMix).toBe(0);
+    expect(mid.seamRow).toBe(full.seamRow);
   });
 
   it("totals the weighted terms", () => {

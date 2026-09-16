@@ -2,51 +2,89 @@ import type { Size } from "./types";
 
 export type Placed<T extends Size> = T & { x: number; y: number };
 
+export interface Gap {
+  x: number;
+  y: number;
+  /** Contiguous free cells from `x` rightwards on row `y`. */
+  width: number;
+}
+
 /**
- * Reading-order skyline fill. Each item takes the free position with the
- * lowest row, then the lowest column, where its whole rectangle fits. The
- * first item therefore always lands at (0, 0). The grid is `cols` wide and
- * grows downward as needed.
+ * Occupancy grid `cols` wide that grows downward. Cards are placed in reading
+ * order at the lowest row, then the lowest column, where they fit. The first
+ * card therefore always lands at (0, 0).
  */
-export function placeItems<T extends Size>(sizes: T[], cols: number): Placed<T>[] {
-  // occupied[y][x] is true when a card covers that cell. Rows are added lazily.
-  const occupied: boolean[][] = [];
-  const ensureRows = (count: number) => {
-    while (occupied.length < count) occupied.push(new Array<boolean>(cols).fill(false));
-  };
-  const fits = (x: number, y: number, w: number, h: number) => {
-    ensureRows(y + h);
+export class UnitGrid {
+  private occupied: boolean[][] = [];
+
+  constructor(readonly cols: number) {}
+
+  get rows(): number {
+    return this.occupied.length;
+  }
+
+  /** Independent copy, so a search can branch from one state. */
+  clone(): UnitGrid {
+    const copy = new UnitGrid(this.cols);
+    copy.occupied = this.occupied.map((row) => row.slice());
+    return copy;
+  }
+
+  private ensureRows(count: number): void {
+    while (this.occupied.length < count) {
+      this.occupied.push(new Array<boolean>(this.cols).fill(false));
+    }
+  }
+
+  private isFree(x: number, y: number): boolean {
+    return y >= this.occupied.length || !this.occupied[y][x];
+  }
+
+  fits(x: number, y: number, w: number, h: number): boolean {
+    if (x < 0 || x + w > this.cols) return false;
     for (let row = y; row < y + h; row++) {
       for (let col = x; col < x + w; col++) {
-        if (occupied[row][col]) return false;
+        if (!this.isFree(col, row)) return false;
       }
     }
     return true;
-  };
-  const mark = (x: number, y: number, w: number, h: number) => {
-    for (let row = y; row < y + h; row++) {
-      for (let col = x; col < x + w; col++) occupied[row][col] = true;
-    }
-  };
+  }
 
-  const placed: Placed<T>[] = [];
-  for (const size of sizes) {
-    if (size.w > cols) {
-      throw new Error(`Editorial layout: item is wider (${size.w}) than the grid (${cols}).`);
-    }
-    let y = 0;
-    let done = false;
-    while (!done) {
-      for (let x = 0; x + size.w <= cols; x++) {
-        if (fits(x, y, size.w, size.h)) {
-          mark(x, y, size.w, size.h);
-          placed.push({ ...size, x, y });
-          done = true;
-          break;
-        }
+  /** Lowest, then leftmost, empty cell together with its free run to the right. */
+  lowestGap(): Gap {
+    for (let y = 0; ; y++) {
+      for (let x = 0; x < this.cols; x++) {
+        if (!this.isFree(x, y)) continue;
+        let width = 0;
+        while (x + width < this.cols && this.isFree(x + width, y)) width++;
+        return { x, y, width };
       }
-      y++;
     }
   }
-  return placed;
+
+  findSlot(w: number, h: number): { x: number; y: number } {
+    if (w > this.cols) {
+      throw new Error(`Editorial layout: item is wider (${w}) than the grid (${this.cols}).`);
+    }
+    for (let y = 0; ; y++) {
+      for (let x = 0; x + w <= this.cols; x++) {
+        if (this.fits(x, y, w, h)) return { x, y };
+      }
+    }
+  }
+
+  place<T extends Size>(size: T): Placed<T> {
+    const { x, y } = this.findSlot(size.w, size.h);
+    this.ensureRows(y + size.h);
+    for (let row = y; row < y + size.h; row++) {
+      for (let col = x; col < x + size.w; col++) this.occupied[row][col] = true;
+    }
+    return { ...size, x, y };
+  }
+}
+
+/** Convenience wrapper: place every size in order on a fresh grid. */
+export function placeItems<T extends Size>(sizes: T[], cols: number): Placed<T>[] {
+  const grid = new UnitGrid(cols);
+  return sizes.map((size) => grid.place(size));
 }
