@@ -63,12 +63,16 @@ function longestRun(isBoundary: (i: number) => boolean, length: number): number 
   return best;
 }
 
+export type ScoreWeights = { [K in keyof typeof SCORE_WEIGHTS]: number };
+
 export interface ScoreOptions {
   /**
    * True while a layout is still being built: the bottom edge and the tier
    * count are not final, so `ragged`, `skyline` and `tierMix` are left at 0.
    */
   partial?: boolean;
+  /** Per-term overrides of `SCORE_WEIGHTS`, for tuning. */
+  weights?: Partial<ScoreWeights>;
 }
 
 export function scorePlacement(
@@ -222,8 +226,9 @@ export function scorePlacement(
     tierMix: partial ? 0 : tierMix,
     height,
   };
-  const total = (Object.keys(SCORE_WEIGHTS) as (keyof typeof SCORE_WEIGHTS)[]).reduce(
-    (sum, key) => sum + terms[key] * SCORE_WEIGHTS[key],
+  const weights: ScoreWeights = { ...SCORE_WEIGHTS, ...options.weights };
+  const total = (Object.keys(SCORE_WEIGHTS) as (keyof ScoreWeights)[]).reduce(
+    (sum, key) => sum + terms[key] * weights[key],
     0
   );
   return { ...terms, total };

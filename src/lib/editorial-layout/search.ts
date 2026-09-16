@@ -1,5 +1,5 @@
 import { UnitGrid } from "./place";
-import { scorePlacement } from "./score";
+import { scorePlacement, type ScoreWeights } from "./score";
 import type {
   Breakpoint,
   LayoutCandidate,
@@ -16,6 +16,8 @@ export interface SearchOptions {
   beamWidth?: number;
   /** How many best-first finished candidates to return (for the playground). */
   keep?: number;
+  /** Per-term overrides of `SCORE_WEIGHTS`, for tuning. */
+  weights?: Partial<ScoreWeights>;
 }
 
 const DEFAULT_BEAM_WIDTH = 48;
@@ -87,6 +89,7 @@ export function searchLayout(
   const cols = COLUMNS[breakpoint];
   const beamWidth = Math.max(1, options.beamWidth ?? DEFAULT_BEAM_WIDTH);
   const keep = Math.max(1, options.keep ?? DEFAULT_KEEP);
+  const weights = options.weights;
 
   if (items.length === 0) {
     const empty: LayoutCandidate = { placements: [], score: scorePlacement([], cols, 0) };
@@ -113,7 +116,7 @@ export function searchLayout(
       for (const { tier, size } of sizeOptions(tiers[index], gap.width, breakpoint)) {
         const grid = state.grid.clone();
         const placements = [...state.placements, { ...grid.place(size), tier }];
-        const score = scorePlacement(placements, cols, targetFeatures, { partial: !last });
+        const score = scorePlacement(placements, cols, targetFeatures, { partial: !last, weights });
         next.push({ grid, placements, total: score.total, serial: serial++ });
       }
     }
@@ -123,7 +126,7 @@ export function searchLayout(
 
   const candidates: LayoutCandidate[] = beam.slice(0, keep).map((state) => ({
     placements: state.placements,
-    score: scorePlacement(state.placements, cols, targetFeatures),
+    score: scorePlacement(state.placements, cols, targetFeatures, { weights }),
   }));
   const best = candidates[0];
   const rows = best.placements.reduce((max, p) => Math.max(max, p.y + p.h), 0);

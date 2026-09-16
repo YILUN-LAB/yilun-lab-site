@@ -141,6 +141,14 @@ describe("scorePlacement", () => {
     expect(mid.seamRow).toBe(full.seamRow);
   });
 
+  it("accepts weight overrides for tuning", () => {
+    const layout = [card(0, 0, 3, 3, "lead"), card(3, 0, 3, 3), card(0, 3, 3, 3), card(3, 3, 3, 3)];
+    const base = scorePlacement(layout, 6, 2);
+    const tuned = scorePlacement(layout, 6, 2, { weights: { crossJunction: 100 } });
+    expect(tuned.crossJunction).toBe(base.crossJunction);
+    expect(tuned.total - base.total).toBeCloseTo(100 - SCORE_WEIGHTS.crossJunction, 8);
+  });
+
   it("totals the weighted terms", () => {
     const layout = [card(0, 0, 3, 3, "lead"), card(3, 0, 3, 3), card(0, 3, 3, 3), card(3, 3, 3, 3)];
     const score = scorePlacement(layout, 6, 2);

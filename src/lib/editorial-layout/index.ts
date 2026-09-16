@@ -5,6 +5,7 @@ export { searchLayout } from "./search";
 export type { SearchOptions } from "./search";
 export { COLUMNS, VOCABULARY, targetFeatureCount } from "./vocabulary";
 export { SCORE_WEIGHTS, scorePlacement } from "./score";
+export type { ScoreOptions, ScoreWeights } from "./score";
 export type * from "./types";
 
 const BREAKPOINTS: Breakpoint[] = ["sm", "md", "lg"];
