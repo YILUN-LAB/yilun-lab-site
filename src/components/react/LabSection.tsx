@@ -19,7 +19,13 @@ export function LabSection({ projects }: LabSectionProps) {
   const bySlug = new Map(projects.map((p) => [p.slug, p]));
   const items = [lead, supporting[0], supporting[1]]
     .map((h) => bySlug.get(h.slug))
-    .filter((p): p is LabProjectInput => p !== undefined);
+    .filter((p): p is LabProjectInput => p !== undefined)
+    .map(
+      (p, index): LabProjectInput => ({
+        ...p,
+        weight: index === 0 ? "lead" : "column",
+      })
+    );
 
   return (
     <section
@@ -41,11 +47,11 @@ export function LabSection({ projects }: LabSectionProps) {
         {...fadeBlurIn(0.15)}
         className="mb-14 mt-6 max-w-xl font-body text-base font-light leading-snug text-white/80 md:text-lg"
       >
-        An exploration of how light shapes emotion, space, and future
-        experience — across performance, installation, and tech.
+        An exploration of how light shapes emotion, space, and future experience — across
+        performance, installation, and tech.
       </motion.p>
 
-      <EditorialGrid items={items} mode="lab" />
+      <EditorialGrid items={items} mode="lab" composition="featured" />
     </section>
   );
 }

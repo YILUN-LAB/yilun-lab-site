@@ -53,10 +53,8 @@ const ASPECT_BASE = "aspect-[4/3]";
 
 const WEIGHT_TITLE_CLASS: Record<Weight, string> = {
   lead: "font-heading text-4xl italic leading-[0.9] tracking-[-1.5px] text-white md:text-5xl lg:text-6xl",
-  feature:
-    "font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-4xl",
-  column:
-    "font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-3xl",
+  feature: "font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-4xl",
+  column: "font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-3xl",
   tile: "font-heading text-xl italic leading-none tracking-[-0.5px] text-white md:text-2xl",
 };
 
@@ -104,11 +102,13 @@ function resolveWeight(declared: Weight, position: number, totalItems: number): 
   return declared;
 }
 
-function aspectClasses(weight: Weight, aspectOverride: AspectRatio | undefined): string {
-  const md = WEIGHT_ASPECT_MD[weight];
-  const lg = aspectOverride
-    ? ASPECT_LG_OVERRIDE[aspectOverride]
-    : WEIGHT_ASPECT_DEFAULT_LG[weight];
+function aspectClasses(
+  weight: Weight,
+  aspectOverride: AspectRatio | undefined,
+  fullWidthTablet = false
+): string {
+  const md = fullWidthTablet ? "md:aspect-[16/10]" : WEIGHT_ASPECT_MD[weight];
+  const lg = aspectOverride ? ASPECT_LG_OVERRIDE[aspectOverride] : WEIGHT_ASPECT_DEFAULT_LG[weight];
   return `${ASPECT_BASE} ${md} ${lg}`;
 }
 
@@ -132,12 +132,60 @@ interface CardProps {
   stagger: boolean;
   index: number;
   totalItems: number;
+  featuredComposition: boolean;
+  compactWorks: boolean;
 }
 
-function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: CardProps) {
-  const colSpan = weight === "lead" ? leadGridClasses(totalItems) : WEIGHT_COLSPAN[weight];
-  const aspect = aspectClasses(weight, item.aspect);
-  const staggerClass = stagger ? "lg:mt-12" : "";
+function Card({
+  item,
+  weight,
+  showFeaturedBadge,
+  stagger,
+  index,
+  totalItems,
+  featuredComposition,
+  compactWorks,
+}: CardProps) {
+  // Keep the opening pair asymmetric, then fill every remaining row.
+  const trailingCount = totalItems - 2;
+  const lastRowCount = trailingCount % 3;
+  const pairedTail =
+    index >= 2 &&
+    ((lastRowCount === 1 && index >= totalItems - 4) ||
+      (lastRowCount === 2 && index >= totalItems - 2));
+  const fullWidthTablet = index === totalItems - 1 && totalItems % 2 === 0;
+  const worksTabletSpan = index === 0 || fullWidthTablet ? "md:col-span-2" : "md:col-span-1";
+  const worksColSpan =
+    totalItems === 1
+      ? "lg:col-span-12"
+      : index === 0
+        ? `lg:col-span-7 ${totalItems === 3 ? "lg:row-span-2" : ""}`
+        : index === 1 || totalItems === 3
+          ? "lg:col-span-5"
+          : pairedTail
+            ? "lg:col-span-6"
+            : "lg:col-span-4";
+  const colSpan = featuredComposition
+    ? index === 0
+      ? "md:col-span-2 lg:col-span-7 lg:row-span-2"
+      : "md:col-span-1 lg:col-span-5"
+    : compactWorks
+      ? `${worksTabletSpan} ${worksColSpan}`
+      : weight === "lead"
+        ? leadGridClasses(totalItems)
+        : WEIGHT_COLSPAN[weight];
+  const aspect = featuredComposition
+    ? index === 0
+      ? "aspect-[4/5] md:aspect-[4/3] lg:aspect-auto lg:h-full"
+      : "aspect-[4/3] md:aspect-[5/4] lg:aspect-[16/10] lg:min-h-[17rem]"
+    : compactWorks
+      ? index === 0
+        ? "aspect-[4/5] md:aspect-[4/3] md:h-full"
+        : totalItems === 3
+          ? "aspect-[4/3] md:aspect-[4/5] lg:aspect-[16/10] lg:min-h-[17rem]"
+          : `${aspectClasses(weight, item.aspect ?? (pairedTail ? "5/4" : undefined), fullWidthTablet)} md:h-full`
+      : aspectClasses(weight, item.aspect);
+  const staggerClass = !featuredComposition && !compactWorks && stagger ? "lg:mt-12" : "";
 
   const titleClass = WEIGHT_TITLE_CLASS[weight];
 
@@ -217,6 +265,7 @@ function Card({ item, weight, showFeaturedBadge, stagger, index, totalItems }: C
 interface EditorialGridProps {
   items: WorkCardData[];
   mode: "lab" | "works";
+  composition?: "featured";
 }
 
 /**
@@ -237,16 +286,20 @@ interface EditorialGridProps {
  *    declared weights are honored — the curator's intended hierarchy
  *    (lead > feature > column > tile) wins.
  *
- * `mode="lab"` enables the "// Featured" pill on the lead card; `mode="works"`
- * keeps the lead chrome (size, CTA) but suppresses the pill.
+ * `mode="lab"` enables the "// Featured" pill on the lead card. Its featured
+ * composition places two supporting cards beside a full-height lead.
+ * `mode="works"` fills aligned rows with adaptive spans, keeping weight-based
+ * typography and CTA sizes while suppressing the featured pill.
  */
-export function EditorialGrid({ items, mode }: EditorialGridProps) {
+export function EditorialGrid({ items, mode, composition }: EditorialGridProps) {
   // Walk items once, computing the resolved weight + staggering per position.
   // Counter for column/tile cards → every 3rd one gets a top offset at lg+.
   let columnTileCount = 0;
 
   return (
-    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12 lg:grid-flow-row-dense lg:items-start">
+    <div
+      className={`grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12 ${composition === "featured" || mode === "works" ? "items-stretch" : "lg:grid-flow-row-dense lg:items-start"}`}
+    >
       <AnimatePresence initial={false}>
         {items.map((item, i) => {
           const resolvedWeight = resolveWeight(item.weight, i, items.length);
@@ -268,6 +321,8 @@ export function EditorialGrid({ items, mode }: EditorialGridProps) {
               stagger={stagger}
               index={i}
               totalItems={items.length}
+              featuredComposition={composition === "featured"}
+              compactWorks={mode === "works"}
             />
           );
         })}

@@ -1,0 +1,23 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Navbar } from "@components/react/Navbar";
+import { Footer } from "@components/react/Footer";
+import { SoftBoundaryProject } from "@components/react/SoftBoundaryProject";
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+  next: CollectionEntry<"projects">;
+}
+
+const { entry, next } = Astro.props;
+---
+
+<Navbar client:load mode="page" />
+<main>
+  <SoftBoundaryProject
+    client:load
+    images={entry.data.images}
+    next={{ title: next.data.title, href: `/projects/${next.id}` }}
+  />
+</main>
+<Footer />
