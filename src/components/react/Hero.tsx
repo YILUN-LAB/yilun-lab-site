@@ -5,6 +5,7 @@ import { BlurText } from "./BlurText";
 import { ArrowUpRight, PlayIcon, ClockIcon, GlobeIcon } from "./icons";
 import { fadeBlurInImmediate } from "@lib/motion-presets";
 import { pickHeroVideo } from "@lib/hero-video";
+import { softBoundaryAnnouncement } from "@lib/data/soft-boundary";
 
 export function Hero() {
   const glowRef = useRef<HTMLDivElement>(null);
@@ -56,23 +57,55 @@ export function Hero() {
       <div className="relative z-10 flex flex-1 flex-col">
         <div className="h-24" />
 
-        <div className="flex flex-1 flex-col items-center justify-center px-4 pt-12 text-center">
-          <motion.a
-            {...fadeBlurInImmediate(0.4)}
-            href="https://litawards.com/winners/winner.php?id=4274&mode=win"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="liquid-glass inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition-colors hover:text-white"
+        <div className="flex flex-1 flex-col items-center justify-center px-4 pb-10 pt-12 text-center">
+          <div
+            role="group"
+            aria-label="Studio news"
+            className="flex w-fit max-w-full flex-col items-center gap-2.5"
           >
-            <span className="rounded-full bg-[#F5AF3C] px-3 py-1 text-xs font-semibold text-black">
-              Winner
-            </span>
-            <span className="font-body text-sm text-white/90">
-              LIT Awards 2025 — A Human Permeability
-            </span>
-          </motion.a>
+            <motion.a
+              {...fadeBlurInImmediate(0.4)}
+              href="/projects/soft-boundary"
+              className="soft-boundary-news liquid-glass grid w-full grid-cols-[5rem_minmax(0,1fr)_1rem] items-center gap-3 rounded-2xl py-3 pl-2 pr-3 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-200"
+            >
+              <span className="justify-self-center rounded-full bg-[#C9BBF4] px-3 py-1 text-xs font-semibold text-[#251D3D]">
+                Exhibition
+              </span>
+              <span className="min-w-0 font-body">
+                <span className="block text-sm font-medium text-white">
+                  {softBoundaryAnnouncement.en}
+                  <span className="mx-1.5 text-white/50">·</span>
+                  <span lang="ja" className="inline-block text-xs font-normal text-white/85">
+                    {softBoundaryAnnouncement.ja}
+                  </span>
+                </span>
+                <span className="mt-1 block text-[11px] tracking-wide text-white/80">
+                  {softBoundaryAnnouncement.dates} ·{" "}
+                  <span className="hidden sm:inline">{softBoundaryAnnouncement.venue}</span>
+                  <span className="sm:hidden">{softBoundaryAnnouncement.city}</span>
+                </span>
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-white/90" />
+            </motion.a>
 
-          <div className="mt-6 max-w-3xl">
+            <motion.a
+              {...fadeBlurInImmediate(0.55)}
+              href="https://litawards.com/winners/winner.php?id=4274&mode=win"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="liquid-glass grid w-full grid-cols-[5rem_minmax(0,1fr)_1rem] items-center gap-3 rounded-full py-1 pl-2 pr-3 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-200"
+            >
+              <span className="justify-self-center rounded-full bg-[#F5AF3C] px-3 py-1 text-xs font-semibold text-black">
+                Winner
+              </span>
+              <span className="font-body text-sm text-white/90">
+                LIT Awards 2025 — A Human Permeability
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-white/90" />
+            </motion.a>
+          </div>
+
+          <div className="mt-10 max-w-3xl md:mt-12">
             <BlurText
               as="h1"
               text="Light is my language."

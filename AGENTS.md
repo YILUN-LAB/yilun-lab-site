@@ -106,11 +106,30 @@ Supported variants:
 links derive from non-draft content. Do not hardcode an expected project count in
 checks; derive it from the current collection and active filter.
 
+`soft-boundary` uses `SoftBoundaryLayout.astro` and a dedicated React exhibition
+page. Its English and Japanese text lives in `src/lib/data/soft-boundary.ts`;
+the MDX entry maintains card metadata and the ordered image list. The project
+defaults to Japanese when the browser language starts with `ja`, otherwise English.
+Its language switch is scoped to the project article and does not change shared
+navigation, other pages, or a saved site-wide preference. The homepage announcement
+shows both languages together. The exhibition flyer is displayed as an image
+without a download control.
+See `docs/soft-boundary.md` for content sources, assets, and maintenance details.
+
 Lab and Works share `EditorialGrid.tsx`. Preserve first-item promotion to `lead`,
 full-width layout for one item, second-item promotion to `feature` for two items,
-and the three-item lead spanning two rows. Other positions respect declared
-`lead`, `feature`, `column`, or `tile` weights. See `docs/editorial-grid.md` for
-background; consult the component for exact current layout behavior.
+and the three-item lead spanning two rows at desktop widths. Weights control
+card typography and controls; column spans adapt to fill rows. Both homepage
+grids use 20px gaps and aligned cards without vertical offsets. See
+`docs/editorial-grid.md` and the component for exact layout behavior.
+
+The Lab uses `composition="featured"`: a seven-column lead fills the height of
+two stacked five-column supporting cards, which use 16:10 media with a 272px
+minimum height at desktop widths. Tablet places the lead above a supporting
+pair; mobile stacks the cards with a 4:5 lead. LabSection supplies section-specific
+weights without changing MDX metadata. Works opens with a 7+5 desktop pair,
+then fills rows in thirds or halves. Tablet uses a full-width lead followed by
+pairs, with any final orphan full-width. Media stretches to each row's height.
 
 ## Publishing and preview behavior
 
@@ -166,7 +185,8 @@ master or reintroduce the removed masks into the outlined SVGs.
 ## Verification and handoff
 
 For code changes, run `npm run check`, relevant Vitest tests, and lint; run a build
-when content, routes, configuration, or rendering changes. Tests currently cover preview middleware and a basic runner sanity check;
+when content, routes, configuration, or rendering changes. Tests cover preview
+middleware, the Soft Boundary language controls and assets, and a basic runner sanity check;
 the build validates project frontmatter against the content schema. For documentation-only changes,
 check referenced paths, commands, formatting, and the diff; a full app build is not required.
 
