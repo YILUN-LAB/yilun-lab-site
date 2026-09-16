@@ -5,10 +5,7 @@ import CaseStudyLayout from "@components/CaseStudyLayout.astro";
 import JsonLd from "@components/JsonLd.astro";
 import { SITE_URL } from "@lib/data/seo";
 
-// In preview-deploy mode (`output: "server"` per astro.config.mjs), Astro
-// otherwise treats getStaticPaths as a dynamic SSR route and 500s. Forcing
-// prerender ensures the page builds as static HTML for both modes; the
-// `noindex` meta in BaseHead keeps preview-build HTML out of search.
+// Case studies stay static in both production and preview deployments.
 export const prerender = true;
 
 export async function getStaticPaths() {
@@ -48,9 +45,7 @@ const creativeWorkLd = {
   image: `${SITE_URL}/assets/images/projects/${entry.id}/cover.jpg`,
   dateCreated: entry.data.year,
   creator: { "@id": `${SITE_URL}/about#person` },
-  keywords: entry.data.category.map(
-    (c: string) => `Light & ${c[0].toUpperCase() + c.slice(1)}`
-  ),
+  keywords: entry.data.category.map((c: string) => `Light & ${c[0].toUpperCase() + c.slice(1)}`),
 };
 
 const breadcrumbLd = {

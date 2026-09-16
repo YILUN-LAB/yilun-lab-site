@@ -7,15 +7,9 @@ import remarkSmartypants from "remark-smartypants";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
-// When PREVIEW_PASSWORD is set (preview-scope env on Vercel), build in
-// "server" mode so every route — including pages that would otherwise
-// prerender — runs through the basic-auth middleware. Production builds
-// (no PREVIEW_PASSWORD) stay "static" for CDN-fast delivery.
-const previewGated = Boolean(process.env.PREVIEW_PASSWORD);
-
 export default defineConfig({
   site: "https://www.yilunlab.com",
-  output: previewGated ? "server" : "static",
+  output: "static",
   adapter: vercel({
     webAnalytics: { enabled: true },
     imageService: true,
@@ -28,8 +22,7 @@ export default defineConfig({
     }),
     sitemap({
       // /connect is QR-only — keep it out of crawler indexes.
-      filter: (page) =>
-        !page.endsWith("/connect/") && !page.endsWith("/connect"),
+      filter: (page) => !page.endsWith("/connect/") && !page.endsWith("/connect"),
     }),
   ],
   vite: {

@@ -23,11 +23,8 @@ const fullTitle = title === "YILUN LAB" ? title : `${title} — YILUN LAB`;
 const canonicalURL = new URL(canonical, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
 
-// PREVIEW_PASSWORD is only set on Vercel's preview-scope env vars (i.e. the
-// staging branch's edit.yilunlab.com build). When present at build time,
-// every page ships with noindex/nofollow so search engines don't catalog
-// Yilun's drafts. Production builds (no PREVIEW_PASSWORD) are unaffected.
-const isPreviewBuild = Boolean(import.meta.env.PREVIEW_PASSWORD);
+// Preview indexing is independent of the retired editor/password configuration.
+const isPreviewBuild = process.env.VERCEL_ENV === "preview";
 ---
 
 <meta charset="utf-8" />
