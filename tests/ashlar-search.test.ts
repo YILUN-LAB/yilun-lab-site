@@ -6,6 +6,7 @@ import type { Breakpoint, LayoutItem } from "../src/lib/ashlar/types";
 const BREAKPOINTS: Breakpoint[] = ["sm", "md", "lg"];
 
 const worksAll: LayoutItem[] = [
+  { slug: "true-self", weight: "lead" },
   { slug: "her", weight: "feature" },
   { slug: "through-limits", weight: "column" },
   { slug: "tao-cave", weight: "feature" },
@@ -13,11 +14,12 @@ const worksAll: LayoutItem[] = [
   { slug: "saoko", weight: "tile" },
   { slug: "myself", weight: "column" },
   { slug: "bizcochito", weight: "tile" },
-  { slug: "true-self", weight: "lead" },
 ];
-const worksArt = worksAll.filter((i) => ["through-limits", "tao-cave", "mo-gu"].includes(i.slug));
+const worksArt = worksAll.filter((i) =>
+  ["true-self", "through-limits", "tao-cave", "mo-gu"].includes(i.slug)
+);
 const worksDance = worksAll.filter((i) =>
-  ["her", "through-limits", "saoko", "myself", "bizcochito"].includes(i.slug)
+  ["true-self", "her", "through-limits", "saoko", "myself", "bizcochito"].includes(i.slug)
 );
 const worksTech = worksAll.filter((i) => ["tao-cave", "mo-gu"].includes(i.slug));
 const lab: LayoutItem[] = [
@@ -99,12 +101,27 @@ describe("searchLayout", () => {
     }
   });
 
-  it("keeps cards in reading order from top to bottom", () => {
+  it("keeps cards in reading order from top to bottom, allowing one-unit drops", () => {
     for (const bp of BREAKPOINTS) {
       const { best } = searchLayout(fakeItems(10), bp);
       for (let i = 1; i < best.placements.length; i++) {
-        expect(best.placements[i].y).toBeGreaterThanOrEqual(best.placements[i - 1].y);
+        expect(best.placements[i].y).toBeGreaterThanOrEqual(best.placements[i - 1].y - 1);
       }
+    }
+  });
+
+  it("breaks the flush top and left edges for larger sets", () => {
+    for (const items of [worksAll, worksDance]) {
+      const { best, cols } = searchLayout(items, "lg");
+      const topCovered = new Set<number>();
+      const leftCovered = new Set<number>();
+      for (const p of best.placements) {
+        if (p.y === 0) for (let x = p.x; x < p.x + p.w; x++) topCovered.add(x);
+        if (p.x === 0) for (let y = p.y; y < p.y + p.h; y++) leftCovered.add(y);
+      }
+      const rows = Math.max(...best.placements.map((p) => p.y + p.h));
+      expect(topCovered.size, "top edge").toBeLessThan(cols);
+      expect(leftCovered.size, "left edge").toBeLessThan(rows);
     }
   });
 

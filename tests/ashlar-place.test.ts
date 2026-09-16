@@ -67,3 +67,19 @@ describe("UnitGrid.lowestGap", () => {
     expect(grid.lowestGap()).toEqual({ x: 0, y: 5, width: 7 });
   });
 });
+
+describe("UnitGrid blocking and explicit placement", () => {
+  it("skips blocked cells when finding the lowest gap", () => {
+    const grid = new UnitGrid(12);
+    grid.place({ w: 7, h: 5 });
+    grid.block(7, 0, 5, 1); // drop the next card by one row
+    grid.placeAt(7, 1, { w: 5, h: 3 });
+    expect(grid.lowestGap()).toEqual({ x: 7, y: 4, width: 5 });
+  });
+
+  it("refuses to place over occupied or blocked cells", () => {
+    const grid = new UnitGrid(12);
+    grid.block(0, 0, 1, 1);
+    expect(() => grid.placeAt(0, 0, { w: 2, h: 2 })).toThrow(/occupied/);
+  });
+});

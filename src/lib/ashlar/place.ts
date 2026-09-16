@@ -75,11 +75,27 @@ export class UnitGrid {
 
   place<T extends Size>(size: T): Placed<T> {
     const { x, y } = this.findSlot(size.w, size.h);
-    this.ensureRows(y + size.h);
-    for (let row = y; row < y + size.h; row++) {
-      for (let col = x; col < x + size.w; col++) this.occupied[row][col] = true;
+    return this.placeAt(x, y, size);
+  }
+
+  /** Places at an explicit position; throws if any cell is already taken. */
+  placeAt<T extends Size>(x: number, y: number, size: T): Placed<T> {
+    if (!this.fits(x, y, size.w, size.h)) {
+      throw new Error(`Ashlar: cannot place ${size.w}×${size.h} at (${x}, ${y}); cells are occupied.`);
     }
+    this.block(x, y, size.w, size.h);
     return { ...size, x, y };
+  }
+
+  /**
+   * Marks cells as taken without a card, so later cards skip them. Used to
+   * leave a deliberate perimeter inset (a dropped or indented card).
+   */
+  block(x: number, y: number, w: number, h: number): void {
+    this.ensureRows(y + h);
+    for (let row = y; row < y + h; row++) {
+      for (let col = x; col < x + w; col++) this.occupied[row][col] = true;
+    }
   }
 }
 

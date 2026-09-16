@@ -1,4 +1,4 @@
-import type { Placement, ScoreBreakdown } from "./types";
+import type { Placement, ScoreBreakdown, Tier } from "./types";
 
 /**
  * Penalty weights. Lower total is better. These are the main tuning surface;
@@ -13,8 +13,10 @@ export const SCORE_WEIGHTS = {
   skyline: 3,
   twins: 1.5,
   narrow: 1.5,
+  edges: 1,
+  inset: 1,
   balance: 6,
-  tierMix: 5,
+  tierMix: 8,
   height: 0.5,
 } as const;
 
@@ -47,6 +49,39 @@ function buildCellMap(placements: Placement[], cols: number): { cells: number[][
   return { cells, rows };
 }
 
+/** Empty cells not connected to the outside of the bounding box via empty cells. */
+function countEnclosedCells(cells: number[][], cols: number, rows: number): number {
+  if (rows === 0) return 0;
+  const seen: boolean[][] = Array.from({ length: rows }, () => new Array<boolean>(cols).fill(false));
+  const stack: [number, number][] = [];
+  const push = (y: number, x: number) => {
+    if (y < 0 || y >= rows || x < 0 || x >= cols) return;
+    if (seen[y][x] || cells[y][x] !== EMPTY) return;
+    seen[y][x] = true;
+    stack.push([y, x]);
+  };
+  for (let x = 0; x < cols; x++) {
+    push(0, x);
+    push(rows - 1, x);
+  }
+  for (let y = 0; y < rows; y++) {
+    push(y, 0);
+    push(y, cols - 1);
+  }
+  let exterior = 0;
+  while (stack.length > 0) {
+    const [y, x] = stack.pop() as [number, number];
+    exterior++;
+    push(y - 1, x);
+    push(y + 1, x);
+    push(y, x - 1);
+    push(y, x + 1);
+  }
+  let empty = 0;
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) if (cells[y][x] === EMPTY) empty++;
+  return empty - exterior;
+}
+
 function seamPenalty(run: number, free: number, full: number): number {
   const excess = Math.max(0, run - free);
   return excess * excess + (run >= full ? FULL_SEAM_PENALTY : 0);
@@ -67,8 +102,8 @@ export type ScoreWeights = { [K in keyof typeof SCORE_WEIGHTS]: number };
 
 export interface ScoreOptions {
   /**
-   * True while a layout is still being built: the bottom edge and the tier
-   * count are not final, so `ragged`, `skyline` and `tierMix` are left at 0.
+   * True while a layout is still being built: the bottom edge is not final,
+   * so `ragged` and `skyline` are left at 0.
    */
   partial?: boolean;
   /** Per-term overrides of `SCORE_WEIGHTS`, for tuning. */
@@ -78,7 +113,7 @@ export interface ScoreOptions {
 export function scorePlacement(
   placements: Placement[],
   cols: number,
-  targetFeatures: number,
+  wantedTiers: Tier[] = [],
   options: ScoreOptions = {}
 ): ScoreBreakdown {
   const partial = options.partial === true;
@@ -93,6 +128,11 @@ export function scorePlacement(
   const heroBottom = placements.length > 0 ? placements[0].y + placements[0].h : -1;
   for (let y = 1; y < rows; y++) {
     const run = longestRun((x) => between(cells[y - 1][x], cells[y][x]), cols);
+    const emptyRow = cells[y].every((id) => id === EMPTY);
+    if (emptyRow) {
+      seamRow += FULL_ROW_PENALTY;
+      continue;
+    }
     if (run >= cols) {
       seamRow += y === heroBottom ? HERO_BREAK_PENALTY : FULL_ROW_PENALTY;
       continue;
@@ -123,9 +163,12 @@ export function scorePlacement(
     }
   }
 
-  // Holes: empty cells with an occupied cell somewhere below in the column.
+  // Holes: empty cells that cannot reach the outside of the bounding box
+  // through other empty cells. Perimeter insets (a dropped or indented card)
+  // stay open to the outside and are therefore not holes.
+  const holes = countEnclosedCells(cells, cols, rows);
+
   // Ragged: range of column bottoms.
-  let holes = 0;
   let minBottom = Number.POSITIVE_INFINITY;
   let maxBottom = 0;
   for (let x = 0; x < cols; x++) {
@@ -136,10 +179,33 @@ export function scorePlacement(
         break;
       }
     }
-    for (let y = 0; y < bottom; y++) if (cells[y][x] === EMPTY) holes++;
     minBottom = Math.min(minBottom, bottom);
     maxBottom = Math.max(maxBottom, bottom);
   }
+
+  // Inset: empty cells more than the free ragged range above the deepest
+  // bottom (drops, indents, notches, holes). Each one costs a little, so the
+  // search only spends them where they break a seam or a flush edge.
+  let inset = 0;
+  const insetLimit = maxBottom - RAGGED_FREE_UNITS;
+  for (let y = 0; y < insetLimit; y++) {
+    for (let x = 0; x < cols; x++) if (cells[y][x] === EMPTY) inset++;
+  }
+
+  // Edges: straight runs along the outer silhouette read as a frame. The top
+  // edge is free up to half the width; the left and right edges are free up
+  // to half the height, or the tallest card if that is more (the lead has to
+  // sit somewhere).
+  const topRun = longestRun((x) => cells[0]?.[x] !== EMPTY && cells[0]?.[x] !== undefined, cols);
+  const leftRun = longestRun((y) => cells[y][0] !== EMPTY, rows);
+  const rightRun = longestRun((y) => cells[y][cols - 1] !== EMPTY, rows);
+  const sideFree = Math.max(tallest, rows * SEAM_ROW_FREE_FRACTION);
+  const edgeExcess = (run: number, free: number) => {
+    const excess = Math.max(0, run - free);
+    return excess * excess;
+  };
+  const edges =
+    edgeExcess(topRun, rowFree) + edgeExcess(leftRun, sideFree) + edgeExcess(rightRun, sideFree);
   const raggedRange = cols > 0 ? maxBottom - minBottom : 0;
   const raggedExcess = Math.max(0, raggedRange - RAGGED_FREE_UNITS);
   const ragged = raggedExcess * raggedExcess;
@@ -163,7 +229,8 @@ export function scorePlacement(
       if (x === cols) emptyAtRight = true;
       if (start > 0 && x < cols) notches++;
     }
-    if (emptyAtLeft && emptyAtRight) notches++;
+    // A lone card with space on both edges only reads as a tooth at the bottom.
+    if (emptyAtLeft && emptyAtRight && y >= minBottom) notches++;
   }
   const bottoms = new Set<number>();
   for (let x = 0; x < cols; x++) {
@@ -203,8 +270,9 @@ export function scorePlacement(
   }
   const balance = area > 0 ? Math.abs(moment / area - cols / 2) / cols : 0;
 
-  const featureCount = placements.filter((p) => p.tier === "feature").length;
-  const tierMix = Math.abs(featureCount - targetFeatures);
+  // Tier mix: cards that could not take their assigned tier and borrowed a
+  // neighbouring size instead. Valid on partial layouts too.
+  const tierMix = placements.filter((p, i) => wantedTiers[i] !== undefined && p.tier !== wantedTiers[i]).length;
 
   // Narrow: cards under the comfortable width, only where the grid is wide
   // enough for that to be a choice (mobile cards always span the grid).
@@ -222,8 +290,10 @@ export function scorePlacement(
     skyline: partial ? 0 : skyline,
     twins,
     narrow,
+    edges,
+    inset,
     balance,
-    tierMix: partial ? 0 : tierMix,
+    tierMix,
     height,
   };
   const weights: ScoreWeights = { ...SCORE_WEIGHTS, ...options.weights };

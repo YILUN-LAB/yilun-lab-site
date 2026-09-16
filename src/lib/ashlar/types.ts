@@ -30,6 +30,8 @@ export interface ScoreBreakdown {
   skyline: number;
   twins: number;
   narrow: number;
+  edges: number;
+  inset: number;
   balance: number;
   tierMix: number;
   height: number;
