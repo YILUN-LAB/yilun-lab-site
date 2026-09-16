@@ -43,11 +43,13 @@ export function createHeroScrollController({
   hero,
   content,
   exposure,
+  playbackReady,
   onReveal,
 }: {
   hero: HTMLElement;
   content: HTMLElement;
   exposure: MotionValue<number>;
+  playbackReady?: MotionValue<boolean>;
   onReveal: (visible: boolean) => void;
 }) {
   const lab = document.getElementById("lab");
@@ -58,6 +60,7 @@ export function createHeroScrollController({
   let previousY = window.scrollY;
   let direction = 1;
   let revealed = true;
+  let returning = false;
   let animation: { stop: () => void } | undefined;
   let destination: number | undefined;
   let destinationId: string | undefined;
@@ -73,6 +76,7 @@ export function createHeroScrollController({
   let disposed = false;
 
   const reveal = (visible: boolean) => {
+    if (!visible) returning = true;
     content.inert = !visible;
     if (revealed === visible) return;
     revealed = visible;
@@ -88,9 +92,14 @@ export function createHeroScrollController({
       reveal(false);
       if (!animation) phase("outside");
     } else if (amount >= 1 && !animation) {
-      reveal(true);
+      // On return, finish accelerating and presenting video before starting UI.
+      // Initial page content and static/error fallbacks remain accessible.
+      if (!returning || reduced.matches || playbackReady?.get() !== false) {
+        returning = false;
+        reveal(true);
+      }
       phase("inside");
-    } else if (direction < 0 && amount >= 0.2) reveal(true);
+    }
     previousY = position;
   };
   const measure = () => {
@@ -106,7 +115,6 @@ export function createHeroScrollController({
     destination = target;
     destinationId = id;
     if (direction > 0) reveal(false);
-    else if (heroExposure(from, start, end) >= 0.2) reveal(true);
     phase(direction < 0 ? "entering" : "exiting");
     if (target === start) content.scrollTop = 0;
     const complete = () => {
@@ -315,7 +323,7 @@ export function createHeroScrollController({
       animation?.stop();
       animation = undefined;
       go(target);
-    }
+    } else sync();
   };
   const onVisibility = () => {
     if (document.hidden && animation && destination !== undefined) {
@@ -330,6 +338,7 @@ export function createHeroScrollController({
 
   measure();
   sync();
+  const unsubscribePlayback = playbackReady?.on("change", () => sync());
   const observer = new ResizeObserver(onResize);
   observer.observe(hero);
   window.addEventListener("wheel", onWheel, { passive: false });
@@ -347,6 +356,7 @@ export function createHeroScrollController({
   reduced.addEventListener("change", onPolicy);
   return () => {
     disposed = true;
+    unsubscribePlayback?.();
     animation?.stop();
     clearTimeout(scrollTimer);
     observer.disconnect();

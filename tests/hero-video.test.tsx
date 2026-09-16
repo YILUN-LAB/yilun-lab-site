@@ -64,12 +64,19 @@ afterEach(() => {
 
 const mount = (mode: "scene" | "loop" | "still" = "scene") => {
   const exposure = motionValue(1);
+  const onPlaybackReady = vi.fn();
   const result = render(
     <section>
-      <FadingVideo src={source} poster="/poster.webp" mode={mode} exposure={exposure} />
+      <FadingVideo
+        src={source}
+        poster="/poster.webp"
+        mode={mode}
+        exposure={exposure}
+        onPlaybackReady={onPlaybackReady}
+      />
     </section>
   );
-  return { ...result, exposure, video: result.container.querySelector("video")! };
+  return { ...result, exposure, onPlaybackReady, video: result.container.querySelector("video")! };
 };
 const visible = async (value = true) => {
   await act(async () => {
@@ -113,11 +120,12 @@ describe("hero media lifecycle", () => {
           removeEventListener() {},
         },
       });
-      const { video } = mount(policy === "still" ? "still" : "scene");
+      const { video, onPlaybackReady } = mount(policy === "still" ? "still" : "scene");
       await visible();
       expect(video).not.toHaveAttribute("src");
       expect(video).toHaveAttribute("poster", "/poster.webp");
       expect(play).not.toHaveBeenCalled();
+      expect(onPlaybackReady).toHaveBeenLastCalledWith(true);
       expect(screen.queryByRole("button")).not.toBeInTheDocument();
       expect(video.controls).toBe(false);
     }
@@ -160,6 +168,53 @@ describe("hero media lifecycle", () => {
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
     expect(video.controls).toBe(false);
     expect(video).toHaveAttribute("tabindex", "-1");
+  });
+
+  it("reports readiness only after a normal-speed frame is presented on return", async () => {
+    const { video, exposure, onPlaybackReady } = mount();
+    let presentFrame: () => void;
+    let frameId = 0;
+    Object.defineProperty(video, "requestVideoFrameCallback", {
+      configurable: true,
+      value: (callback: () => void) => {
+        presentFrame = callback;
+        return ++frameId;
+      },
+    });
+    Object.defineProperty(video, "cancelVideoFrameCallback", {
+      configurable: true,
+      value: vi.fn(),
+    });
+    await visible();
+    act(() => presentFrame());
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(true);
+    act(() => exposure.set(0));
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(false);
+    await act(async () => exposure.set(0.2));
+    act(() => presentFrame());
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(false);
+    act(() => exposure.set(1));
+    expect(video.playbackRate).toBe(0.65);
+    // Changing playbackRate alone must not reveal the content.
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(false);
+    act(() => presentFrame());
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(true);
+  });
+
+  it("waits for resumed playback after buffering, with a static fallback on error", async () => {
+    const { video, exposure, onPlaybackReady } = mount();
+    await visible();
+    act(() => exposure.set(0));
+    await act(async () => exposure.set(0.2));
+    fireEvent.waiting(video);
+    act(() => exposure.set(1));
+    fireEvent.timeUpdate(video);
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(false);
+    fireEvent.playing(video);
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(true);
+    fireEvent.waiting(video);
+    fireEvent.error(video);
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(true);
   });
 
   it("does not settle merely because a visitor focuses or reads content", async () => {

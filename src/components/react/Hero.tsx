@@ -13,7 +13,7 @@ export function Hero() {
   const glowRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const { exposure, contentVisible } = useHeroScene(heroRef, contentRef);
+  const { exposure, contentVisible, onPlaybackReady } = useHeroScene(heroRef, contentRef);
   const reduced = useReducedMotion();
   const reveal = (delay: number) => ({
     ...fadeBlurInImmediate(reduced ? 0 : delay),
@@ -68,6 +68,7 @@ export function Hero() {
           src={asset.src}
           poster={asset.poster}
           exposure={exposure}
+          onPlaybackReady={onPlaybackReady}
           className="absolute left-1/2 top-0 z-0 -translate-x-1/2 object-cover object-top"
           style={{ width: "120%", height: "120%" }}
           glowRef={glowRef}

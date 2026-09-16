@@ -8,6 +8,8 @@ interface FadingVideoProps {
   poster: string;
   mode?: HeroPlaybackMode;
   exposure?: MotionValue<number>;
+  /** Normal-speed frame presented, or a deliberate static/error fallback. */
+  onPlaybackReady?: (ready: boolean) => void;
   className?: string;
   style?: CSSProperties;
   glowRef?: RefObject<HTMLElement | null>;
@@ -21,6 +23,7 @@ export function FadingVideo({
   poster,
   mode = "scene",
   exposure,
+  onPlaybackReady,
   className = "",
   style = {},
   glowRef,
@@ -36,21 +39,27 @@ export function FadingVideo({
     let blocked = false;
     let previouslyEligible = false;
     let pendingPlay = false;
+    let playing = false;
+    let playbackReady = false;
     let revealed = false;
     let fadingOut = false;
     let firstFrame = 0;
+    let firstFrameAtFullSpeed = false;
     let restartTimer: ReturnType<typeof setTimeout> | undefined;
     const amount = () => Math.max(0, Math.min(1, exposure?.get() ?? 1));
     const transitioning = () => mode === "scene" && amount() < 0.999;
+    const staticPolicy = () =>
+      mode === "still" ||
+      motion.matches ||
+      !!connection?.saveData ||
+      /^(slow-)?2g$/.test(connection?.effectiveType ?? "");
+    const reportReady = (ready: boolean) => {
+      if (disposed || ready === playbackReady) return;
+      playbackReady = ready;
+      onPlaybackReady?.(ready);
+    };
     const eligible = () =>
-      !disposed &&
-      inView &&
-      amount() > 0 &&
-      !document.hidden &&
-      mode !== "still" &&
-      !motion.matches &&
-      !connection?.saveData &&
-      !/^(slow-)?2g$/.test(connection?.effectiveType ?? "");
+      !disposed && inView && amount() > 0 && !document.hidden && !staticPolicy();
     const opacity = (value: number, duration = 500) => {
       video.style.transition = `opacity ${duration}ms ease-out`;
       video.style.opacity = String(value);
@@ -75,9 +84,14 @@ export function FadingVideo({
       previouslyEligible = active;
       if (!active) {
         stop();
+        reportReady(staticPolicy());
         return;
       }
-      if (blocked) return;
+      if (blocked) {
+        reportReady(true);
+        return;
+      }
+      if (amount() < 1) reportReady(false);
       if (transitioning()) {
         clearRestart();
         if (fadingOut) opacity(1);
@@ -94,6 +108,7 @@ export function FadingVideo({
       // Never seek when leaving or re-entering: preserve the held frame.
       video.playbackRate =
         mode === "scene" ? 0.1 + (PLAYBACK_RATE - 0.1) * amount() ** 2 : PLAYBACK_RATE;
+      if (playing && !video.paused && amount() === 1 && !playbackReady) requestFrame();
       if (pendingPlay || restartTimer !== undefined || !video.paused) return;
       if (video.ended) {
         video.currentTime = 0;
@@ -114,6 +129,7 @@ export function FadingVideo({
               return;
             }
             blocked = true;
+            reportReady(true);
           }
         });
     };
@@ -123,17 +139,44 @@ export function FadingVideo({
       opacity(1, revealed ? 400 : 1600);
       revealed = true;
     };
+    const readyAtFullSpeed = () => {
+      if (eligible() && playing && !video.paused && amount() === 1) reportReady(true);
+    };
+    const requestFrame = () => {
+      if (typeof video.requestVideoFrameCallback !== "function") return;
+      const atFullSpeed = amount() === 1;
+      // Replace a low-speed callback when acceleration completes, so the UI
+      // waits for a frame requested at the final speed rather than a timer.
+      if (firstFrame) {
+        if (!atFullSpeed || firstFrameAtFullSpeed) return;
+        video.cancelVideoFrameCallback(firstFrame);
+      }
+      firstFrameAtFullSpeed = atFullSpeed;
+      firstFrame = video.requestVideoFrameCallback(() => {
+        firstFrame = 0;
+        reveal();
+        if (atFullSpeed) readyAtFullSpeed();
+      });
+    };
     const onPlaying = () => {
       if (!eligible()) {
         stop();
         return;
       }
+      playing = true;
       if (typeof video.requestVideoFrameCallback === "function") {
-        if (firstFrame) video.cancelVideoFrameCallback(firstFrame);
-        firstFrame = video.requestVideoFrameCallback(reveal);
-      } else reveal();
+        requestFrame();
+      } else {
+        reveal();
+        readyAtFullSpeed();
+      }
+    };
+    const onWaiting = () => {
+      playing = false;
+      reportReady(false);
     };
     const onTime = () => {
+      if (typeof video.requestVideoFrameCallback !== "function") readyAtFullSpeed();
       if (transitioning() || video.paused) return;
       const left = video.duration - video.currentTime;
       if (Number.isFinite(left) && left > 0 && left <= 0.55 && !fadingOut) {
@@ -160,6 +203,7 @@ export function FadingVideo({
       blocked = true;
       stop();
       opacity(0, 0);
+      reportReady(true);
     };
     const observer = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting;
@@ -168,6 +212,8 @@ export function FadingVideo({
     observer.observe(video.closest("section") ?? video);
     const unsubscribe = exposure?.on("change", sync);
     video.addEventListener("playing", onPlaying);
+    video.addEventListener("waiting", onWaiting);
+    video.addEventListener("pause", onWaiting);
     video.addEventListener("timeupdate", onTime);
     video.addEventListener("ended", onEnded);
     video.addEventListener("error", onError);
@@ -181,6 +227,8 @@ export function FadingVideo({
       unsubscribe?.();
       if (firstFrame && video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(firstFrame);
       video.removeEventListener("playing", onPlaying);
+      video.removeEventListener("waiting", onWaiting);
+      video.removeEventListener("pause", onWaiting);
       video.removeEventListener("timeupdate", onTime);
       video.removeEventListener("ended", onEnded);
       video.removeEventListener("error", onError);
@@ -192,7 +240,7 @@ export function FadingVideo({
       video.load();
       video.style.opacity = "0";
     };
-  }, [src, mode, exposure, glowRef]);
+  }, [src, mode, exposure, glowRef, onPlaybackReady]);
   return (
     <video
       ref={videoRef}

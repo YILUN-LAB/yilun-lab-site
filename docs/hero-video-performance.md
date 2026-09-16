@@ -99,8 +99,13 @@ it does not attribute all GPU activity to this tab. Merely pausing video was ins
   transition, its final frame remains held until Hero is fully back and looping
   resumes. Existing fade-out/restart behavior remains when fully inside.
 - **Content choreography:** Hero content fades and blurs out on exit; on every
-  return, heading words, announcements, description, links, cards and footer
-  replay their staggered reveal. Hidden Hero content is inert so it cannot catch
+  return, only the background is visible during acceleration. After Hero is fully
+  entered and a frame at the normal 0.65× speed is presented, heading words,
+  announcements, description, links, cards and footer replay their staggered
+  reveal. `requestVideoFrameCallback` supplies readiness where supported; media
+  events supply the fallback. There is no fixed delay guessing when playback
+  will resume. Initial content, reduced-motion/data policies and playback errors
+  retain readable content. Hidden Hero content is inert so it cannot catch
   keyboard focus. The global navigation remains available across sections.
 - **Small viewports:** Hero is one small viewport high (`100svh`). Content can
   scroll internally when short screens or enlarged text need more room; these
@@ -171,7 +176,7 @@ controller coverage for wheel momentum, touch gestures, keyboard navigation,
 scrollbar settling, reduced motion, viewport changes and disposal.
 
 Final revision: `npm run check` (zero diagnostics), `npm run lint`, `npm test`
-(41 tests in 6 files), `npm run build`, changed-file formatting and `git diff
+(44 tests in 6 files), `npm run build`, changed-file formatting and `git diff
 --check` passed. Production output contains the SSR poster and excludes both
 playback controls and the diagnostic readout.
 
@@ -185,3 +190,11 @@ lifecycle observations, not a new whole-device GPU benchmark.
 Network emulation, physical iOS/Safari touch playback and controlled regional
 field measurements remain unverified. Screenshots and diagnostic captures stay
 in ignored `.playwright-mcp/`.
+
+The subsequent return-order revision was checked in the browser: while entering
+at 0.17×, Hero content was inert and the title opacity was 0; after normal 0.65×
+playback resumed, content became available and the title reached opacity 1. The
+return resumed from the held 6.20 s frame. Added tests cover delayed playback
+readiness, normal-speed frame presentation, buffering and static/error fallbacks.
+The full check/lint/test/build run passed again with no browser console warnings
+or errors.

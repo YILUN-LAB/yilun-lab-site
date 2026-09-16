@@ -123,9 +123,11 @@ describe("Hero / Lab scene navigation", () => {
     for (let i = 0; i < 2; i++) {
       wheel(-40);
       transition.update(400);
+      expect(reveal).toHaveBeenLastCalledWith(false);
+      expect(content.inert).toBe(true);
+      finish();
       expect(reveal).toHaveBeenLastCalledWith(true);
       expect(content.inert).toBe(false);
-      finish();
       expect(y).toBe(0);
       expect(exposure.get()).toBe(1);
       expect(hero.dataset.heroState).toBe("inside");
@@ -133,6 +135,37 @@ describe("Hero / Lab scene navigation", () => {
       finish();
       expect(reveal).toHaveBeenLastCalledWith(false);
     }
+  });
+  it("keeps returning content hidden until full exposure and playback readiness, ignoring stale readiness after exit", () => {
+    cleanup();
+    const playbackReady = motionValue(false);
+    cleanup = createHeroScrollController({
+      hero,
+      content,
+      exposure,
+      playbackReady,
+      onReveal: reveal,
+    });
+    // Initial content is not held hostage by the first video download.
+    expect(content.inert).toBe(false);
+    wheel(40);
+    finish();
+    wheel(-40);
+    transition.update(400);
+    playbackReady.set(true);
+    expect(content.inert).toBe(true);
+    playbackReady.set(false);
+    finish();
+    expect(exposure.get()).toBe(1);
+    expect(content.inert).toBe(true);
+    playbackReady.set(true);
+    expect(content.inert).toBe(false);
+    expect(reveal).toHaveBeenLastCalledWith(true);
+    wheel(40);
+    finish();
+    playbackReady.set(false);
+    playbackReady.set(true);
+    expect(content.inert).toBe(true);
   });
   it("lets Lab and later content scroll normally after the initiating gesture ends", () => {
     wheel(40);

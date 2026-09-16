@@ -163,7 +163,8 @@ pairs, with any final orphan full-width. Media stretches to each row's height.
   `FadingVideo.tsx` uses exposure to slow/pause on exit and resume/accelerate from
   the held frame on return. Preserve looping, storage-failure and poster fallbacks.
   This decorative background must have no manual playback controls. Hero content
-  replays its staggered reveal on each entry and is inert while hidden.
+  replays its staggered reveal only after a normal-speed video frame is presented
+  on return, and is inert while hidden. Static/error fallbacks must remain usable.
   `AuroraBackground` sleeps when occluded by Hero or when the tab is hidden.
   See `docs/hero-video-performance.md` for evidence and the dev-only readout.
 - `/api/contact` validates with `ContactFormSchema`, applies an in-memory per-IP
