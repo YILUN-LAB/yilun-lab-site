@@ -54,7 +54,7 @@ lowest-row-then-lowest-column. `mulberry32(1)` yields a fixed sequence;
 **Tests:** `places first item at origin`, `never overlaps`, `never exceeds
 columns`, `fills the lowest free row first`, `prng is deterministic`,
 `hash is stable`.
-**Status:** Not Started
+**Status:** Complete
 
 ## Stage 2: Score function
 
@@ -64,7 +64,7 @@ staggered brick layout of the same items; a "+" arrangement scores
 `crossJunction` = 1; a layout with an enclosed empty cell scores `holes` > 0;
 `ragged` is 0 when bottoms are flush.
 **Tests:** one test per term above plus `total is the weighted sum`.
-**Status:** Not Started
+**Status:** Complete
 
 ## Stage 3: Vocabulary, search and public API
 
@@ -76,7 +76,7 @@ best candidate has zero holes for the real project set; runtime under 50ms for
 12 items × 3 breakpoints in Vitest.
 **Tests:** `is deterministic`, `lead is first and largest`, `respects tier
 targets`, `no holes for site content`, `handles zero and one item`, `runs fast`.
-**Status:** Not Started
+**Status:** Complete
 
 ## Stage 4: Playground and visual check
 
@@ -86,7 +86,7 @@ for a chosen count, seed and breakpoint width, with a score table and a
 **Success criteria:** User confirms the desktop, tablet and mobile results look
 editorial and not chaotic; weights in `score.ts` and vocabulary tuned as needed.
 **Tests:** Manual visual check; engine tests stay green after tuning.
-**Status:** Not Started
+**Status:** In Progress
 
 ## Stage 5: Site integration
 
