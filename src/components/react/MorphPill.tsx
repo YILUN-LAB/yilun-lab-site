@@ -105,13 +105,13 @@ export function MorphPill({
     >
       <div
         ref={containerRef}
-        className={
-          "no-scrollbar relative min-w-0 max-w-full items-center gap-1 overflow-y-hidden " +
-          (mobileGrid
+        className={[
+          "no-scrollbar relative min-w-0 max-w-full items-center gap-1 overflow-y-hidden",
+          mobileGrid
             ? "grid w-full grid-cols-2 overflow-x-hidden md:inline-flex md:w-auto md:overflow-x-auto"
-            : "inline-flex flex-nowrap overflow-x-auto") +
-          (bare ? "" : "scroll-px-1.5 p-1.5")
-        }
+            : "inline-flex flex-nowrap overflow-x-auto",
+          bare ? "" : "scroll-px-1.5 p-1.5",
+        ].join(" ")}
       >
         <motion.span
           className="liquid-glass-tint pointer-events-none absolute rounded-full will-change-transform"
@@ -143,11 +143,11 @@ export function MorphPill({
                   });
               }}
               aria-current={isActive ? "true" : undefined}
-              className={
-                "relative z-10 inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full font-body text-sm font-medium transition-colors duration-300 " +
-                (mobileGrid ? "min-w-0 justify-center px-2 py-3 md:px-4 md:py-2" : "px-4 py-2") +
-                (isActive ? "text-[#fff5e0]" : "glass-link text-white/85")
-              }
+              className={[
+                "relative z-10 inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full font-body text-sm font-medium transition-colors duration-300",
+                mobileGrid ? "min-w-0 justify-center px-2 py-3 md:px-4 md:py-2" : "px-4 py-2",
+                isActive ? "text-[#fff5e0]" : "glass-link text-white/85",
+              ].join(" ")}
               style={isActive ? { textShadow: "0 1px 0 rgba(80,40,5,0.45)" } : undefined}
             >
               {item.label}
