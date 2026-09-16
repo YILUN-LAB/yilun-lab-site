@@ -161,7 +161,11 @@ pairs, with any final orphan full-width. Media stretches to each row's height.
   positions; later content scrolls normally. Preserve nested content scrolling,
   keyboard/touch input, reduced motion, viewport changes and handler cleanup.
   `FadingVideo.tsx` uses exposure to slow/pause on exit and resume/accelerate from
-  the held frame on return. Preserve looping, storage-failure and poster fallbacks.
+  the held frame on return. Assets bake a forward/return cycle from source frames
+  `0..96,95..1` at 24 fps, excluding the source fade-to-black outro. Use native
+  looping; do not restore end fades, restart timers or end-of-clip entry holds.
+  Select one clip per page mount and retain it through scroll transitions.
+  Preserve storage-failure and poster fallbacks.
   This decorative background must have no manual playback controls. Hero content
   replays its staggered reveal only after a normal-speed video frame is presented
   on return, and is inert while hidden. Static/error fallbacks must remain usable.

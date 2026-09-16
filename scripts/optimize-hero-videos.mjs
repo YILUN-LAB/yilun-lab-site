@@ -5,8 +5,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
 
-// Keep the original resolution, frame rate, colour and composition. Original
-// clips remain available for comparisons; never overwrite their stable URLs.
+// Bake a forward/return cycle from the bright first four seconds. The source
+// outros fade to black and cannot be looped directly. Do this offline so the
+// browser only decodes one normally playing video, never reverse-seeks frames.
+// 0..96,95..1 = 192 frames at 24 fps; neither turning point is duplicated.
+// Keep resolution, colour and framing. Preserve all original source files.
+const turnFrame = 96;
+const loopFilter =
+  `[0:v:0]trim=start_frame=0:end_frame=${turnFrame + 1},setpts=PTS-STARTPTS,split[f][r];` +
+  `[r]reverse,trim=start_frame=1:end_frame=${turnFrame},setpts=PTS-STARTPTS[b];` +
+  "[f][b]concat=n=2:v=1:a=0[out]";
 const output = "public/assets/videos/optimized";
 const temp = await mkdtemp(join(tmpdir(), "yilun-hero-"));
 const assets = [];
@@ -14,19 +22,49 @@ await mkdir(output, { recursive: true });
 try {
   for (let index = 1; index <= 3; index++) {
     const original = `/assets/videos/hero-${index}.mp4`;
+    const { streams } = JSON.parse(
+      execFileSync(
+        "ffprobe",
+        [
+          "-v",
+          "error",
+          "-select_streams",
+          "v:0",
+          "-show_entries",
+          "stream=r_frame_rate,nb_frames,width,height",
+          "-of",
+          "json",
+          `public${original}`,
+        ],
+        { encoding: "utf8" }
+      )
+    );
+    const stream = streams[0];
+    if (
+      stream?.r_frame_rate !== "24/1" ||
+      Number(stream.nb_frames) <= turnFrame ||
+      stream.width !== 1920 ||
+      stream.height !== 1080
+    ) {
+      throw new Error(`${original}: review the curated loop range for the new source format`);
+    }
     execFileSync("ffmpeg", [
       "-hide_banner",
       "-loglevel",
       "error",
       "-i",
       `public${original}`,
+      "-filter_complex",
+      loopFilter,
       "-map",
-      "0:v:0",
+      "[out]",
       "-an",
       "-c:v",
       "libx264",
       "-preset",
       "slow",
+      "-threads",
+      "4",
       "-crf",
       "23",
       "-pix_fmt",
@@ -55,7 +93,7 @@ try {
     ]) {
       const bytes = await readFile(join(temp, `${index}.${extension}`));
       const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 12);
-      const name = `hero-${index}.${hash}.${extension}`;
+      const name = `hero-${index}${key === "src" ? "-loop" : ""}.${hash}.${extension}`;
       await writeFile(join(output, name), bytes);
       asset[key] = `/assets/videos/optimized/${name}`;
       asset[`${key}Bytes`] = bytes.length;

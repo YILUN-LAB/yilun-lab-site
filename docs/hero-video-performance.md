@@ -15,19 +15,33 @@ poster; the video was selected only after React hydration, with `preload="auto"`
 
 | Clip | Original bytes | New bytes | Reduction | Poster bytes |
 | ---- | -------------: | --------: | --------: | -----------: |
-| 1    |     12,936,149 | 8,111,131 |     37.3% |      103,358 |
-| 2    |      6,526,558 | 4,015,136 |     38.5% |       57,520 |
-| 3    |      7,826,551 | 4,736,124 |     39.5% |       61,172 |
+| 1    |     12,936,149 | 8,015,813 |     38.0% |      103,358 |
+| 2    |      6,526,558 | 3,887,739 |     40.4% |       57,520 |
+| 3    |      7,826,551 | 4,652,588 |     40.6% |       61,172 |
 
-The new clips preserve resolution, frame rate, duration and framing. They use
-x264 slow / CRF 23, have no audio, and put `moov` before `mdat`. Compression is
-lossy: unchanged dimensions do not imply pixel-identical quality. A more aggressive
-CRF 26 trial reduced clip 1 to about 4.9 MB, but the conservative variant was kept
-for visual review. The original clips remain available for direct A/B comparison.
+The current clips preserve 1920×1080, 24 fps, 8-second duration and framing.
+They use x264 slow / CRF 23, have no audio, and put `moov` before `mdat`.
+Compression is lossy; unchanged dimensions do not imply pixel-identical quality.
+The original files remain available for offline comparisons.
+
+The source videos contain a fade-to-black outro, so simply enabling `loop` on
+those files would retain a visible ending. The current assets instead bake an
+8-second forward/return cycle from the bright first four seconds: source frames
+`0..96,95..1`. Neither turning point is duplicated, and the file boundary goes
+from source frame 1 to adjacent source frame 0. This removes the dark outro and
+changes the motion into a repeating oscillation; the particles also run backward
+on the return half. It is a design treatment of existing footage, not newly
+synthesized motion. The browser decodes one ordinary H.264 stream, with no reverse
+seeking, canvas drawing or second video decoder.
+
+The first optimization pass retained each full original clip and weighed
+8,111,131 / 4,015,136 / 4,736,124 bytes. The loop variants are slightly smaller
+than those files. Superseded, never-deployed optimized MP4s were removed from
+this branch after checking references; their originals and Git history remain.
 
 Posters are first frames at 1920×1080, WebP quality 85. The first poster is in
 server-rendered HTML; selection rotates after hydration. A poster stays underneath
-the video during loading, errors and crossfades. The default SSR poster is clip 1;
+the video during loading, errors and initial fade-in. The default SSR poster is clip 1;
 when another clip is chosen its poster can change briefly before playback.
 
 ### Actual Vercel dashboard observations
@@ -94,10 +108,10 @@ it does not attribute all GPU activity to this tab. Merely pausing video was ins
   native scrollbar settling and viewport changes share the same boundary.
 - **Reversible scene:** visible Hero proportion drives playback rate from 0.65×
   toward 0.1× on exit, then pauses at zero exposure. Re-entry resumes the held
-  frame at low speed and accelerates with exposure. No seek or source reload is
-  performed on a normal re-entry. If a clip naturally reaches its end during a
-  transition, its final frame remains held until Hero is fully back and looping
-  resumes. Existing fade-out/restart behavior remains when fully inside.
+  frame at low speed and accelerates with exposure. The same native loop can wrap
+  during acceleration without a terminal paused state. The player has no end
+  fade, restart timer, explicit seek or clip swap. One Bubble is selected per
+  page mount; reloading can select another, while scrolling cannot.
 - **Content choreography:** Hero content fades and blurs out on exit; on every
   return, only the background is visible during acceleration. After Hero is fully
   entered and a frame at the normal 0.65× speed is presented, heading words,
@@ -121,7 +135,7 @@ it does not attribute all GPU activity to this tab. Merely pausing video was ins
 - **Loading:** first-frame poster in HTML, video revealed after a decoded-frame
   callback where available, no endless animation-frame polling. A shared Motion
   value updates only during scrolling; opacity fades use CSS transitions. Playback and
-  loop timers are cleaned up on unmount/source changes.
+  frame callbacks are cleaned up on unmount/source changes.
 - **Caching:** only content-hashed files under `/assets/videos/optimized/` get
   one-year immutable browser caching. Never replace a hashed URL with new bytes.
   Local `performance` marks record request and first presented frame for diagnosis;
@@ -176,7 +190,7 @@ controller coverage for wheel momentum, touch gestures, keyboard navigation,
 scrollbar settling, reduced motion, viewport changes and disposal.
 
 Final revision: `npm run check` (zero diagnostics), `npm run lint`, `npm test`
-(44 tests in 6 files), `npm run build`, changed-file formatting and `git diff
+(45 tests in 6 files), `npm run build`, changed-file formatting and `git diff
 --check` passed. Production output contains the SSR poster and excludes both
 playback controls and the diagnostic readout.
 
@@ -198,3 +212,33 @@ return resumed from the held 6.20 s frame. Added tests cover delayed playback
 readiness, normal-speed frame presentation, buffering and static/error fallbacks.
 The full check/lint/test/build run passed again with no browser console warnings
 or errors.
+
+## Continuous-loop corner case
+
+The native-loop revision removes the JS end fade, 100 ms restart delay and the
+ended-during-entry hold. Tests cover resuming at 7.95 s and wrapping during
+acceleration, repeated ordinary loop boundaries without source reload or extra
+play/pause calls, and unmount cleanup. Frame readiness still gates content once
+per entry; ordinary loop boundaries do not hide or reload already visible UI.
+
+FFprobe confirmed all three loop assets have 192 frames, 8 seconds, 1920×1080 at
+24 fps, no audio and faststart. A 320×180 grayscale frame audit measured wrap
+differences of 1.914 / 1.139 / 0.439 (out of 255), versus median ordinary adjacent
+frame differences of 4.270 / 2.166 / 3.683. No black outro remains in the selected
+range. These measurements check image discontinuities, not guaranteed zero-latency
+browser decoding. The underlying processing uses FFmpeg's
+[reverse filter](https://ffmpeg.org/ffmpeg-filters.html#reverse); playback uses the
+[native media loop](https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/loop).
+
+In the browser, clip 3 was paused at 7.89 s, resumed at 0.12× with content hidden,
+and wrapped to 0.37 s at 0.65× with content visible. The source URL stayed identical
+and video opacity stayed 1. Captures are in `.playwright-mcp/hero-loop-review/`.
+
+All three variants were played in the in-app browser. Desktop 1280×900, tablet
+768×1024 and mobile 375×812 remained usable; mobile had no horizontal overflow.
+Clip 1 also crossed an ordinary wrap at 0.06 s with content visible and opacity 1.
+There were no console warnings/errors. Regeneration reproduced all three hashes
+and byte counts; check, lint, 45 tests, build, formatting and diff checks passed.
+Production output includes the three new loops and excludes the debug readout.
+Physical Safari touch behavior and controlled GPU/regional measurements remain
+outside this verification.

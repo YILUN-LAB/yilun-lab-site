@@ -228,54 +228,58 @@ describe("hero media lifecycle", () => {
     expect(video.playbackRate).toBe(0.65);
   });
 
-  it("cancels a loop fade during exit so the held frame stays visible", async () => {
-    const { video, exposure } = mount();
+  it("keeps the same native loop visible when returning just before its boundary", async () => {
+    const { video, exposure, onPlaybackReady } = mount();
     await visible();
+    expect(video.loop).toBe(true);
     Object.defineProperty(video, "duration", { configurable: true, value: 8 });
-    video.currentTime = 7.6;
+    video.currentTime = 7.95;
     fireEvent.timeUpdate(video);
-    expect(video.style.opacity).toBe("0");
-    act(() => exposure.set(0.5));
     expect(video.style.opacity).toBe("1");
-    mediaPaused = true;
-    Object.defineProperty(video, "ended", {
-      configurable: true,
-      get: () => video.currentTime >= 8,
-    });
-    video.currentTime = 8;
-    fireEvent.ended(video);
     act(() => exposure.set(0));
-    await act(async () => {
-      vi.advanceTimersByTime(1000);
-      exposure.set(0.5);
-    });
-    expect(video.currentTime).toBe(8);
-    expect(play).toHaveBeenCalledTimes(1);
-    await act(async () => exposure.set(1));
-    expect(video.currentTime).toBe(0);
+    expect(video.paused).toBe(true);
+    expect(video.currentTime).toBe(7.95);
+    await act(async () => exposure.set(0.2));
+    expect(video.currentTime).toBe(7.95);
+    // Simulate the browser wrapping its native loop during acceleration.
+    video.currentTime = 0.04;
+    fireEvent.timeUpdate(video);
+    expect(video.paused).toBe(false);
+    expect(video.style.opacity).toBe("1");
+    expect(video).toHaveAttribute("src", source);
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(false);
+    act(() => exposure.set(1));
+    fireEvent.timeUpdate(video);
+    expect(onPlaybackReady).toHaveBeenLastCalledWith(true);
     expect(play).toHaveBeenCalledTimes(2);
   });
 
-  it("loops with a fade and cancels pending restarts on unmount", async () => {
-    const { video, unmount } = mount("loop");
+  it("does not fade, restart, reload, or hide ready content across ordinary loop boundaries", async () => {
+    const { video, onPlaybackReady } = mount();
     await visible();
-    Object.defineProperty(video, "duration", { configurable: true, value: 8 });
-    video.currentTime = 7.6;
-    fireEvent.timeUpdate(video);
-    expect(video.style.opacity).toBe("0");
-    mediaPaused = true;
-    fireEvent.ended(video);
-    await act(async () => {
-      vi.advanceTimersByTime(101);
-    });
-    expect(video.currentTime).toBe(0);
-    expect(play).toHaveBeenCalledTimes(2);
-    fireEvent.ended(video);
+    const notifications = onPlaybackReady.mock.calls.length;
+    for (let i = 0; i < 3; i++) {
+      video.currentTime = 7.99;
+      fireEvent.timeUpdate(video);
+      expect(video.style.opacity).toBe("1");
+      video.currentTime = 0.04;
+      fireEvent.timeUpdate(video);
+    }
+    expect(play).toHaveBeenCalledTimes(1);
+    expect(video.load).toHaveBeenCalledTimes(1);
+    expect(video.pause).not.toHaveBeenCalled();
+    expect(onPlaybackReady).toHaveBeenCalledTimes(notifications);
+    expect(video).toHaveAttribute("src", source);
+  });
+
+  it("releases the decoder and ignores late playback signals on unmount", async () => {
+    const { video, unmount } = mount();
+    await visible();
     unmount();
-    await act(async () => {
-      vi.advanceTimersByTime(1000);
-    });
-    expect(play).toHaveBeenCalledTimes(2);
+    await visible();
+    expect(video.paused).toBe(true);
+    expect(video).not.toHaveAttribute("src");
+    expect(play).toHaveBeenCalledTimes(1);
   });
 
   it("allows retry after autoplay is rejected", async () => {

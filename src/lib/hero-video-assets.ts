@@ -2,22 +2,22 @@
 export const HERO_VIDEO_ASSETS = [
   {
     original: "/assets/videos/hero-1.mp4",
-    src: "/assets/videos/optimized/hero-1.19e141bdaa12.mp4",
-    srcBytes: 8111131,
+    src: "/assets/videos/optimized/hero-1-loop.cfbf75c82fc3.mp4",
+    srcBytes: 8015813,
     poster: "/assets/videos/optimized/hero-1.8457f836567c.webp",
     posterBytes: 103358,
   },
   {
     original: "/assets/videos/hero-2.mp4",
-    src: "/assets/videos/optimized/hero-2.a39574f2aa43.mp4",
-    srcBytes: 4015136,
+    src: "/assets/videos/optimized/hero-2-loop.66ec409c5558.mp4",
+    srcBytes: 3887739,
     poster: "/assets/videos/optimized/hero-2.c495aa7d5a6d.webp",
     posterBytes: 57520,
   },
   {
     original: "/assets/videos/hero-3.mp4",
-    src: "/assets/videos/optimized/hero-3.e41c36e4b44f.mp4",
-    srcBytes: 4736124,
+    src: "/assets/videos/optimized/hero-3-loop.b6cb8a213b41.mp4",
+    srcBytes: 4652588,
     poster: "/assets/videos/optimized/hero-3.3c6d62a17b72.webp",
     posterBytes: 61172,
   },

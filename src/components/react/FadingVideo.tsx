@@ -17,7 +17,8 @@ interface FadingVideoProps {
 type Connection = EventTarget & { saveData?: boolean; effectiveType?: string };
 const PLAYBACK_RATE = 0.65;
 
-/** Decorative media: navigation owns playback; there are no user controls. */
+/** Pre-rendered cycle with native looping, without JS fades, restart timers or
+ * clip swaps. Navigation owns pause/resume; there are no user controls. */
 export function FadingVideo({
   src,
   poster,
@@ -42,12 +43,9 @@ export function FadingVideo({
     let playing = false;
     let playbackReady = false;
     let revealed = false;
-    let fadingOut = false;
     let firstFrame = 0;
     let firstFrameAtFullSpeed = false;
-    let restartTimer: ReturnType<typeof setTimeout> | undefined;
     const amount = () => Math.max(0, Math.min(1, exposure?.get() ?? 1));
-    const transitioning = () => mode === "scene" && amount() < 0.999;
     const staticPolicy = () =>
       mode === "still" ||
       motion.matches ||
@@ -68,15 +66,8 @@ export function FadingVideo({
         glowRef.current.style.opacity = String(value);
       }
     };
-    const clearRestart = () => {
-      clearTimeout(restartTimer);
-      restartTimer = undefined;
-    };
     const stop = () => {
-      clearRestart();
       if (!video.paused) video.pause();
-      if (revealed && fadingOut) opacity(1);
-      fadingOut = false;
     };
     const sync = () => {
       const active = eligible();
@@ -92,13 +83,6 @@ export function FadingVideo({
         return;
       }
       if (amount() < 1) reportReady(false);
-      if (transitioning()) {
-        clearRestart();
-        if (fadingOut) opacity(1);
-        fadingOut = false;
-        // A naturally ended clip remains a still until the scene is fully back.
-        if (video.ended) return;
-      }
       if (!video.getAttribute("src")) {
         performance.mark(`hero-video:request:${src}`);
         video.src = src;
@@ -109,11 +93,7 @@ export function FadingVideo({
       video.playbackRate =
         mode === "scene" ? 0.1 + (PLAYBACK_RATE - 0.1) * amount() ** 2 : PLAYBACK_RATE;
       if (playing && !video.paused && amount() === 1 && !playbackReady) requestFrame();
-      if (pendingPlay || restartTimer !== undefined || !video.paused) return;
-      if (video.ended) {
-        video.currentTime = 0;
-        opacity(0, 0);
-      }
+      if (pendingPlay || !video.paused) return;
       pendingPlay = true;
       void video
         .play()
@@ -177,27 +157,6 @@ export function FadingVideo({
     };
     const onTime = () => {
       if (typeof video.requestVideoFrameCallback !== "function") readyAtFullSpeed();
-      if (transitioning() || video.paused) return;
-      const left = video.duration - video.currentTime;
-      if (Number.isFinite(left) && left > 0 && left <= 0.55 && !fadingOut) {
-        fadingOut = true;
-        opacity(0);
-      }
-    };
-    const onEnded = () => {
-      if (transitioning() || !eligible()) {
-        stop();
-        return;
-      }
-      opacity(0, 0);
-      clearRestart();
-      restartTimer = setTimeout(() => {
-        restartTimer = undefined;
-        if (!eligible()) return;
-        video.currentTime = 0;
-        fadingOut = false;
-        sync();
-      }, 100);
     };
     const onError = () => {
       blocked = true;
@@ -215,14 +174,12 @@ export function FadingVideo({
     video.addEventListener("waiting", onWaiting);
     video.addEventListener("pause", onWaiting);
     video.addEventListener("timeupdate", onTime);
-    video.addEventListener("ended", onEnded);
     video.addEventListener("error", onError);
     document.addEventListener("visibilitychange", sync);
     motion.addEventListener("change", sync);
     connection?.addEventListener("change", sync);
     return () => {
       disposed = true;
-      clearRestart();
       observer.disconnect();
       unsubscribe?.();
       if (firstFrame && video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(firstFrame);
@@ -230,7 +187,6 @@ export function FadingVideo({
       video.removeEventListener("waiting", onWaiting);
       video.removeEventListener("pause", onWaiting);
       video.removeEventListener("timeupdate", onTime);
-      video.removeEventListener("ended", onEnded);
       video.removeEventListener("error", onError);
       document.removeEventListener("visibilitychange", sync);
       motion.removeEventListener("change", sync);
@@ -245,6 +201,7 @@ export function FadingVideo({
     <video
       ref={videoRef}
       poster={poster}
+      loop
       muted
       playsInline
       preload="none"
