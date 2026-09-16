@@ -3,8 +3,8 @@
 Date: 2026-09-17. Branch: `codex/aurora-performance`, based on production main
 `269fbbd` (Hero PR #5). The merged Hero branch was deleted locally and remotely.
 The worktree was renamed to `Yilun-Lab-Website-aurora-perf`; earlier local evidence
-remains under its ignored `.playwright-mcp/` directory. This revision is a local
-experiment, not a production deployment.
+remains under its ignored `.playwright-mcp/` directory. This document records the implementation and its measurement limits.
+Release approval and validation are recorded below.
 
 ## Implementation
 
@@ -54,8 +54,9 @@ budget prototype produced a mixed 43% median, but part of that interval was
 hidden. A later old-page run reached 100% amid changing background load, and the
 paired new-page run was interrupted by browser interaction. Neither is a valid
 final A/B result. No GPU reduction is claimed for this final 12 fps candidate.
-A quiet, foreground-stable comparison against main is still required before
-considering this performance work validated or deploying it.
+A quiet, foreground-stable comparison against main is still required to
+quantify the performance benefit. Release approval does not establish a GPU
+reduction.
 
 The development server was restarted after the worktree move and production
 build to clear stale Vite dependency URLs; actual hydration was then verified. The real page used a 94 px-wide backing
@@ -74,3 +75,12 @@ Run `npm run dev -- --host 127.0.0.1 --port 4322` in the Aurora worktree and ope
 and visit About/Contact/Connect. Compare with production without changing the
 Hero design or the Ashlar layouts. Physical Safari touch and a stable Chrome
 GPU/power trace remain unverified.
+
+## Release approval
+
+On 2026-09-17 the user reviewed the local result and explicitly approved merge,
+push and deployment. Main `45689b4`, including the navigation pill padding fix,
+was integrated at `046ed8e` without conflicts. The resulting version passed
+98 tests in 12 files, typecheck with zero diagnostics, lint and production build.
+The release retains the GPU measurement limitation above; no percentage saving
+or validated power reduction is claimed.
