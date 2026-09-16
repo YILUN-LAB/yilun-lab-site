@@ -35,17 +35,19 @@ universal execution workflow or a prerequisite for ordinary maintenance.
 
 ## Repository map
 
-| Location                | Purpose                                                                     |
-| ----------------------- | --------------------------------------------------------------------------- |
-| `src/pages/`            | Public routes and the contact API                                           |
-| `src/components/`       | Astro layouts, metadata, case-study rendering, and MDX glue                 |
-| `src/components/react/` | Public React pages, media, navigation, and editorial grid                   |
-| `src/content/projects/` | Project MDX files                                                           |
-| `src/lib/`              | Motion, content helpers, and contact validation                             |
-| `src/styles/global.css` | Public theme tokens and liquid-glass styles                                 |
-| `public/assets/`        | Project images, videos, and brand assets                                    |
-| `tests/`                | Unit and component tests, including contact validation and preview metadata |
-| `scripts/`              | Asset optimization, logo rendering/checking, QR generation, and cleanup     |
+| Location                | Purpose                                                                           |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| `src/pages/`            | Public routes and the contact API                                                 |
+| `src/components/`       | Astro layouts, metadata, case-study rendering, and MDX glue                       |
+| `src/components/react/` | Public React pages, media, navigation, and editorial grid                         |
+| `src/content/projects/` | Project MDX files                                                                 |
+| `src/lib/`              | Motion, content helpers, contact validation, and the Ashlar layout engine         |
+| `src/lib/ashlar/`       | Ashlar: deterministic layout engine for the homepage grids (see `docs/ashlar.md`) |
+| `src/styles/global.css` | Public theme tokens and liquid-glass styles                                       |
+| `public/assets/`        | Project images, videos, and brand assets                                          |
+| `tests/`                | Unit and component tests, including contact validation and preview metadata       |
+| `scripts/`              | Asset optimization, logo rendering/checking, QR generation, and cleanup           |
+| `playground/`           | Tracked Vite page for tuning Ashlar visually, outside the app build               |
 
 Path aliases are `@/*`, `@components/*`, `@lib/*`, and `@styles/*`.
 The public `/`, `/about`, `/contact`, and `/connect` pages mount React page islands;
@@ -61,23 +63,24 @@ Prefix shell commands with `rtk` in environments configured to use it; use
 `rtk proxy <command>` when an unfiltered command is needed. The table lists the
 underlying npm commands.
 
-| Command                   | Purpose                                                                  |
-| ------------------------- | ------------------------------------------------------------------------ |
-| `npm ci`                  | Install locked dependencies                                              |
-| `npm run dev`             | Start Astro development server, normally on port 4321                    |
-| `npm run build`           | Build the site and Vercel output; validate content                       |
-| `npm run preview`         | Invoke Astro's build preview; adapter support determines availability    |
-| `npm run check`           | Run `astro check` and `tsc --noEmit`                                     |
-| `npm run lint`            | Run ESLint, including accessibility rules                                |
-| `npm test`                | Run the Vitest suite once                                                |
-| `npm run test:watch`      | Run Vitest in watch mode                                                 |
-| `npm run test:ui`         | Open Vitest's UI                                                         |
-| `npm run format:check`    | Check formatting across the repository                                   |
-| `npm run format`          | Rewrite formatting across the repository; prefer targeting changed files |
-| `npm run assets:optimize` | Regenerate migration-derived WebP and Open Graph images                  |
-| `npm run assets:hero`     | Generate hashed hero videos and posters (requires local FFmpeg)          |
-| `npm run assets:gc`       | Report images not explicitly referenced in project MDX                   |
-| `npm run qr:make`         | Generate the `/connect` QR assets                                        |
+| Command                     | Purpose                                                                  |
+| --------------------------- | ------------------------------------------------------------------------ |
+| `npm ci`                    | Install locked dependencies                                              |
+| `npm run dev`               | Start Astro development server, normally on port 4321                    |
+| `npm run build`             | Build the site and Vercel output; validate content                       |
+| `npm run preview`           | Invoke Astro's build preview; adapter support determines availability    |
+| `npm run check`             | Run `astro check` and `tsc --noEmit`                                     |
+| `npm run lint`              | Run ESLint, including accessibility rules                                |
+| `npm test`                  | Run the Vitest suite once                                                |
+| `npm run test:watch`        | Run Vitest in watch mode                                                 |
+| `npm run test:ui`           | Open Vitest's UI                                                         |
+| `npm run format:check`      | Check formatting across the repository                                   |
+| `npm run format`            | Rewrite formatting across the repository; prefer targeting changed files |
+| `npm run assets:optimize`   | Regenerate migration-derived WebP and Open Graph images                  |
+| `npm run assets:gc`         | Report images not explicitly referenced in project MDX                   |
+| `npm run qr:make`           | Generate the `/connect` QR assets                                        |
+| `npm run ashlar:playground` | Run the Ashlar tuning playground (Vite, `http://localhost:4400`)         |
+| `npm run assets:hero`       | Generate hashed hero videos and posters (requires local FFmpeg)          |
 
 Use a development server for local browser checks when adapter preview is unavailable.
 
@@ -87,7 +90,9 @@ Use a development server for local browser checks when adapter preview is unavai
    Required metadata includes title, tagline, category, year, role, medium, and accent.
 2. Put project images under `public/assets/images/projects/<slug>/` and provide alt text.
 3. Validate frontmatter against `src/content.config.ts`. Preserve existing metadata,
-   especially `category`, `accent`, `weight`, `aspect`, and `variant`.
+   especially `category`, `accent`, `weight`, and `variant`. `weight` only nudges
+   which supporting items Ashlar promotes to `feature`; it does not set a card's
+   size or position. There is no `aspect` field — see "Ashlar layout engine" below.
 4. Use `order` for ascending public ordering. Entries with `draft: true` are excluded
    from the homepage and generated project routes, including preview builds.
 5. Keep exactly three non-draft projects with distinct `featured` values of 1, 2,
@@ -117,20 +122,24 @@ shows both languages together. The exhibition flyer is displayed as an image
 without a download control.
 See `docs/soft-boundary.md` for content sources, assets, and maintenance details.
 
-Lab and Works share `EditorialGrid.tsx`. Preserve first-item promotion to `lead`,
-full-width layout for one item, second-item promotion to `feature` for two items,
-and the three-item lead spanning two rows at desktop widths. Weights control
-card typography and controls; column spans adapt to fill rows. Both homepage
-grids use 20px gaps and aligned cards without vertical offsets. See
-`docs/editorial-grid.md` and the component for exact layout behavior.
+### Ashlar layout engine
 
-The Lab uses `composition="featured"`: a seven-column lead fills the height of
-two stacked five-column supporting cards, which use 16:10 media with a 272px
-minimum height at desktop widths. Tablet places the lead above a supporting
-pair; mobile stacks the cards with a 4:5 lead. LabSection supplies section-specific
-weights without changing MDX metadata. Works opens with a 7+5 desktop pair,
-then fills rows in thirds or halves. Tablet uses a full-width lead followed by
-pairs, with any final orphan full-width. Media stretches to each row's height.
+Lab and Works share `EditorialGrid.tsx`, which lays out every card through
+Ashlar (`src/lib/ashlar/`), a deterministic beam-search engine rather than
+hand-tuned column spans. Both grids share the same tiers (`lead`, `feature`,
+`tile`), the same 4/12/12-column breakpoints (sm/md/lg) with a 20px gap, and
+the same perimeter irregularity (drops, indents, and short edges that keep
+cards from lining up into a flush grid). Given the same ordered list of
+slugs, Ashlar always produces the same layout, so server and client renders
+agree.
+
+Manual layout is not allowed: there is no `aspect` field, and no component
+may hard-code column spans, row spans, aspect ratios, or positions for these
+grids; `grid-auto-flow: dense` must not be used. Changes to how cards are
+arranged go through the engine's vocabulary and score
+(`src/lib/ashlar/vocabulary.ts`, `src/lib/ashlar/score.ts`), tuned visually
+with `npm run ashlar:playground` and verified on the real homepage — never
+through per-card overrides. See `docs/ashlar.md` for the full reference.
 
 ## Publishing and preview behavior
 
@@ -215,6 +224,8 @@ only the temporary processes you started.
 Check affected routes and relevant interactions:
 
 - `/`: hero playback/reveals, Lab highlights, all Works filters, badge counts, and links.
+  Verify the Lab and Works grids render through Ashlar with no overlapping cards at
+  375, 768, and 1280px.
 - `/about`, `/contact`, `/connect`: content, navigation, responsive layout, form validation,
   and contact/social links. Use mocked email delivery for submission tests.
 - Case studies: chapter tabs on `human-permeability` or `mood-cocoon`, video behavior on

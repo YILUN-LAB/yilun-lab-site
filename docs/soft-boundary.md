@@ -40,7 +40,7 @@ below it. The LIT announcement links to its original award listing.
 
 The three featured projects are Soft Boundary, A Human Permeability, and Mood
 Cocoon, in that order. Mo Gu appears in Works. Layout rules are documented in
-[Editorial Grid](editorial-grid.md).
+[Ashlar](ashlar.md).
 
 ## Verification
 

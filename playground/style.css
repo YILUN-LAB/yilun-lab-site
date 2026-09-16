@@ -1,0 +1,326 @@
+@import "@fontsource/instrument-serif/400-italic.css";
+@import "@fontsource/barlow/300.css";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+
+:root {
+  color-scheme: dark;
+  --heading: "Instrument Serif", serif;
+  --body: "Barlow", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #070707;
+  color: #fff;
+  font-family: var(--body);
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 20px;
+  background: rgba(10, 10, 10, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.bar h1 {
+  margin: 0 0 8px;
+  font: italic 22px/1 var(--heading);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.controls label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.controls input[type="number"] {
+  width: 56px;
+}
+
+.controls select,
+.controls input,
+.controls button {
+  font: inherit;
+  color: inherit;
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  padding: 3px 6px;
+}
+
+.weights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.weights label {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.weights input {
+  width: 48px;
+  font: inherit;
+  color: inherit;
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+
+#stage {
+  padding: 24px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.candidate h2 {
+  margin: 0 0 6px;
+  font: 500 12px/1.4 var(--body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.frames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.frame {
+  flex: none;
+  background: rgba(0, 0, 0, 0.65);
+  outline: 1px dashed rgba(255, 255, 255, 0.15);
+  outline-offset: 0;
+}
+
+.frame-inner {
+  container-type: inline-size;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  grid-auto-rows: calc((100cqw - (var(--cols) - 1) * 20px) / var(--cols));
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card .shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.15) 50%, transparent);
+}
+
+.pill {
+  position: absolute;
+  top: 16px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.pill.year {
+  left: 16px;
+}
+
+.pill.size {
+  right: 16px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.text h3 {
+  margin: 0;
+  font: italic 1em/0.95 var(--heading);
+  letter-spacing: -0.02em;
+}
+
+.text p {
+  margin: 0.4em 0 0;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.text .cta {
+  display: inline-block;
+  margin-top: 0.8em;
+  padding: 0.4em 0.9em;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+}
+
+.card.lead .text {
+  padding: 40px;
+}
+.card.lead h3 {
+  font-size: 60px;
+}
+.card.lead p {
+  font-size: 18px;
+  max-width: 36rem;
+}
+.card.lead .cta {
+  font-size: 14px;
+}
+
+.card.feature .text {
+  padding: 28px;
+}
+.card.feature h3 {
+  font-size: 36px;
+}
+.card.feature p {
+  font-size: 16px;
+  max-width: 28rem;
+}
+.card.feature .cta {
+  font-size: 12px;
+}
+
+.card.tile .text {
+  padding: 24px;
+}
+.card.tile h3 {
+  font-size: 28px;
+}
+.card.tile p {
+  font-size: 14px;
+  max-width: 40ch;
+}
+.card.tile .cta {
+  font-size: 12px;
+}
+
+.frame.sm .card.lead h3 {
+  font-size: 36px;
+}
+.frame.sm .card.lead .text {
+  padding: 24px;
+}
+.frame.sm .card.lead p {
+  font-size: 16px;
+}
+.frame.sm .card.feature h3 {
+  font-size: 30px;
+}
+.frame.sm .card.tile h3 {
+  font-size: 24px;
+}
+.frame.md .card.lead h3 {
+  font-size: 48px;
+}
+.frame.md .card.lead .text {
+  padding: 32px;
+}
+
+.score {
+  margin-top: 10px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+
+.score b {
+  color: #fff;
+}
+
+.score .hot {
+  color: #ffb347;
+}
+
+/* Tablet units are small (about 35px); taller rows keep three-row cards readable. */
+.frame.md .grid {
+  grid-auto-rows: calc(((100cqw - (var(--cols) - 1) * 20px) / var(--cols)) * 1.5);
+}
+.frame.md .card.feature h3 {
+  font-size: 30px;
+}
+.frame.md .card.feature .text {
+  padding: 22px;
+}
+.frame.md .card.feature p {
+  font-size: 14px;
+}
+.frame.md .card.tile h3 {
+  font-size: 24px;
+}
+.frame.md .card.tile .text {
+  padding: 20px;
+}
+.frame.md .card.tile p {
+  font-size: 13px;
+}
+.frame.md .card.lead h3 {
+  font-size: 40px;
+}
+.frame.md .card.lead p {
+  font-size: 15px;
+}
+
+.score .map {
+  flex-basis: 100%;
+  margin: 0 0 4px;
+  font:
+    11px/1.15 ui-monospace,
+    monospace;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.45);
+}

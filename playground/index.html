@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editorial layout playground</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <h1>Editorial layout playground</h1>
+      <form id="controls" class="controls">
+        <label
+          >Preset
+          <select name="preset"></select
+        ></label>
+        <label>Items <input name="count" type="number" min="1" max="12" value="8" /></label>
+        <label
+          >Breakpoint
+          <select name="viewport">
+            <option value="lg-1536">lg · 1536</option>
+            <option value="lg-1280" selected>lg · 1280</option>
+            <option value="lg-1024">lg · 1024</option>
+            <option value="md-768">md · 768</option>
+            <option value="sm-375">sm · 375</option>
+            <option value="all">all three</option>
+          </select>
+        </label>
+        <label>Candidates <input name="keep" type="number" min="1" max="6" value="3" /></label>
+        <label>Beam <input name="beam" type="number" min="1" max="400" value="48" /></label>
+        <label><input name="labels" type="checkbox" checked /> size labels</label>
+        <label><input name="covers" type="checkbox" checked /> covers</label>
+        <button type="button" id="reset">Reset weights</button>
+      </form>
+      <div id="weights" class="weights"></div>
+    </header>
+    <main id="stage"></main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

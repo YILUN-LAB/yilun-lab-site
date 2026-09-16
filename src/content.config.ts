@@ -14,7 +14,6 @@ const accentEnum = z.enum([
 ]);
 
 const weightEnum = z.enum(["lead", "feature", "column", "tile"]);
-const aspectEnum = z.enum(["4/5", "16/10", "1/1", "5/4", "4/3", "21/9"]);
 
 const imageSchema = z.object({
   src: z.string(),
@@ -48,7 +47,6 @@ const projects = defineCollection({
 
       accent: accentEnum,
       weight: weightEnum.default("column"),
-      aspect: aspectEnum.optional(),
       cover: z.string().optional(),
 
       variant: z

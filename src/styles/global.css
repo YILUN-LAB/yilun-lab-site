@@ -444,3 +444,59 @@ lite-youtube {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
+/* Ashlar layout system (src/lib/ashlar, docs/ashlar.md). The engine assigns
+   every homepage card a cell rectangle per breakpoint through inline CSS
+   variables; these rules turn them into grid placement. Rows are square
+   units derived from the container width, so no JavaScript measures the DOM.
+   Tablet rows run 1.5× taller than a column unit because its 12-column unit
+   is only about 35px. */
+.ashlar {
+  container-type: inline-size;
+}
+.ashlar-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: calc((100cqw - 3 * 1.25rem) / 4);
+}
+.ashlar-grid > * {
+  grid-column: var(--ashlar-sm-col);
+  grid-row: var(--ashlar-sm-row);
+}
+@media (min-width: 768px) {
+  .ashlar-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: calc(((100cqw - 11 * 1.25rem) / 12) * 1.5);
+  }
+  .ashlar-grid > * {
+    grid-column: var(--ashlar-md-col);
+    grid-row: var(--ashlar-md-row);
+  }
+}
+@media (min-width: 1024px) {
+  .ashlar-grid {
+    grid-auto-rows: calc((100cqw - 11 * 1.25rem) / 12);
+  }
+  .ashlar-grid > * {
+    grid-column: var(--ashlar-lg-col);
+    grid-row: var(--ashlar-lg-row);
+  }
+}
+/* Browsers without container query units get fixed unit heights close to the
+   reference widths. */
+@supports not (width: 1cqw) {
+  .ashlar-grid {
+    grid-auto-rows: 4rem;
+  }
+  @media (min-width: 768px) {
+    .ashlar-grid {
+      grid-auto-rows: 3.3rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .ashlar-grid {
+      grid-auto-rows: 4.7rem;
+    }
+  }
+}
