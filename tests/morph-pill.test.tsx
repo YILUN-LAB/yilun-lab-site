@@ -18,6 +18,27 @@ afterEach(() => {
 });
 
 describe("MorphPill measurement", () => {
+  it.each([
+    { bare: true, mobileGrid: false },
+    { bare: false, mobileGrid: false },
+    { bare: false, mobileGrid: true },
+  ])("keeps padding and state classes separate for %j", (props) => {
+    const items = [
+      { id: "lab", label: "Lab" },
+      { id: "works", label: "Works" },
+    ];
+    const { rerender } = render(<MorphPill {...props} items={items} activeId="works" />);
+    const works = screen.getByRole("button", { name: "Works" });
+    const padding = props.mobileGrid ? ["py-3", "md:py-2"] : ["py-2"];
+    expect(works).toHaveClass(...padding, "text-[#fff5e0]");
+    expect(works.parentElement).toHaveClass(
+      props.mobileGrid ? "md:overflow-x-auto" : "overflow-x-auto"
+    );
+    if (!props.bare) expect(works.parentElement).toHaveClass("scroll-px-1.5", "p-1.5");
+    rerender(<MorphPill {...props} items={items} activeId="lab" />);
+    expect(works).toHaveClass(...padding, "glass-link");
+  });
+
   it("remeasures the active button when fonts or responsive layout change without changing selection", () => {
     let resize: ResizeObserverCallback = () => {};
     const observe = vi.fn();
