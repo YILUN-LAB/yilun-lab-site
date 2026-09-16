@@ -17,8 +17,11 @@ const weightEnum = z.enum(["lead", "feature", "column", "tile"]);
 
 const imageSchema = z.object({
   src: z.string(),
+  fullSrc: z.string().optional(),
   alt: z.string(),
   caption: z.string().optional(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
 });
 
 const chapterSchema = z.object({
@@ -48,6 +51,7 @@ const projects = defineCollection({
       accent: accentEnum,
       weight: weightEnum.default("column"),
       cover: z.string().optional(),
+      coverFullSrc: z.string().optional(),
 
       variant: z
         .enum(["image-wall", "video-hero", "image-poster", "chapters", "chapters-tabbed"])

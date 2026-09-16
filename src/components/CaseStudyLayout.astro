@@ -59,7 +59,7 @@ const categoryRail = data.category
 
   {
     data.variant === "image-wall" && (
-      <ImageWallVariant client:load images={data.images} accent={data.accent}>
+      <ImageWallVariant title={data.title} client:load images={data.images} accent={data.accent}>
         <Content components={caseStudyComponents} slot="intro" />
       </ImageWallVariant>
     )
@@ -68,6 +68,7 @@ const categoryRail = data.category
   {
     data.variant === "video-hero" && data.youtube && (
       <VideoHeroVariant
+        title={data.title}
         client:load
         youtube={data.youtube}
         youtubeAlt={data.youtubeAlt}
@@ -95,7 +96,7 @@ const categoryRail = data.category
 
   {
     (data.variant === "chapters" || data.variant === "chapters-tabbed") && data.chapters && (
-      <Chapters client:load variant={data.variant} chapters={data.chapters} />
+      <Chapters title={data.title} client:load variant={data.variant} chapters={data.chapters} />
     )
   }
 

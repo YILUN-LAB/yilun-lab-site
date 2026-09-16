@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { fadeBlurIn } from "@lib/motion-presets";
+import { PhotoLightbox } from "./PhotoLightbox";
 import { PillTabs } from "./PillTabs";
 import { ArrowUpRight } from "./icons";
 import {
@@ -11,7 +12,16 @@ import {
 } from "@lib/data/soft-boundary";
 
 interface SoftBoundaryProjectProps {
-  images: Array<{ src: string; alt: string; caption?: string }>;
+  cover?: string;
+  coverFullSrc?: string;
+  images: Array<{
+    src: string;
+    fullSrc?: string;
+    alt: string;
+    caption?: string;
+    width?: number;
+    height?: number;
+  }>;
   next: { title: string; href: string };
 }
 
@@ -19,7 +29,14 @@ const flyer = "/assets/images/projects/soft-boundary/exhibition-flyer.webp";
 const linkClass =
   "inline-flex items-center gap-2 border-b border-white/35 pb-1 text-sm text-white/85 transition-colors hover:border-white hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-200";
 
-export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) {
+export function SoftBoundaryProject({
+  cover,
+  coverFullSrc,
+  images,
+  next,
+}: SoftBoundaryProjectProps) {
+  const [activePhoto, setActivePhoto] = useState<number | null>(null);
+  const closeLightbox = useCallback(() => setActivePhoto(null), []);
   const [language, setLanguage] = useState<ExhibitionLanguage>("en");
 
   useEffect(() => {
@@ -27,6 +44,10 @@ export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) 
   }, []);
 
   const copy = softBoundary[language];
+  const photos = [
+    ...(cover ? [{ src: cover, fullSrc: coverFullSrc, alt: copy.coverAlt }] : []),
+    ...images.map((image, index) => ({ ...image, alt: copy.imageAlts[index] ?? image.alt })),
+  ];
   const reducedMotion = useReducedMotion();
   const reveal = reducedMotion ? {} : fadeBlurIn(0);
 
@@ -84,20 +105,25 @@ export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) 
 
       <div className="relative px-8 py-12 md:px-16 lg:px-20">
         <div className="mx-auto max-w-6xl">
-          {images[0] && (
+          {cover && (
             <motion.figure {...reveal} className="relative">
-              <div className="liquid-glass overflow-hidden rounded-[1.25rem]">
+              <button
+                type="button"
+                aria-label={`${copy.lightbox.open}: ${copy.coverAlt}`}
+                aria-haspopup="dialog"
+                onClick={() => setActivePhoto(0)}
+                className="liquid-glass block w-full cursor-zoom-in overflow-hidden rounded-[1.25rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-200"
+              >
                 <img
-                  src={images[0].src}
-                  alt={copy.imageAlts[0] ?? images[0].alt}
-                  width="1280"
-                  height="960"
+                  src={cover}
+                  alt={copy.coverAlt}
+                  width="1920"
+                  height="1280"
                   className="h-auto w-full"
                 />
-              </div>
+              </button>
               <figcaption className="mt-3 flex justify-between gap-4 font-body text-xs text-white/50">
                 <span>{copy.labels.exhibitionViews} · GALLERY AND LINKS 81</span>
-                <span className="tabular-nums">01 / {String(images.length).padStart(2, "0")}</span>
               </figcaption>
             </motion.figure>
           )}
@@ -123,7 +149,7 @@ export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) 
       <section aria-labelledby="exhibition-about" className="relative px-8 py-16 md:px-16 lg:px-20">
         <motion.div
           {...reveal}
-          className="soft-boundary-statement relative mx-auto max-w-6xl py-8 md:py-12"
+          className="soft-boundary-statement relative mx-auto max-w-6xl py-8 [container-type:inline-size] md:py-12"
         >
           <h2
             id="exhibition-about"
@@ -135,7 +161,7 @@ export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) 
             className={
               language === "ja"
                 ? "relative mx-auto max-w-3xl text-center font-body text-2xl font-light leading-relaxed md:text-4xl"
-                : "relative mx-auto max-w-3xl text-center font-heading text-3xl italic leading-[1.05] tracking-[-1.5px] md:text-4xl lg:text-5xl"
+                : "relative mx-auto whitespace-nowrap text-center font-heading text-[clamp(0.75rem,5cqi,3rem)] italic leading-[1.05] tracking-[-0.025em]"
             }
           >
             {copy.statement[0]}
@@ -156,31 +182,32 @@ export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) 
           <h2 id="exhibition-views" className="mb-6 font-body text-sm text-white/80">
             // {copy.labels.exhibitionViews}
           </h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-            {images.slice(1).map((image, index) => (
+          <div className="columns-2 gap-3 md:columns-3 md:gap-4">
+            {images.map((image, index) => (
               <motion.figure
                 {...reveal}
                 key={image.src}
-                className="liquid-glass relative overflow-hidden rounded-[1rem]"
+                className="liquid-glass relative mb-3 break-inside-avoid overflow-hidden rounded-[1rem] md:mb-4"
               >
-                <a
-                  href={image.src}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-amber-200"
+                <button
+                  type="button"
+                  aria-label={`${copy.lightbox.open}: ${copy.imageAlts[index] ?? image.alt}`}
+                  aria-haspopup="dialog"
+                  onClick={() => setActivePhoto(index + (cover ? 1 : 0))}
+                  className="group block w-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-amber-200"
                 >
                   <img
                     src={image.src}
-                    alt={copy.imageAlts[index + 1] ?? image.alt}
+                    alt={copy.imageAlts[index] ?? image.alt}
                     loading="lazy"
                     decoding="async"
-                    width="1280"
-                    height="960"
+                    width={image.width}
+                    height={image.height}
                     className="h-auto w-full transition-transform duration-700 motion-safe:group-hover:scale-[1.025]"
                   />
-                </a>
+                </button>
                 <figcaption className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/35 px-2 py-0.5 font-body text-[10px] tabular-nums text-white/75 backdrop-blur-md md:bottom-3 md:right-3">
-                  {String(index + 2).padStart(2, "0")}
+                  {String(index + 1).padStart(2, "0")}
                 </figcaption>
               </motion.figure>
             ))}
@@ -237,6 +264,15 @@ export function SoftBoundaryProject({ images, next }: SoftBoundaryProjectProps) 
           </a>
         </div>
       </nav>
+      {activePhoto !== null && (
+        <PhotoLightbox
+          title="Soft Boundary"
+          photos={photos}
+          initialIndex={activePhoto}
+          labels={copy.lightbox}
+          onClose={closeLightbox}
+        />
+      )}
     </article>
   );
 }

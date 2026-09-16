@@ -1,3 +1,4 @@
+import { ProjectPhoto } from "./ProjectPhotoGallery";
 import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import type { ChapterImage } from "./Chapters";
 
@@ -50,13 +51,7 @@ export function Chapter({
         {youtube ? (
           <lite-youtube videoid={youtube} class="h-full w-full" />
         ) : cover ? (
-          <img
-            src={cover}
-            alt={`${name} — cover`}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          <ProjectPhoto photo={{ src: cover, alt: `${name} — cover` }} />
         ) : (
           <>
             <div className="absolute inset-0" style={{ background: gradientFor(accent) }} />
@@ -83,15 +78,9 @@ export function Chapter({
               key={img.src}
               className="liquid-glass relative aspect-[3/4] overflow-hidden rounded-[1rem]"
             >
-              <img
-                src={img.src}
-                alt={img.alt}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+              <ProjectPhoto photo={img} />
               {img.caption && (
-                <figcaption className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 font-body text-xs font-light text-white/85">
+                <figcaption className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 font-body text-xs font-light text-white/85">
                   {img.caption}
                 </figcaption>
               )}
