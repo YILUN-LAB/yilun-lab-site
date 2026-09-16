@@ -108,13 +108,24 @@ Supported variants:
 | `chapters`        | Requires at least one chapter; shows the chapter sequence                                |
 | `chapters-tabbed` | Requires at least one chapter; tabs control the visible chapter                          |
 
-`CaseStudyLayout.astro` chooses the renderer. Public project paths and the next-work
+`CaseStudyLayout.astro` chooses the renderer and supplies its project title. All
+project photo renderers use `ProjectPhotoGallery` / `ProjectPhoto` to open the shared
+`PhotoLightbox` with the full uncropped image, optional `fullSrc`, and no visible
+photo descriptions. Tabbed chapters browse only the active chapter; stacked chapters
+share a sequence. Repeated image sources are counted once, and video embeds are
+excluded. Preserve native dialog focus/scroll cleanup and the existing video state.
+Public project paths and the next-work
 links derive from non-draft content. Do not hardcode an expected project count in
 checks; derive it from the current collection and active filter.
 
 `soft-boundary` uses `SoftBoundaryLayout.astro` and a dedicated React exhibition
 page. Its English and Japanese text lives in `src/lib/data/soft-boundary.ts`;
-the MDX entry maintains card metadata and the ordered image list. The project
+the MDX entry maintains card metadata, the designated cover, and six preview
+photographs. Image entries may include intrinsic `width` and `height` for stable
+layout; this gallery preserves mixed portrait and landscape framing. The cover and
+six photos open `PhotoLightbox.tsx`, a native modal dialog with arrow-key/swipe
+navigation. Optional `coverFullSrc` and image `fullSrc` paths load original JPEGs
+only inside the viewer. The flyer remains outside the photo sequence. The project
 defaults to Japanese when the browser language starts with `ja`, otherwise English.
 Its language switch is scoped to the project article and does not change shared
 navigation, other pages, or a saved site-wide preference. The homepage announcement

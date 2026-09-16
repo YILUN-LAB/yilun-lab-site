@@ -1,3 +1,5 @@
+import type { LightboxLabels } from "../../components/react/PhotoLightbox";
+
 export type ExhibitionLanguage = "en" | "ja";
 
 export interface SoftBoundaryCopy {
@@ -28,6 +30,8 @@ export interface SoftBoundaryCopy {
     previewAlt: string;
   };
   inquiry: string;
+  lightbox: LightboxLabels;
+  coverAlt: string;
   imageAlt: string;
   imageAlts: string[];
 }
@@ -79,21 +83,25 @@ export const softBoundary: Record<ExhibitionLanguage, SoftBoundaryCopy> = {
     },
     inquiry:
       "For questions about the exhibited works or purchases, contact the gallery. Inquiries are welcome after the exhibition has ended.",
+    lightbox: {
+      title: "Exhibition photographs",
+      open: "View photograph",
+      close: "Close image viewer",
+      previous: "Previous photograph",
+      next: "Next photograph",
+      loading: "Loading image…",
+      unavailable: "Full-size image unavailable. Showing preview.",
+    },
+    coverAlt:
+      "Blue light fills cloudlike fibers beneath reflective forms and colored light on sheer fabric",
     imageAlt: "Soft Boundary exhibition at GALLERY AND LINKS 81",
     imageAlts: [
-      "Light installations and suspended fabric throughout the gallery",
-      "An iridescent folded form casts colored light beside a fabric wall",
-      "A cyan-lit sculpture faces fabric draped across the gallery walls",
-      "Blue and yellow light falls across suspended fabric and floor sculptures",
-      "A dark mesh form surrounds a violet light on the gallery floor",
-      "Green and iridescent light fills sculptures along the gallery floor",
-      "Colored reflections appear on a fabric partition beside blue-lit sculptures",
-      "A yellow translucent form rests beneath illuminated draped fabric",
-      "Red light glows inside a dark mesh sculpture",
-      "Iridescent and yellow forms illuminate a corner of the gallery",
-      "Violet and blue sculptures fill the room beneath hanging fabric",
-      "A yellow form sits among soft white material at the base of a fabric wall",
-      "A blue-lit central sculpture faces hanging fabric and circular mirrors",
+      "Colored light crosses sheer fabric beside a suspended circular mirror",
+      "A violet glow shines through layers of dark mesh with distant colored reflections",
+      "Turquoise light blooms through cloudlike fibers beside a reflective edge",
+      "A golden folded form appears out of focus behind a translucent woven veil",
+      "Iridescent folds scatter green and gold light across soft white fibers",
+      "Yellow and green light streaks across sheer fabric beneath a blurred warm reflection",
     ],
   },
   ja: {
@@ -129,21 +137,24 @@ export const softBoundary: Record<ExhibitionLanguage, SoftBoundaryCopy> = {
     },
     inquiry:
       "展示作品やご購入については、ギャラリーへお問い合わせください。展覧会終了後もお問い合わせを受け付けています。",
+    lightbox: {
+      title: "展覧会の写真",
+      open: "写真を拡大",
+      close: "写真を閉じる",
+      previous: "前の写真",
+      next: "次の写真",
+      loading: "画像を読み込み中…",
+      unavailable: "元の画像を読み込めません。プレビューを表示しています。",
+    },
+    coverAlt: "鏡面の立体の下で雲のような繊維に満ちる青い光と、薄い布に映る色の光",
     imageAlt: "GALLERY AND LINKS 81での「やわらかな境界」展示風景",
     imageAlts: [
-      "ギャラリー全体に配置された光のインスタレーションと吊り下げられた布",
-      "布の壁のそばで色の光を放つ、虹色の折り重なった立体",
-      "壁に掛けられた布と向かい合う、水色に光る立体",
-      "吊り下げられた布と床の立体に広がる青と黄色の光",
-      "ギャラリーの床で紫の光を包む暗いメッシュの立体",
-      "床に沿って並ぶ立体の中に広がる緑と虹色の光",
-      "青く光る立体のそばで、布の間仕切りに映る色の反射",
-      "光に照らされた布の下に置かれた黄色い半透明の立体",
-      "暗いメッシュの立体の内側で光る赤い光",
-      "ギャラリーの一角を照らす虹色と黄色の立体",
-      "吊り下げられた布の下に並ぶ紫と青の立体",
-      "布の壁の足元で、柔らかな白い素材に囲まれた黄色い立体",
-      "吊り下げられた布と円形の鏡に向かい合う、中央の青い立体",
+      "吊り下げられた円形の鏡のそばで、薄い布を横切る色の光",
+      "遠くの色の反射を背景に、重なった暗いメッシュから漏れる紫の光",
+      "鏡面の縁のそばで、雲のような繊維に広がるターコイズ色の光",
+      "半透明の織物の向こうにぼんやりと見える金色の折り重なった形",
+      "柔らかな白い繊維に緑と金色の光を散らす虹色のひだ",
+      "ぼけた暖色の反射の下で、薄い布を横切る黄色と緑の光",
     ],
   },
 };

@@ -16,6 +16,8 @@ const { entry, next } = Astro.props;
 <main>
   <SoftBoundaryProject
     client:load
+    cover={entry.data.cover}
+    coverFullSrc={entry.data.coverFullSrc}
     images={entry.data.images}
     next={{ title: next.data.title, href: `/projects/${next.id}` }}
   />
