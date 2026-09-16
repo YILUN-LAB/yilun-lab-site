@@ -14,18 +14,12 @@ export function LabSection({ projects }: LabSectionProps) {
 
   // selectHighlights returns the HighlightInput subset (slug + title + tagline +
   // accent + cover + featured). Re-attach the full WorkCardData fields by looking
-  // up each highlight's slug in the input projects array, so EditorialGrid gets
-  // the weight + aspect + category + year fields it needs.
+  // up each highlight's slug in the input projects array. Ashlar lays the three
+  // out in this order: featured 1 leads, 2 and 3 follow.
   const bySlug = new Map(projects.map((p) => [p.slug, p]));
   const items = [lead, supporting[0], supporting[1]]
     .map((h) => bySlug.get(h.slug))
-    .filter((p): p is LabProjectInput => p !== undefined)
-    .map(
-      (p, index): LabProjectInput => ({
-        ...p,
-        weight: index === 0 ? "lead" : "column",
-      })
-    );
+    .filter((p): p is LabProjectInput => p !== undefined);
 
   return (
     <section
@@ -51,7 +45,7 @@ export function LabSection({ projects }: LabSectionProps) {
         performance, installation, and tech.
       </motion.p>
 
-      <EditorialGrid items={items} mode="lab" composition="featured" />
+      <EditorialGrid items={items} mode="lab" />
     </section>
   );
 }

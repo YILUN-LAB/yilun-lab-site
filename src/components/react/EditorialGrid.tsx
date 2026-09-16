@@ -1,6 +1,14 @@
+import { useMemo, type CSSProperties } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { gradientFor, type AccentName } from "@lib/accent-gradients";
 import { easeOut } from "@lib/motion-presets";
+import {
+  computeAshlarLayout,
+  type Breakpoint,
+  type LayoutItem,
+  type Placement,
+  type Tier,
+} from "@lib/ashlar";
 import { ArrowUpRight } from "./icons";
 
 export interface WorkCardData {
@@ -11,191 +19,76 @@ export interface WorkCardData {
   category: string[];
   year?: string;
   accent: AccentName;
+  /** Editorial nudge only: raises or lowers the chance of a feature slot. */
   weight: "lead" | "feature" | "column" | "tile";
-  aspect?: "4/5" | "16/10" | "1/1" | "5/4" | "4/3" | "21/9";
   cover?: string;
 }
 
-type Weight = "lead" | "feature" | "column" | "tile";
-type AspectRatio = "4/5" | "16/10" | "1/1" | "5/4" | "4/3" | "21/9";
+const BREAKPOINTS: Breakpoint[] = ["sm", "md", "lg"];
 
-const WEIGHT_COLSPAN: Record<Weight, string> = {
-  lead: "md:col-span-2 lg:col-span-7",
-  feature: "md:col-span-1 lg:col-span-5",
-  column: "md:col-span-1 lg:col-span-4",
-  tile: "md:col-span-1 lg:col-span-4",
-};
-
-const WEIGHT_ASPECT_DEFAULT_LG: Record<Weight, string> = {
-  lead: "lg:aspect-[4/5]",
-  feature: "lg:aspect-[16/10]",
-  column: "lg:aspect-[4/5]",
-  tile: "lg:aspect-[1/1]",
-};
-
-const WEIGHT_ASPECT_MD: Record<Weight, string> = {
-  lead: "md:aspect-[4/3]",
-  feature: "md:aspect-[4/5]",
-  column: "md:aspect-[4/5]",
-  tile: "md:aspect-[1/1]",
-};
-
-const ASPECT_LG_OVERRIDE: Record<AspectRatio, string> = {
-  "4/5": "lg:aspect-[4/5]",
-  "16/10": "lg:aspect-[16/10]",
-  "1/1": "lg:aspect-[1/1]",
-  "5/4": "lg:aspect-[5/4]",
-  "4/3": "lg:aspect-[4/3]",
-  "21/9": "lg:aspect-[21/9]",
-};
-
-const ASPECT_BASE = "aspect-[4/3]";
-
-const WEIGHT_TITLE_CLASS: Record<Weight, string> = {
+// Card chrome scales with the Ashlar tier. Tablet sits one step below desktop
+// because its cards are narrower (a 12-column unit is about 43px there).
+const TIER_TITLE_CLASS: Record<Tier, string> = {
   lead: "font-heading text-4xl italic leading-[0.9] tracking-[-1.5px] text-white md:text-5xl lg:text-6xl",
-  feature: "font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-4xl",
-  column: "font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-3xl",
-  tile: "font-heading text-xl italic leading-none tracking-[-0.5px] text-white md:text-2xl",
+  feature:
+    "font-heading text-3xl italic leading-[0.95] tracking-[-1px] text-white md:text-[1.75rem] lg:text-4xl",
+  tile: "font-heading text-2xl italic leading-none tracking-[-1px] text-white md:text-[1.375rem] lg:text-3xl",
 };
 
-const WEIGHT_OVERLAY_PADDING: Record<Weight, string> = {
-  lead: "p-6 md:p-10",
-  feature: "p-5 md:p-7",
-  column: "p-5 md:p-6",
-  tile: "p-5 md:p-6",
+const TIER_OVERLAY_PADDING: Record<Tier, string> = {
+  lead: "p-6 md:p-8 lg:p-10",
+  feature: "p-5 md:p-5 lg:p-7",
+  tile: "p-5 md:p-5 lg:p-6",
 };
 
-const WEIGHT_TAGLINE_CLASS: Record<Weight, string> = {
+const TIER_TAGLINE_CLASS: Record<Tier, string> = {
   lead: "mt-3 max-w-xl font-body text-base font-light text-white/85 md:text-lg",
-  feature: "mt-2 max-w-md font-body text-sm font-light text-white/85 md:text-base",
-  column: "mt-2 max-w-[40ch] font-body text-sm font-light leading-snug text-white/85",
-  tile: "mt-1.5 max-w-[32ch] font-body text-xs font-light leading-snug text-white/80",
+  feature: "mt-2 max-w-md font-body text-sm font-light text-white/85 lg:text-base",
+  tile: "mt-2 max-w-[40ch] font-body text-sm font-light leading-snug text-white/85 md:text-xs lg:text-sm",
 };
 
-const WEIGHT_CTA_CLASS: Record<Weight, string> = {
+const TIER_CTA_CLASS: Record<Tier, string> = {
   lead: "liquid-glass-strong liquid-glass-tint mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-semibold transition-transform group-hover:translate-x-0.5",
   feature:
     "liquid-glass mt-4 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5",
-  column:
-    "liquid-glass mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5",
-  tile: "liquid-glass mt-2 inline-flex items-center gap-2 rounded-full px-2.5 py-1 font-body text-[11px] font-medium text-white transition-transform group-hover:translate-x-0.5",
+  tile: "liquid-glass mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-body text-xs font-medium text-white transition-transform group-hover:translate-x-0.5",
 };
 
-const WEIGHT_CTA_ICON_CLASS: Record<Weight, string> = {
+const TIER_CTA_ICON_CLASS: Record<Tier, string> = {
   lead: "h-4 w-4",
   feature: "h-3.5 w-3.5",
-  column: "h-3 w-3",
   tile: "h-3 w-3",
 };
 
-function resolveWeight(declared: Weight, position: number, totalItems: number): Weight {
-  // Position 0 is always promoted to lead, regardless of declared weight.
-  if (position === 0) return "lead";
-
-  // 2-item adaptive promotion: lead (7-col) + a column/tile (4-col) leaves a
-  // stranded col gap. Promote position 1 to feature (5-col) so the row reads
-  // cleanly. From 3 items onward, the curator's declared weight wins — the
-  // hierarchy we want (lead > feature > column > tile) requires honoring it.
-  if (totalItems === 2 && position === 1) return "feature";
-
-  // Otherwise honor the declared weight from MDX.
-  return declared;
+/** Reverses the memo key: "slug:weight|slug:weight" back into engine items. */
+function parseLayoutKey(key: string): LayoutItem[] {
+  if (key === "") return [];
+  return key.split("|").map((entry) => {
+    const [slug, weight] = entry.split(":");
+    return { slug, weight: weight as LayoutItem["weight"] };
+  });
 }
 
-function aspectClasses(
-  weight: Weight,
-  aspectOverride: AspectRatio | undefined,
-  fullWidthTablet = false
-): string {
-  const md = fullWidthTablet ? "md:aspect-[16/10]" : WEIGHT_ASPECT_MD[weight];
-  const lg = aspectOverride ? ASPECT_LG_OVERRIDE[aspectOverride] : WEIGHT_ASPECT_DEFAULT_LG[weight];
-  return `${ASPECT_BASE} ${md} ${lg}`;
-}
-
-function leadGridClasses(totalItems: number): string {
-  // When only 1 item, the "lead" spans the full row at every breakpoint.
-  if (totalItems === 1) return "md:col-span-2 lg:col-span-12";
-
-  // 3-item composition: span the lead across two grid rows so position 1
-  // (top-right) and position 2 (bottom-right) stack in the right column,
-  // producing the conventional T-shaped editorial layout instead of leaving
-  // the bottom-right empty and orphaning position 2 below the lead.
-  if (totalItems === 3) return `${WEIGHT_COLSPAN.lead} lg:row-span-2`;
-
-  return WEIGHT_COLSPAN.lead;
+/** Inline variables consumed by the `.ashlar-grid` rules in global.css. */
+function placementStyle(placements: Record<Breakpoint, Placement>): CSSProperties {
+  const style: Record<string, string> = {};
+  for (const bp of BREAKPOINTS) {
+    const p = placements[bp];
+    style[`--ashlar-${bp}-col`] = `${p.x + 1} / span ${p.w}`;
+    style[`--ashlar-${bp}-row`] = `${p.y + 1} / span ${p.h}`;
+  }
+  return style as CSSProperties;
 }
 
 interface CardProps {
   item: WorkCardData;
-  weight: Weight;
+  tier: Tier;
+  placements: Record<Breakpoint, Placement>;
   showFeaturedBadge: boolean;
-  stagger: boolean;
   index: number;
-  totalItems: number;
-  featuredComposition: boolean;
-  compactWorks: boolean;
 }
 
-function Card({
-  item,
-  weight,
-  showFeaturedBadge,
-  stagger,
-  index,
-  totalItems,
-  featuredComposition,
-  compactWorks,
-}: CardProps) {
-  // Keep the opening pair asymmetric, then fill every remaining row.
-  const trailingCount = totalItems - 2;
-  const lastRowCount = trailingCount % 3;
-  const pairedTail =
-    index >= 2 &&
-    ((lastRowCount === 1 && index >= totalItems - 4) ||
-      (lastRowCount === 2 && index >= totalItems - 2));
-  const fullWidthTablet = index === totalItems - 1 && totalItems % 2 === 0;
-  const worksTabletSpan = index === 0 || fullWidthTablet ? "md:col-span-2" : "md:col-span-1";
-  const worksColSpan =
-    totalItems === 1
-      ? "lg:col-span-12"
-      : index === 0
-        ? `lg:col-span-7 ${totalItems === 3 ? "lg:row-span-2" : ""}`
-        : index === 1 || totalItems === 3
-          ? "lg:col-span-5"
-          : pairedTail
-            ? "lg:col-span-6"
-            : "lg:col-span-4";
-  const colSpan = featuredComposition
-    ? index === 0
-      ? "md:col-span-2 lg:col-span-7 lg:row-span-2"
-      : "md:col-span-1 lg:col-span-5"
-    : compactWorks
-      ? `${worksTabletSpan} ${worksColSpan}`
-      : weight === "lead"
-        ? leadGridClasses(totalItems)
-        : WEIGHT_COLSPAN[weight];
-  const aspect = featuredComposition
-    ? index === 0
-      ? "aspect-[4/5] md:aspect-[4/3] lg:aspect-auto lg:h-full"
-      : "aspect-[4/3] md:aspect-[5/4] lg:aspect-[16/10] lg:min-h-[17rem]"
-    : compactWorks
-      ? index === 0
-        ? "aspect-[4/5] md:aspect-[4/3] md:h-full"
-        : totalItems === 3
-          ? "aspect-[4/3] md:aspect-[4/5] lg:aspect-[16/10] lg:min-h-[17rem]"
-          : `${aspectClasses(weight, item.aspect ?? (pairedTail ? "5/4" : undefined), fullWidthTablet)} md:h-full`
-      : aspectClasses(weight, item.aspect);
-  const staggerClass = !featuredComposition && !compactWorks && stagger ? "lg:mt-12" : "";
-
-  const titleClass = WEIGHT_TITLE_CLASS[weight];
-
-  // All weights render the same chrome inside the image overlay
-  // (title + optional subtitle + tagline + "View case study" CTA), so every
-  // card is self-contained regardless of which composition it lands in.
-  // The visual hierarchy comes from card size (col-span + aspect) and the
-  // weight-specific text/CTA scales below — not from showing different
-  // content per weight.
-
+function Card({ item, tier, placements, showFeaturedBadge, index }: CardProps) {
   return (
     <motion.a
       layout
@@ -208,9 +101,10 @@ function Card({
         ease: easeOut,
         delay: Math.min(index * 0.06, 0.6),
       }}
-      className={`group block ${colSpan} ${staggerClass}`}
+      className="group block"
+      style={placementStyle(placements)}
     >
-      <div className={`liquid-glass relative w-full overflow-hidden rounded-[1.25rem] ${aspect}`}>
+      <div className="liquid-glass relative h-full w-full overflow-hidden rounded-[1.25rem]">
         {item.cover ? (
           <img
             src={item.cover}
@@ -244,17 +138,17 @@ function Card({
           </div>
         )}
 
-        <div className={`absolute bottom-0 left-0 right-0 ${WEIGHT_OVERLAY_PADDING[weight]}`}>
-          <h3 className={titleClass}>{item.title}</h3>
+        <div className={`absolute bottom-0 left-0 right-0 ${TIER_OVERLAY_PADDING[tier]}`}>
+          <h3 className={TIER_TITLE_CLASS[tier]}>{item.title}</h3>
 
-          {item.subtitle && weight !== "tile" && (
+          {item.subtitle && tier !== "tile" && (
             <div className="mt-1 font-body text-sm font-light text-white/70">{item.subtitle}</div>
           )}
 
-          <p className={WEIGHT_TAGLINE_CLASS[weight]}>{item.tagline}</p>
+          <p className={TIER_TAGLINE_CLASS[tier]}>{item.tagline}</p>
 
-          <span className={WEIGHT_CTA_CLASS[weight]}>
-            View case study <ArrowUpRight className={WEIGHT_CTA_ICON_CLASS[weight]} />
+          <span className={TIER_CTA_CLASS[tier]}>
+            View case study <ArrowUpRight className={TIER_CTA_ICON_CLASS[tier]} />
           </span>
         </div>
       </div>
@@ -265,68 +159,48 @@ function Card({
 interface EditorialGridProps {
   items: WorkCardData[];
   mode: "lab" | "works";
-  composition?: "featured";
 }
 
 /**
- * Shared editorial grid for the homepage's Lab + Works sections.
+ * Shared editorial grid for the homepage's Lab and Works sections, laid out
+ * by the Ashlar engine (`@lib/ashlar`, documented in docs/ashlar.md).
  *
- * Two contracts that aren't obvious from the props:
- *
- * 1. **Hero promotion.** The first item in `items` is always rendered as
- *    `lead` regardless of its declared `weight`. Items 2+ render at their
- *    declared weights as-is. So MDX `weight` is editorial intent for any
- *    non-first slot — putting the editorial weight `tile` on the project
- *    sorted first by `order` will still render it as `lead`. See
- *    `resolveWeight()`.
- *
- * 2. **Low-count adaptive promotion.** With 1 item, the lead spans the full
- *    row at every breakpoint. With 2 items, position 1 is auto-promoted to
- *    `feature` so the row tiles cleanly (7+5=12 cols). From 3 items onward,
- *    declared weights are honored — the curator's intended hierarchy
- *    (lead > feature > column > tile) wins.
- *
- * `mode="lab"` enables the "// Featured" pill on the lead card. Its featured
- * composition places two supporting cards beside a full-height lead.
- * `mode="works"` fills aligned rows with adaptive spans, keeping weight-based
- * typography and CTA sizes while suppressing the featured pill.
+ * The engine decides every card's tier, size and position for all three
+ * breakpoints from the item order alone, so the same list always renders the
+ * same layout on the server and the client. Nothing here hard-codes spans or
+ * aspect ratios; card chrome only follows the resolved tier. `mode="lab"`
+ * adds the "// Featured" pill to the lead.
  */
-export function EditorialGrid({ items, mode, composition }: EditorialGridProps) {
-  // Walk items once, computing the resolved weight + staggering per position.
-  // Counter for column/tile cards → every 3rd one gets a top offset at lg+.
-  let columnTileCount = 0;
+export function EditorialGrid({ items, mode }: EditorialGridProps) {
+  // The layout depends only on slug order and weights, so key the memo on
+  // exactly that and rebuild the engine input from the key.
+  const layoutKey = items.map((item) => `${item.slug}:${item.weight}`).join("|");
+  const layout = useMemo(() => computeAshlarLayout(parseLayoutKey(layoutKey)), [layoutKey]);
 
   return (
-    <div
-      className={`grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12 ${composition === "featured" || mode === "works" ? "items-stretch" : "lg:grid-flow-row-dense lg:items-start"}`}
-    >
-      <AnimatePresence initial={false}>
-        {items.map((item, i) => {
-          const resolvedWeight = resolveWeight(item.weight, i, items.length);
-          let stagger = false;
-          if (resolvedWeight === "column" || resolvedWeight === "tile") {
-            columnTileCount++;
-            if (columnTileCount % 3 === 0) stagger = true;
-          }
-          // Lab mode shows the "// Featured" pill on the lead card.
-          // Works mode promotes the lead chrome (size, CTA) but never the badge.
-          const showFeaturedBadge = mode === "lab" && resolvedWeight === "lead";
-
-          return (
-            <Card
-              key={item.slug}
-              item={item}
-              weight={resolvedWeight}
-              showFeaturedBadge={showFeaturedBadge}
-              stagger={stagger}
-              index={i}
-              totalItems={items.length}
-              featuredComposition={composition === "featured"}
-              compactWorks={mode === "works"}
-            />
-          );
-        })}
-      </AnimatePresence>
+    <div className="ashlar">
+      <div className="ashlar-grid">
+        <AnimatePresence initial={false}>
+          {items.map((item, i) => {
+            const placements = {
+              sm: layout.sm.best.placements[i],
+              md: layout.md.best.placements[i],
+              lg: layout.lg.best.placements[i],
+            };
+            const tier = placements.lg.tier;
+            return (
+              <Card
+                key={item.slug}
+                item={item}
+                tier={tier}
+                placements={placements}
+                showFeaturedBadge={mode === "lab" && tier === "lead"}
+                index={i}
+              />
+            );
+          })}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

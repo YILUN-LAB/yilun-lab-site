@@ -52,7 +52,9 @@ function buildCellMap(placements: Placement[], cols: number): { cells: number[][
 /** Empty cells not connected to the outside of the bounding box via empty cells. */
 function countEnclosedCells(cells: number[][], cols: number, rows: number): number {
   if (rows === 0) return 0;
-  const seen: boolean[][] = Array.from({ length: rows }, () => new Array<boolean>(cols).fill(false));
+  const seen: boolean[][] = Array.from({ length: rows }, () =>
+    new Array<boolean>(cols).fill(false)
+  );
   const stack: [number, number][] = [];
   const push = (y: number, x: number) => {
     if (y < 0 || y >= rows || x < 0 || x >= cols) return;
@@ -272,7 +274,9 @@ export function scorePlacement(
 
   // Tier mix: cards that could not take their assigned tier and borrowed a
   // neighbouring size instead. Valid on partial layouts too.
-  const tierMix = placements.filter((p, i) => wantedTiers[i] !== undefined && p.tier !== wantedTiers[i]).length;
+  const tierMix = placements.filter(
+    (p, i) => wantedTiers[i] !== undefined && p.tier !== wantedTiers[i]
+  ).length;
 
   // Narrow: cards under the comfortable width, only where the grid is wide
   // enough for that to be a choice (mobile cards always span the grid).

@@ -2,7 +2,7 @@ import type { Breakpoint, Size, Tier } from "./types";
 
 /**
  * Grid columns per breakpoint. Rows are square units of the same size, so a
- * 12-column tablet unit is about 43px and a desktop unit about 75px at the
+ * 12-column tablet unit is about 35px and a desktop unit about 75px at the
  * reference widths. Mobile is a single visual column.
  */
 export const COLUMNS: Record<Breakpoint, number> = { sm: 4, md: 12, lg: 12 };

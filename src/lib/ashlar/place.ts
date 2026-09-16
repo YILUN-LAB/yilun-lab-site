@@ -81,7 +81,9 @@ export class UnitGrid {
   /** Places at an explicit position; throws if any cell is already taken. */
   placeAt<T extends Size>(x: number, y: number, size: T): Placed<T> {
     if (!this.fits(x, y, size.w, size.h)) {
-      throw new Error(`Ashlar: cannot place ${size.w}×${size.h} at (${x}, ${y}); cells are occupied.`);
+      throw new Error(
+        `Ashlar: cannot place ${size.w}×${size.h} at (${x}, ${y}); cells are occupied.`
+      );
     }
     this.block(x, y, size.w, size.h);
     return { ...size, x, y };

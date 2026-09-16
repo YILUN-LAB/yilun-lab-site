@@ -73,12 +73,7 @@ describe("scorePlacement", () => {
   });
 
   it("counts enclosed empty cells as holes", () => {
-    const holey = [
-      card(0, 0, 4, 2, "lead"),
-      card(4, 0, 4, 1),
-      card(8, 0, 4, 2),
-      card(0, 2, 12, 1),
-    ];
+    const holey = [card(0, 0, 4, 2, "lead"), card(4, 0, 4, 1), card(8, 0, 4, 2), card(0, 2, 12, 1)];
     expect(scorePlacement(holey, 12).holes).toBe(4);
   });
 

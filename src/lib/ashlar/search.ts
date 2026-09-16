@@ -71,8 +71,7 @@ function sizeOptions(
   const vocab = VOCABULARY[breakpoint];
   const minWidth = MIN_WIDTH[breakpoint];
   // Exact fill, one short (for an inset against a grid edge), or room for another card.
-  const fits = (s: Size) =>
-    s.w === gapWidth || s.w === gapWidth - 1 || s.w <= gapWidth - minWidth;
+  const fits = (s: Size) => s.w === gapWidth || s.w === gapWidth - 1 || s.w <= gapWidth - minWidth;
   const own = vocab[wanted].filter(fits).map((size) => ({ tier: wanted, size }));
   if (own.length > 0) return own;
   if (wanted !== "lead") {
@@ -162,7 +161,9 @@ export function searchLayout(
 
   const tiers = assignTiers(items);
   let serial = 0;
-  let beam: BeamState[] = [{ grid: new UnitGrid(cols), placements: [], total: 0, serial: serial++ }];
+  let beam: BeamState[] = [
+    { grid: new UnitGrid(cols), placements: [], total: 0, serial: serial++ },
+  ];
 
   for (let index = 0; index < items.length; index++) {
     const last = index === items.length - 1;
