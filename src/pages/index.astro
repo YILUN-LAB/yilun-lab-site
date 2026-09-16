@@ -2,6 +2,8 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "@components/BaseLayout.astro";
 import { HomePage } from "@components/react/HomePage";
+import heroBootstrap from "@lib/hero-bootstrap.js?raw";
+import { HERO_VIDEO_ASSETS } from "@lib/hero-video-assets";
 
 const entries = await getCollection("projects", (e: CollectionEntry<"projects">) => !e.data.draft);
 entries.sort(
@@ -24,5 +26,13 @@ const projects = entries.map((e: CollectionEntry<"projects">) => ({
 ---
 
 <BaseLayout title="YILUN LAB" description="Light. Emotion. Future.">
+  <script
+    slot="head"
+    is:inline
+    data-hero-assets={JSON.stringify(
+      HERO_VIDEO_ASSETS.map(({ original, poster }) => ({ original, poster }))
+    )}
+    set:html={heroBootstrap}
+  />
   <HomePage client:load projects={projects} />
 </BaseLayout>

@@ -39,10 +39,18 @@ The first optimization pass retained each full original clip and weighed
 than those files. Superseded, never-deployed optimized MP4s were removed from
 this branch after checking references; their originals and Git history remain.
 
-Posters are first frames at 1920×1080, WebP quality 85. The first poster is in
-server-rendered HTML; selection rotates after hydration. A poster stays underneath
-the video during loading, errors and initial fade-in. The default SSR poster is clip 1;
-when another clip is chosen its poster can change briefly before playback.
+Posters are first frames at 1920×1080, WebP quality 85. A synchronous inline
+homepage head script selects one clip before the body paints and preloads its
+matching poster. The SSR background uses a CSS custom property set by that script;
+React reuses the same document selection without consuming another queue entry.
+The poster stays underneath the video during loading, errors and initial fade-in.
+With JavaScript unavailable, the CSS fallback remains clip 1. If the bootstrap
+cannot run but React can, React also uses clip 1 rather than introducing a mismatch.
+
+The earlier implementation always painted poster 1 before selecting a random
+clip after hydration, producing a visible first-load jump for clips 2 and 3.
+The pre-paint selection fixes that identity mismatch without crossfading different
+Bubbles, changing the footage or giving up rotation between page loads.
 
 ### Actual Vercel dashboard observations
 
@@ -296,3 +304,32 @@ redesign/renderer optimization needs visual review and further measurement.
 Raw timestamped IOGPU samples, local fixture scripts and media observations are
 retained in ignored `.playwright-mcp/gpu-review/`. The instrumentation, temporary
 SVGs and benchmark worktree are excluded from tracked release files.
+
+
+## First-load poster identity fix (2026-09-17)
+
+The homepage now chooses its clip in a classic inline head script, before React
+or body paint. Only the chosen poster is preloaded, and the decorative background
+uses that URL through `--hero-poster`. React reads the document's existing choice;
+it never advances the rotation queue during hydration. The fallback CSS and
+missing-bootstrap video both use clip 1. The queue still rotates all three clips,
+avoids a repeat across queue boundaries, and tolerates unavailable/corrupt storage.
+
+Validation: `npm run check` reported zero diagnostics; lint, the production build,
+and all 104 tests across 13 files passed. Bootstrap tests execute the actual raw
+script and cover each poster/video pair, duplicate initialization, queue rotation,
+malformed queues, denied storage and missing-bootstrap fallback. Production HTML
+inspection confirmed a classic script before the body, no fixed Hero `<img>` URL,
+and an identical poster style across SSR and hydration.
+
+A local HTTP fixture served the production build while holding the HomePage JS
+response. For forced clips 2 and 3, the real in-app browser showed the corresponding
+poster with the island still unhydrated and no video element. Releasing the response
+mounted and played the matching video at 0.65x; the poster URL stayed unchanged.
+Desktop 1280x900 and mobile 375x812 were checked. A script-stripped fixture at
+768x1024 retained poster 1. No horizontal overflow was observed. On the actual dev
+homepage, exiting Hero held clip 2 at 5.089765 seconds; returning restored playback
+and content with the same source. Neither hydrated run reported console warnings
+or errors. This verifies first-load identity and existing scroll lifecycle, not a
+new GPU or regional network benchmark. Local fixtures and screenshots remain in
+ignored `.playwright-mcp/hero-first-frame/`.

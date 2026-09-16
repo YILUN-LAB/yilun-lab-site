@@ -6,7 +6,7 @@ import { HERO_VIDEO_ASSETS } from "@lib/hero-video-assets";
 import { BlurText } from "./BlurText";
 import { ArrowUpRight, PlayIcon, ClockIcon, GlobeIcon } from "./icons";
 import { fadeBlurInImmediate } from "@lib/motion-presets";
-import { pickHeroVideo } from "@lib/hero-video";
+import { getInitialHeroVideo } from "@lib/hero-video";
 import { softBoundaryAnnouncement } from "@lib/data/soft-boundary";
 
 export function Hero() {
@@ -29,7 +29,7 @@ export function Hero() {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    setVideoSrc(pickHeroVideo());
+    setVideoSrc(getInitialHeroVideo());
   }, []);
   const asset =
     HERO_VIDEO_ASSETS.find((asset) => asset.original === videoSrc) ?? HERO_VIDEO_ASSETS[0];
@@ -53,15 +53,15 @@ export function Hero() {
             "radial-gradient(80% 60% at 50% 100%, rgba(140,80,20,0.35), transparent 60%)",
         }}
       />
-      <img
-        src={asset.poster}
-        alt=""
+      <div
+        data-hero-poster
         aria-hidden="true"
-        width="1920"
-        height="1080"
-        loading="eager"
-        className="pointer-events-none absolute left-1/2 top-0 z-0 -translate-x-1/2 object-cover object-top"
-        style={{ width: "120%", height: "120%" }}
+        className="pointer-events-none absolute left-1/2 top-0 z-0 -translate-x-1/2 bg-cover bg-top bg-no-repeat"
+        style={{
+          width: "120%",
+          height: "120%",
+          backgroundImage: `var(--hero-poster, url("${HERO_VIDEO_ASSETS[0].poster}"))`,
+        }}
       />
       {videoSrc && (
         <FadingVideo
