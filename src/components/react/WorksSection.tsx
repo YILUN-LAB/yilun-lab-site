@@ -53,7 +53,7 @@ export function WorksSection({ projects }: WorksSectionProps) {
         </p>
       </motion.div>
 
-      <PillTabs tabs={tabs} activeId={filter} onChange={setFilter} className="mb-10" />
+      <PillTabs tabs={tabs} activeId={filter} onChange={setFilter} className="mb-10" mobileGrid />
       <div className="-mt-4 mb-6 font-body text-xs text-white/55">
         {filtered.length} {filtered.length === 1 ? "work" : "works"}
       </div>

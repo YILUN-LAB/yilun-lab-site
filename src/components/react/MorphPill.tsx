@@ -13,6 +13,8 @@ interface MorphPillProps {
   onChange?: (id: string) => void;
   className?: string;
   ariaLabel?: string;
+  /** Keep all filter options visible in two columns below the tablet breakpoint. */
+  mobileGrid?: boolean;
   /**
    * When true, render without the outer liquid-glass container so the
    * component can embed inside another glass surface (e.g. Navbar).
@@ -28,6 +30,7 @@ export function MorphPill({
   onChange,
   className = "",
   ariaLabel,
+  mobileGrid = false,
   bare = false,
 }: MorphPillProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -45,33 +48,43 @@ export function MorphPill({
       setIndicator((prev) => ({ ...prev, opacity: 0 }));
       return;
     }
-    const active = containerRef.current?.querySelector<HTMLElement>(
-      '[data-active="true"]'
-    );
-    if (!active) return;
-    const next = {
-      left: active.offsetLeft,
-      top: active.offsetTop,
-      width: active.offsetWidth,
-      height: active.offsetHeight,
-      opacity: 1 as number,
+    const container = containerRef.current;
+    if (!container) return;
+    const measure = () => {
+      const active = container.querySelector<HTMLElement>('[data-active="true"]');
+      if (!active) return;
+      const next = {
+        left: active.offsetLeft,
+        top: active.offsetTop,
+        width: active.offsetWidth,
+        height: active.offsetHeight,
+        opacity: 1 as number,
+      };
+      setIndicator((prev) => {
+        if (
+          prev.left === next.left &&
+          prev.top === next.top &&
+          prev.width === next.width &&
+          prev.height === next.height &&
+          prev.opacity === next.opacity
+        )
+          return prev;
+        return next;
+      });
     };
-    setIndicator((prev) => {
-      if (
-        prev.left === next.left &&
-        prev.top === next.top &&
-        prev.width === next.width &&
-        prev.height === next.height &&
-        prev.opacity === next.opacity
-      )
-        return prev;
-      return next;
-    });
-  }, [activeId, items.length]);
+    measure();
+    // Font loading, viewport changes and badge updates can all move the button.
+    const observer = new ResizeObserver(measure);
+    observer.observe(container);
+    container.querySelectorAll("button").forEach((button) => observer.observe(button));
+    return () => observer.disconnect();
+  }, [activeId, items]);
 
   const containerClass = bare
-    ? "no-scrollbar relative inline-flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto"
-    : "liquid-glass no-scrollbar relative inline-flex max-w-full flex-nowrap items-center gap-1 overflow-x-auto rounded-full p-1.5";
+    ? "inline-flex min-w-0 max-w-full"
+    : mobileGrid
+      ? "liquid-glass inline-flex w-full max-w-full rounded-[1.75rem] md:w-auto md:rounded-full"
+      : "liquid-glass inline-flex max-w-full rounded-full";
 
   const spring = { type: "spring" as const, stiffness: 520, damping: 40, mass: 1 };
   const indicatorTransition = reducedMotion
@@ -86,57 +99,69 @@ export function MorphPill({
 
   return (
     <div
-      ref={containerRef}
       role={ariaLabel ? "group" : undefined}
       aria-label={ariaLabel}
       className={[containerClass, className].filter(Boolean).join(" ")}
     >
-      <motion.span
-        className="liquid-glass-tint pointer-events-none absolute rounded-full will-change-transform"
-        initial={false}
-        animate={{
-          x: indicator.left,
-          y: indicator.top,
-          width: indicator.width,
-          height: indicator.height,
-          opacity: indicator.opacity,
-        }}
-        transition={indicatorTransition}
-        style={{ left: 0, top: 0, zIndex: 0 }}
-      />
-      {items.map((item) => {
-        const isActive = activeId === item.id;
-        return (
-          <button
-            key={item.id}
-            type="button"
-            data-active={isActive}
-            onClick={(e) => {
-              onChange?.(item.id);
-              e.currentTarget.scrollIntoView({
-                block: "nearest",
-                inline: "nearest",
-                behavior: reducedMotion ? "auto" : "smooth",
-              });
-            }}
-            aria-current={isActive ? "true" : undefined}
-            className={
-              "relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-2 font-body text-sm font-medium transition-colors duration-300 " +
-              (isActive ? "text-[#fff5e0]" : "glass-link text-white/85")
-            }
-            style={isActive ? { textShadow: "0 1px 0 rgba(80,40,5,0.45)" } : undefined}
-          >
-            {item.label}
-            {item.badge !== undefined && (
-              <span
-                className={"text-[10px] " + (isActive ? "text-[#fff0d0]/75" : "text-white/50")}
-              >
-                {item.badge}
-              </span>
-            )}
-          </button>
-        );
-      })}
+      <div
+        ref={containerRef}
+        className={
+          "no-scrollbar relative min-w-0 max-w-full items-center gap-1 overflow-y-hidden " +
+          (mobileGrid
+            ? "grid w-full grid-cols-2 overflow-x-hidden md:inline-flex md:w-auto md:overflow-x-auto"
+            : "inline-flex flex-nowrap overflow-x-auto") +
+          (bare ? "" : "scroll-px-1.5 p-1.5")
+        }
+      >
+        <motion.span
+          className="liquid-glass-tint pointer-events-none absolute rounded-full will-change-transform"
+          initial={false}
+          animate={{
+            x: indicator.left,
+            y: indicator.top,
+            width: indicator.width,
+            height: indicator.height,
+            opacity: indicator.opacity,
+          }}
+          transition={indicatorTransition}
+          style={{ left: 0, top: 0, zIndex: 0 }}
+        />
+        {items.map((item) => {
+          const isActive = activeId === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              data-active={isActive}
+              onClick={(e) => {
+                onChange?.(item.id);
+                if (!mobileGrid)
+                  e.currentTarget.scrollIntoView({
+                    block: "nearest",
+                    inline: "nearest",
+                    behavior: reducedMotion ? "auto" : "smooth",
+                  });
+              }}
+              aria-current={isActive ? "true" : undefined}
+              className={
+                "relative z-10 inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full font-body text-sm font-medium transition-colors duration-300 " +
+                (mobileGrid ? "min-w-0 justify-center px-2 py-3 md:px-4 md:py-2" : "px-4 py-2") +
+                (isActive ? "text-[#fff5e0]" : "glass-link text-white/85")
+              }
+              style={isActive ? { textShadow: "0 1px 0 rgba(80,40,5,0.45)" } : undefined}
+            >
+              {item.label}
+              {item.badge !== undefined && (
+                <span
+                  className={"text-[10px] " + (isActive ? "text-[#fff0d0]/75" : "text-white/50")}
+                >
+                  {item.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
