@@ -1,3 +1,4 @@
+import { navigateHomeSection } from "@lib/hero-scroll";
 import { useGlassLensing } from "@lib/glass-lensing";
 import { useActiveSection } from "@lib/use-active-section";
 import { MorphPill } from "./MorphPill";
@@ -24,28 +25,13 @@ const NAV_SECTION_IDS = NAV_ITEMS.map((item) => item.id);
 export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
   useGlassLensing();
 
-  const homepageActive = useActiveSection(
-    mode === "scroll" ? NAV_SECTION_IDS : []
-  );
+  const homepageActive = useActiveSection(mode === "scroll" ? NAV_SECTION_IDS : []);
 
-  const navActiveId =
-    mode === "scroll"
-      ? homepageActive
-      : activePage === "about"
-        ? "about"
-        : null;
+  const navActiveId = mode === "scroll" ? homepageActive : activePage === "about" ? "about" : null;
 
   function jumpTo(target: string) {
     if (mode === "scroll") {
-      if (target === "top") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
-      const el = document.getElementById(target);
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 20;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
+      navigateHomeSection(target);
     } else {
       if (target === "top") window.location.href = "/";
       else if (target === "about") window.location.href = "/about";
@@ -75,12 +61,7 @@ export function Navbar({ mode = "page", activePage = null }: NavbarProps) {
             />
           </button>
 
-          <MorphPill
-            bare
-            items={NAV_ITEMS}
-            activeId={navActiveId}
-            onChange={jumpTo}
-          />
+          <MorphPill bare items={NAV_ITEMS} activeId={navActiveId} onChange={jumpTo} />
 
           <button
             onClick={() => jumpTo("collaborate")}

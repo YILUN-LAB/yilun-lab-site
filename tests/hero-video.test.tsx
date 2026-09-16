@@ -1,6 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FadingVideo } from "../src/components/react/FadingVideo";
+import { motionValue } from "motion/react";
 import { pickHeroVideo } from "../src/lib/hero-video";
 
 let intersect: (entries: { isIntersecting: boolean }[]) => void;
@@ -61,13 +62,14 @@ afterEach(() => {
   Object.defineProperty(navigator, "connection", { configurable: true, value: undefined });
 });
 
-const mount = (mode: "settle" | "loop" | "still" = "settle") => {
+const mount = (mode: "scene" | "loop" | "still" = "scene") => {
+  const exposure = motionValue(1);
   const result = render(
     <section>
-      <FadingVideo src={source} poster="/poster.webp" mode={mode} />
+      <FadingVideo src={source} poster="/poster.webp" mode={mode} exposure={exposure} />
     </section>
   );
-  return { ...result, video: result.container.querySelector("video")! };
+  return { ...result, exposure, video: result.container.querySelector("video")! };
 };
 const visible = async (value = true) => {
   await act(async () => {
@@ -111,15 +113,13 @@ describe("hero media lifecycle", () => {
           removeEventListener() {},
         },
       });
-      const { video } = mount(policy === "still" ? "still" : "settle");
+      const { video } = mount(policy === "still" ? "still" : "scene");
       await visible();
       expect(video).not.toHaveAttribute("src");
       expect(video).toHaveAttribute("poster", "/poster.webp");
       expect(play).not.toHaveBeenCalled();
-      fireEvent.click(screen.getByRole("button", { name: "Play background" }));
-      expect(video).toHaveAttribute("src", source);
-      await act(async () => {});
-      expect(play).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole("button")).not.toBeInTheDocument();
+      expect(video.controls).toBe(false);
     }
   );
 
@@ -131,63 +131,74 @@ describe("hero media lifecycle", () => {
     expect(video.paused).toBe(true);
   });
 
-  it("keeps an explicit pause when the tab or viewport returns", async () => {
-    const { video } = mount();
+  it("slows on exit, holds the exact frame, and accelerates from it on every re-entry", async () => {
+    const { video, exposure } = mount();
     await visible();
-    fireEvent.click(screen.getByRole("button", { name: "Pause background" }));
-    await visible(false);
-    await visible();
-    await visibility(true);
-    await visibility(false);
+    video.currentTime = 3.25;
+    expect(video.playbackRate).toBe(0.65);
+    act(() => exposure.set(0.5));
+    const midpointRate = video.playbackRate;
+    expect(midpointRate).toBeGreaterThan(0.1);
+    expect(midpointRate).toBeLessThan(0.65);
+    act(() => exposure.set(0.05));
+    expect(video.playbackRate).toBeLessThan(midpointRate);
+    act(() => exposure.set(0));
     expect(video.paused).toBe(true);
-    expect(play).toHaveBeenCalledTimes(1);
+    expect(video.currentTime).toBe(3.25);
+    expect(video.style.opacity).toBe("1");
+    expect(video).toHaveAttribute("src", source);
+    for (let i = 0; i < 2; i++) {
+      await act(async () => exposure.set(0.05));
+      expect(video.paused).toBe(false);
+      expect(video.playbackRate).toBeLessThan(midpointRate);
+      expect(video.currentTime).toBe(3.25);
+      act(() => exposure.set(1));
+      expect(video.playbackRate).toBe(0.65);
+      act(() => exposure.set(0));
+      expect(video.paused).toBe(true);
+    }
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(video.controls).toBe(false);
+    expect(video).toHaveAttribute("tabindex", "-1");
   });
 
-  it("decelerates on keyboard engagement and holds the frame until explicitly played", async () => {
+  it("does not settle merely because a visitor focuses or reads content", async () => {
     const { video, container } = mount();
     await visible();
-    const link = document.createElement("a");
-    link.href = "#lab";
-    container.querySelector("section")!.append(link);
-    fireEvent.focusIn(link);
+    fireEvent.focusIn(container.querySelector("section")!);
     await act(async () => {
-      vi.advanceTimersByTime(800);
+      vi.advanceTimersByTime(10000);
     });
-    expect(video.playbackRate).toBeLessThan(0.65);
-    await act(async () => {
-      vi.advanceTimersByTime(1000);
-    });
-    expect(video.paused).toBe(true);
-    expect(video.style.opacity).toBe("1");
-    await visible(false);
-    await visible();
-    expect(video.paused).toBe(true);
-    fireEvent.click(screen.getByRole("button", { name: "Play background" }));
-    await act(async () => {});
     expect(video.paused).toBe(false);
     expect(video.playbackRate).toBe(0.65);
   });
 
-  it("settles after meaningful scrolling but loop mode keeps playing", async () => {
-    const { video, rerender } = mount();
+  it("cancels a loop fade during exit so the held frame stays visible", async () => {
+    const { video, exposure } = mount();
     await visible();
-    vi.spyOn(window, "scrollY", "get").mockReturnValue(20);
-    fireEvent.scroll(window);
-    await act(async () => {
-      vi.advanceTimersByTime(1700);
+    Object.defineProperty(video, "duration", { configurable: true, value: 8 });
+    video.currentTime = 7.6;
+    fireEvent.timeUpdate(video);
+    expect(video.style.opacity).toBe("0");
+    act(() => exposure.set(0.5));
+    expect(video.style.opacity).toBe("1");
+    mediaPaused = true;
+    Object.defineProperty(video, "ended", {
+      configurable: true,
+      get: () => video.currentTime >= 8,
     });
-    expect(video.paused).toBe(true);
-    rerender(
-      <section>
-        <FadingVideo src={source} poster="/poster.webp" mode="loop" />
-      </section>
-    );
-    await visible();
-    fireEvent.scroll(window);
+    video.currentTime = 8;
+    fireEvent.ended(video);
+    act(() => exposure.set(0));
     await act(async () => {
-      vi.advanceTimersByTime(1700);
+      vi.advanceTimersByTime(1000);
+      exposure.set(0.5);
     });
-    expect(video.paused).toBe(false);
+    expect(video.currentTime).toBe(8);
+    expect(play).toHaveBeenCalledTimes(1);
+    await act(async () => exposure.set(1));
+    expect(video.currentTime).toBe(0);
+    expect(play).toHaveBeenCalledTimes(2);
   });
 
   it("loops with a fade and cancels pending restarts on unmount", async () => {
@@ -219,8 +230,8 @@ describe("hero media lifecycle", () => {
     const { video } = mount();
     await visible();
     expect(video.style.opacity).toBe("0");
-    fireEvent.click(screen.getByRole("button", { name: "Play background" }));
-    await act(async () => {});
+    await visible(false);
+    await visible();
     expect(video.paused).toBe(false);
   });
 });

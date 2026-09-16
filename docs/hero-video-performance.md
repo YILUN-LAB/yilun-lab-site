@@ -84,23 +84,38 @@ it does not attribute all GPU activity to this tab. Merely pausing video was ins
 
 ## Implemented behavior
 
-- **Default: settle on engagement.** Loop initially at the existing 0.65× rate.
-  A scroll past 16 px or focus inside Hero content eases playback down over
-  1.6 seconds, then pauses on the decoded frame without seeking or replacing it
-  with a different poster. Reading itself is not detected. The background button
-  explicitly resumes from that frame; further interaction may settle it again.
-- **Visible loop:** keeps the original fade-out/restart cadence, but pauses when
-  outside the viewport or in a hidden tab. Explicit pauses persist across re-entry.
-- **Poster only:** no video source is attached automatically. Reduced motion,
-  Save-Data and detected 2G connections also default to this behavior. Explicit
-  play remains available. No automatic heuristic depends on device price/model.
+- **Black-box background:** there is no playback button, native media control,
+  or interactive experiment switch. Video runs at the existing 0.65× rate while
+  fully inside Hero. Merely reading or focusing its content does not stop it.
+- **Two resting positions:** the Hero / Lab boundary completes a 1.25-second
+  scroll transition after a vertical gesture. It does not rest half inside Hero.
+  Lab and later sections retain normal scrolling. Wheel momentum is consumed
+  during the transition with a bounded tail; touch, keyboard, navigation links,
+  native scrollbar settling and viewport changes share the same boundary.
+- **Reversible scene:** visible Hero proportion drives playback rate from 0.65×
+  toward 0.1× on exit, then pauses at zero exposure. Re-entry resumes the held
+  frame at low speed and accelerates with exposure. No seek or source reload is
+  performed on a normal re-entry. If a clip naturally reaches its end during a
+  transition, its final frame remains held until Hero is fully back and looping
+  resumes. Existing fade-out/restart behavior remains when fully inside.
+- **Content choreography:** Hero content fades and blurs out on exit; on every
+  return, heading words, announcements, description, links, cards and footer
+  replay their staggered reveal. Hidden Hero content is inert so it cannot catch
+  keyboard focus. The global navigation remains available across sections.
+- **Small viewports:** Hero is one small viewport high (`100svh`). Content can
+  scroll internally when short screens or enlarged text need more room; these
+  gestures finish reading the content before initiating a scene change.
+- **Motion/data policies:** reduced motion skips the animated scroll; reduced
+  motion, Save-Data and detected 2G leave a poster without requesting the video.
+  A hidden tab or offscreen Hero pauses playback. No device-model heuristic or
+  manual override is used.
 - **Aurora:** hidden while completely covered by Hero; visible but stationary
   while Hero partly occupies the viewport; resumes its existing drift once Hero
   leaves. Hidden tabs sleep. This prevents a tiny scroll from restarting the
   expensive background while the visitor is still reading Hero.
 - **Loading:** first-frame poster in HTML, video revealed after a decoded-frame
-  callback where available, no endless animation-frame polling. Short frame loops
-  run only during deceleration; opacity fades use CSS transitions. Playback and
+  callback where available, no endless animation-frame polling. A shared Motion
+  value updates only during scrolling; opacity fades use CSS transitions. Playback and
   loop timers are cleaned up on unmount/source changes.
 - **Caching:** only content-hashed files under `/assets/videos/optimized/` get
   one-year immutable browser caching. Never replace a hashed URL with new bytes.
@@ -112,15 +127,13 @@ it does not attribute all GPU activity to this tab. Merely pausing video was ins
 ## Compare locally
 
 Run `rtk proxy npm run dev -- --host 127.0.0.1 --port 4322` and open
-[the experiment](http://127.0.0.1:4322/?heroPreview=1). The footer overlay offers
-motion mode, all three clips, original/optimized assets, Aurora behavior and glass
-blur switches, plus playback/frame counters. Use the same clip, viewport and
-foreground browser for comparisons. The panel is excluded from production builds.
-The ordinary [homepage](http://127.0.0.1:4322/) shows the proposed product UI only.
-
-The original-asset option compares encoding under the new player. To approximate
-the original GPU workload, also choose Visible loop and Original: always running
-Aurora. It is not an exact historical implementation benchmark.
+[the homepage](http://127.0.0.1:4322/). Scroll down to Lab, then back up to Hero.
+The background has no playback controls. For diagnosis only,
+[`?heroPreview=1`](http://127.0.0.1:4322/?heroPreview=1) adds a non-interactive
+readout of scene state, time, rate and decoded/dropped frames. The readout is
+excluded from production builds. Earlier interactive A/B controls were removed
+following design review. Original assets remain in the repository for offline
+encoding comparisons.
 
 Regenerate with `rtk npm run assets:hero` (requires local FFmpeg and installed npm
 dependencies). It writes hash-named files and the TypeScript manifest. FFmpeg
@@ -149,20 +162,26 @@ trace remain the useful next measurements.
 
 ## Verification
 
-`npm run check`, `npm run lint`, `npm test` (33 tests in 5 files),
-`npm run build`, changed-file Prettier checks, and `git diff --check` passed.
-`npm run assets:hero` regenerated identical hashes and media sizes. Built HTML
-was checked for the SSR poster, no premature video source, correct inline CSS,
-and removal of the dev comparison panel from production JavaScript.
+The first performance pass passed `npm run check`, lint, build and 33 tests;
+asset regeneration produced identical hashes and sizes. Its real-browser work
+covered all Works filters and all three clip encodings. The reversible-scene
+revision replaces the manual-control tests with frame-preserving exit/re-entry,
+no-control, loop-boundary and reading/focus behavior checks, and adds scroll
+controller coverage for wheel momentum, touch gestures, keyboard navigation,
+scrollbar settling, reduced motion, viewport changes and disposal.
 
-Tests cover playback eligibility,
-visibility, manual control, reduced-motion changes, Save-Data, 2G, loop cleanup,
-autoplay rejection, storage corruption and Aurora occlusion. Real-browser checks
-cover desktop/tablet/mobile composition, first-frame display, keyboard and scroll
-settling, re-entry and frame-counter stability. Network emulation, Safari playback
-and controlled regional field measurements are not yet verified. The in-app
-browser checked actual widths 375, 768 and 1280 px without horizontal overflow,
-all Works filter counts (derived from the current content), all three media
-choices, looping/re-entry, and scroll/keyboard settling. After correcting an
-inline-style quote escaping hydration mismatch, a fresh page load produced
-no console warnings or errors. Screenshots are in ignored `.playwright-mcp/`.
+Final revision: `npm run check` (zero diagnostics), `npm run lint`, `npm test`
+(41 tests in 6 files), `npm run build`, changed-file formatting and `git diff
+--check` passed. Production output contains the SSR poster and excludes both
+playback controls and the diagnostic readout.
+
+The in-app browser verified 1280×900, 768×1024 and 375×812 layouts without
+horizontal overflow, plus 375×667 internal content scrolling before scene exit.
+Wheel and keyboard transitions reached Hero / Lab endpoints; navbar navigation
+reached Works and filtering still worked. Two separated offscreen readings held
+exactly 6.98 s / 363 frames, and re-entry began at 6.98 s / 0.11× before returning
+to 0.65×. The browser reported no console warnings or errors. These are playback
+lifecycle observations, not a new whole-device GPU benchmark.
+Network emulation, physical iOS/Safari touch playback and controlled regional
+field measurements remain unverified. Screenshots and diagnostic captures stay
+in ignored `.playwright-mcp/`.

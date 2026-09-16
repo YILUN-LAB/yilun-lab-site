@@ -6,7 +6,7 @@ import { WorksSection } from "./WorksSection";
 import { AboutSection } from "./AboutSection";
 import { CollaborateSection } from "./CollaborateSection";
 import { Footer } from "./Footer";
-import { HeroPerformanceControls, type HeroPreviewOptions } from "./HeroPerformanceControls";
+import { HeroPerformanceReadout } from "./HeroPerformanceReadout";
 import { useEffect, useState } from "react";
 import type { WorkCardData } from "./EditorialGrid";
 import type { HighlightInput } from "@lib/data/highlights";
@@ -19,11 +19,6 @@ interface HomePageProps {
 
 export function HomePage({ projects }: HomePageProps) {
   const [heroPreview, setHeroPreview] = useState(false);
-  const [previewOptions, setPreviewOptions] = useState<HeroPreviewOptions>({
-    mode: "settle",
-    clip: 0,
-    original: false,
-  });
   useEffect(() => {
     if (import.meta.env.DEV)
       setHeroPreview(new URLSearchParams(location.search).has("heroPreview"));
@@ -34,16 +29,14 @@ export function HomePage({ projects }: HomePageProps) {
       <AuroraBackground occludedByHero />
       <Navbar mode="scroll" activePage="home" />
       <main>
-        <Hero {...(import.meta.env.DEV && heroPreview ? previewOptions : {})} />
+        <Hero />
         <LabSection projects={projects} />
         <WorksSection projects={nonFeatured} />
         <AboutSection />
         <CollaborateSection />
       </main>
       <Footer />
-      {import.meta.env.DEV && heroPreview && (
-        <HeroPerformanceControls options={previewOptions} onChange={setPreviewOptions} />
-      )}
+      {import.meta.env.DEV && heroPreview && <HeroPerformanceReadout />}
     </div>
   );
 }

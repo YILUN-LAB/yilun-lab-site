@@ -1,63 +1,56 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { CSSProperties, RefObject } from "react";
+import type { MotionValue } from "motion/react";
 
-export type HeroPlaybackMode = "loop" | "settle" | "still";
+export type HeroPlaybackMode = "scene" | "loop" | "still";
 interface FadingVideoProps {
   src: string;
   poster: string;
   mode?: HeroPlaybackMode;
+  exposure?: MotionValue<number>;
   className?: string;
   style?: CSSProperties;
   glowRef?: RefObject<HTMLElement | null>;
 }
-
 type Connection = EventTarget & { saveData?: boolean; effectiveType?: string };
 const PLAYBACK_RATE = 0.65;
-const SETTLE_MS = 1600;
 
+/** Decorative media: navigation owns playback; there are no user controls. */
 export function FadingVideo({
   src,
   poster,
-  mode = "settle",
+  mode = "scene",
+  exposure,
   className = "",
   style = {},
   glowRef,
 }: FadingVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const toggleRef = useRef<() => void>(() => {});
-  const [running, setRunning] = useState(false);
-
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    const hero = video.closest("section");
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const connection = (navigator as Navigator & { connection?: Connection }).connection;
     let inView = false;
     let disposed = false;
-    let manualPause = false;
-    let explicitPlay = false;
-    let settled = false;
-    let settling = false;
+    let blocked = false;
+    let previouslyEligible = false;
     let pendingPlay = false;
     let revealed = false;
     let fadingOut = false;
-    let frame = 0;
     let firstFrame = 0;
     let restartTimer: ReturnType<typeof setTimeout> | undefined;
-
-    const preferStill = () =>
-      mode === "still" ||
-      motion.matches ||
-      connection?.saveData ||
-      /^(slow-)?2g$/.test(connection?.effectiveType ?? "");
-    const shouldPlay = () =>
+    const amount = () => Math.max(0, Math.min(1, exposure?.get() ?? 1));
+    const transitioning = () => mode === "scene" && amount() < 0.999;
+    const eligible = () =>
       !disposed &&
       inView &&
+      amount() > 0 &&
       !document.hidden &&
-      !manualPause &&
-      !settled &&
-      (explicitPlay || !preferStill());
+      mode !== "still" &&
+      !motion.matches &&
+      !connection?.saveData &&
+      !/^(slow-)?2g$/.test(connection?.effectiveType ?? "");
     const opacity = (value: number, duration = 500) => {
       video.style.transition = `opacity ${duration}ms ease-out`;
       video.style.opacity = String(value);
@@ -72,69 +65,76 @@ export function FadingVideo({
     };
     const stop = () => {
       clearRestart();
-      cancelAnimationFrame(frame);
-      frame = 0;
-      if (settling) settled = true;
-      settling = false;
-      video.pause();
-      setRunning(false);
-      // Never leave a stopped frame halfway through the loop's fade-out.
-      if (revealed) opacity(1);
+      if (!video.paused) video.pause();
+      if (revealed && fadingOut) opacity(1);
       fadingOut = false;
     };
-    const play = () => {
-      if (!shouldPlay()) {
+    const sync = () => {
+      const active = eligible();
+      if (active && !previouslyEligible) blocked = false;
+      previouslyEligible = active;
+      if (!active) {
         stop();
         return;
       }
-      if (pendingPlay || restartTimer !== undefined) return;
+      if (blocked) return;
+      if (transitioning()) {
+        clearRestart();
+        if (fadingOut) opacity(1);
+        fadingOut = false;
+        // A naturally ended clip remains a still until the scene is fully back.
+        if (video.ended) return;
+      }
       if (!video.getAttribute("src")) {
         performance.mark(`hero-video:request:${src}`);
         video.src = src;
         video.load();
       }
-      if (!video.paused) return;
-      video.playbackRate = PLAYBACK_RATE;
+      // The same continuous scene value drives deceleration and acceleration.
+      // Never seek when leaving or re-entering: preserve the held frame.
+      video.playbackRate =
+        mode === "scene" ? 0.1 + (PLAYBACK_RATE - 0.1) * amount() ** 2 : PLAYBACK_RATE;
+      if (pendingPlay || restartTimer !== undefined || !video.paused) return;
+      if (video.ended) {
+        video.currentTime = 0;
+        opacity(0, 0);
+      }
       pendingPlay = true;
       void video
         .play()
         .then(() => {
           pendingPlay = false;
-          if (!disposed && !shouldPlay()) video.pause();
+          if (!disposed && !eligible()) video.pause();
         })
         .catch((error: unknown) => {
           pendingPlay = false;
-          if (!disposed && shouldPlay()) {
-            // A fast hide/show can interrupt a pending play without denying it.
+          if (!disposed && eligible()) {
             if (error instanceof DOMException && error.name === "AbortError") {
-              play();
+              sync();
               return;
             }
-            manualPause = true;
-            setRunning(false);
+            blocked = true;
           }
         });
     };
     const reveal = () => {
-      if (!shouldPlay()) return;
+      if (!eligible()) return;
       if (!revealed) performance.mark(`hero-video:first-frame:${src}`);
-      opacity(1, revealed ? 500 : 2000);
+      opacity(1, revealed ? 400 : 1600);
       revealed = true;
     };
     const onPlaying = () => {
-      if (!shouldPlay()) {
+      if (!eligible()) {
         stop();
         return;
       }
-      setRunning(true);
-      // Reveal only after an actual decoded frame, never merely loaded metadata.
       if (typeof video.requestVideoFrameCallback === "function") {
         if (firstFrame) video.cancelVideoFrameCallback(firstFrame);
         firstFrame = video.requestVideoFrameCallback(reveal);
       } else reveal();
     };
     const onTime = () => {
-      if (settling || settled || video.paused) return;
+      if (transitioning() || video.paused) return;
       const left = video.duration - video.currentTime;
       if (Number.isFinite(left) && left > 0 && left <= 0.55 && !fadingOut) {
         fadingOut = true;
@@ -142,12 +142,7 @@ export function FadingVideo({
       }
     };
     const onEnded = () => {
-      if (settling) {
-        settled = true;
-        stop();
-        return;
-      }
-      if (!shouldPlay()) {
+      if (transitioning() || !eligible()) {
         stop();
         return;
       }
@@ -155,141 +150,60 @@ export function FadingVideo({
       clearRestart();
       restartTimer = setTimeout(() => {
         restartTimer = undefined;
-        if (!shouldPlay()) return;
+        if (!eligible()) return;
         video.currentTime = 0;
         fadingOut = false;
-        play();
+        sync();
       }, 100);
     };
-    const settle = () => {
-      if (mode !== "settle" || settled || settling || manualPause) return;
-      clearRestart();
-      if (!shouldPlay() || video.paused) {
-        settled = true;
-        stop();
-        return;
-      }
-      settling = true;
-      fadingOut = false;
-      opacity(1);
-      const started = performance.now();
-      const step = (now: number) => {
-        if (!shouldPlay()) {
-          settled = true;
-          stop();
-          return;
-        }
-        const progress = Math.min(1, (now - started) / SETTLE_MS);
-        video.playbackRate = 0.1 + (PLAYBACK_RATE - 0.1) * (1 - progress) ** 2;
-        if (progress < 1) frame = requestAnimationFrame(step);
-        else {
-          settled = true;
-          stop();
-        }
-      };
-      frame = requestAnimationFrame(step);
-    };
-    const onScroll = () => {
-      if (window.scrollY > 16) settle();
-    };
-    const onFocus = (event: FocusEvent) => {
-      if (
-        event.target instanceof HTMLElement &&
-        !event.target.closest("[data-hero-motion-control]")
-      )
-        settle();
-    };
-    const onPolicyChange = () => {
-      explicitPlay = false;
-      play();
-    };
-    const onPause = () => {
-      if (!disposed) setRunning(false);
-    };
     const onError = () => {
-      manualPause = true;
+      blocked = true;
       stop();
       opacity(0, 0);
     };
-    toggleRef.current = () => {
-      if (!video.paused && !settling) {
-        manualPause = true;
-        stop();
-        return;
-      }
-      manualPause = false;
-      explicitPlay = true;
-      settled = false;
-      settling = false;
-      cancelAnimationFrame(frame);
-      clearRestart();
-      if (video.error) video.removeAttribute("src");
-      if (video.ended) video.currentTime = 0;
-      video.playbackRate = PLAYBACK_RATE;
-      play();
-    };
-
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
+    });
+    observer.observe(video.closest("section") ?? video);
+    const unsubscribe = exposure?.on("change", sync);
     video.addEventListener("playing", onPlaying);
     video.addEventListener("timeupdate", onTime);
     video.addEventListener("ended", onEnded);
-    video.addEventListener("pause", onPause);
     video.addEventListener("error", onError);
-    document.addEventListener("visibilitychange", play);
-    motion.addEventListener("change", onPolicyChange);
-    connection?.addEventListener("change", onPolicyChange);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    hero?.addEventListener("focusin", onFocus);
-    const observer = new IntersectionObserver(([entry]) => {
-      inView = entry.isIntersecting;
-      play();
-    });
-    observer.observe(hero ?? video);
-    onScroll();
-
+    document.addEventListener("visibilitychange", sync);
+    motion.addEventListener("change", sync);
+    connection?.addEventListener("change", sync);
     return () => {
       disposed = true;
       clearRestart();
-      cancelAnimationFrame(frame);
-      if (firstFrame && video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(firstFrame);
       observer.disconnect();
+      unsubscribe?.();
+      if (firstFrame && video.cancelVideoFrameCallback) video.cancelVideoFrameCallback(firstFrame);
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("timeupdate", onTime);
       video.removeEventListener("ended", onEnded);
-      video.removeEventListener("pause", onPause);
       video.removeEventListener("error", onError);
-      document.removeEventListener("visibilitychange", play);
-      motion.removeEventListener("change", onPolicyChange);
-      connection?.removeEventListener("change", onPolicyChange);
-      window.removeEventListener("scroll", onScroll);
-      hero?.removeEventListener("focusin", onFocus);
+      document.removeEventListener("visibilitychange", sync);
+      motion.removeEventListener("change", sync);
+      connection?.removeEventListener("change", sync);
       video.pause();
       video.removeAttribute("src");
       video.load();
       video.style.opacity = "0";
-      toggleRef.current = () => {};
     };
-  }, [src, mode, glowRef]);
-
+  }, [src, mode, exposure, glowRef]);
   return (
-    <>
-      <video
-        ref={videoRef}
-        poster={poster}
-        muted
-        playsInline
-        preload="none"
-        aria-hidden="true"
-        className={className}
-        style={{ opacity: 0, ...style }}
-      />
-      <button
-        type="button"
-        data-hero-motion-control
-        onClick={() => toggleRef.current()}
-        className="absolute right-4 top-24 z-20 rounded-full border border-white/20 bg-black/30 px-3 py-1.5 text-[11px] text-white/80 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-200"
-      >
-        {running ? "Pause background" : "Play background"}
-      </button>
-    </>
+    <video
+      ref={videoRef}
+      poster={poster}
+      muted
+      playsInline
+      preload="none"
+      aria-hidden="true"
+      tabIndex={-1}
+      className={className}
+      style={{ opacity: 0, ...style }}
+    />
   );
 }

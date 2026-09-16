@@ -155,14 +155,17 @@ pairs, with any final orphan full-width. Media stretches to each row's height.
   `PillTabs`. The shared `easeOut` curve is `[0, 0, 0.58, 1]`.
 - `useGlassLensing` must run once per public page; it currently runs in `Navbar`.
 - Hero rotation uses `hero-video.ts`; `hero-video-assets.ts` maps original clip IDs
-  to hashed 1080p videos and SSR posters. `FadingVideo.tsx` defers requests for
-  reduced motion, Save-Data, and 2G connections, and pauses outside the viewport
-  or a visible tab. The homepage default settles on the first meaningful
-  scroll or focus in Hero content; explicit playback resumes from that frame.
-  Keep the loop option, playback controls, and storage-failure behavior.
-  Homepage Aurora animation sleeps while any Hero is visible and is hidden only
-  when fully covered. Other pages pause Aurora only in hidden tabs.
-  See `docs/hero-video-performance.md` for evidence and the dev-only comparison UI.
+  to hashed optimized videos and first-frame posters. Regenerate with `assets:hero`.
+  `hero-scroll.ts` owns the Hero / Lab boundary, shared navbar/anchor navigation,
+  and a continuous exposure MotionValue. Hero and Lab are its only resting
+  positions; later content scrolls normally. Preserve nested content scrolling,
+  keyboard/touch input, reduced motion, viewport changes and handler cleanup.
+  `FadingVideo.tsx` uses exposure to slow/pause on exit and resume/accelerate from
+  the held frame on return. Preserve looping, storage-failure and poster fallbacks.
+  This decorative background must have no manual playback controls. Hero content
+  replays its staggered reveal on each entry and is inert while hidden.
+  `AuroraBackground` sleeps when occluded by Hero or when the tab is hidden.
+  See `docs/hero-video-performance.md` for evidence and the dev-only readout.
 - `/api/contact` validates with `ContactFormSchema`, applies an in-memory per-IP
   rate limit and honeypot, escapes email HTML, and sends through Resend. Preserve
   its input limits and both resolved-error and thrown-error handling. The rate
