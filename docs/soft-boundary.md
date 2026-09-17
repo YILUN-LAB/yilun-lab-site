@@ -18,7 +18,11 @@ The owner supplied `Yilun Zhan DM.jpeg` and `Yilun Zhan DM.pdf` as flyer sources
 
 The page displays the designated cover, six preview photographs, and the flyer.
 The six-image gallery uses CSS columns to preserve mixed portrait and landscape
-compositions without cropping or empty card areas. The flyer has
+compositions without cropping or empty card areas. Each photo wrapper is a full-width
+inline-block so Safari treats it as an indivisible column item; reveal transforms
+and glass filters belong to the inner figure, never the fragmented column box.
+This prevents photos painting across columns or over the following flyer on iPad.
+The flyer has
 no download link or public PDF. Artist biography and awards remain outside this
 case study. Keep English and Japanese content and image descriptions in sync
 when updating the exhibition.

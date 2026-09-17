@@ -184,32 +184,38 @@ export function SoftBoundaryProject({
           </h2>
           <div className="columns-2 gap-3 md:columns-3 md:gap-4">
             {images.map((image, index) => (
-              <motion.figure
-                {...reveal}
+              // Keep the column item atomic and untransformed. Safari can otherwise
+              // fragment composited photos across columns and paint over the flyer.
+              <div
                 key={image.src}
-                className="liquid-glass relative mb-3 break-inside-avoid overflow-hidden rounded-[1rem] md:mb-4"
+                className="mb-3 inline-block w-full break-inside-avoid align-top md:mb-4"
               >
-                <button
-                  type="button"
-                  aria-label={`${copy.lightbox.open}: ${copy.imageAlts[index] ?? image.alt}`}
-                  aria-haspopup="dialog"
-                  onClick={() => setActivePhoto(index + (cover ? 1 : 0))}
-                  className="group block w-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-amber-200"
+                <motion.figure
+                  {...reveal}
+                  className="liquid-glass relative overflow-hidden rounded-[1rem]"
                 >
-                  <img
-                    src={image.src}
-                    alt={copy.imageAlts[index] ?? image.alt}
-                    loading="lazy"
-                    decoding="async"
-                    width={image.width}
-                    height={image.height}
-                    className="h-auto w-full transition-transform duration-700 motion-safe:group-hover:scale-[1.025]"
-                  />
-                </button>
-                <figcaption className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/35 px-2 py-0.5 font-body text-[10px] tabular-nums text-white/75 backdrop-blur-md md:bottom-3 md:right-3">
-                  {String(index + 1).padStart(2, "0")}
-                </figcaption>
-              </motion.figure>
+                  <button
+                    type="button"
+                    aria-label={`${copy.lightbox.open}: ${copy.imageAlts[index] ?? image.alt}`}
+                    aria-haspopup="dialog"
+                    onClick={() => setActivePhoto(index + (cover ? 1 : 0))}
+                    className="group block w-full cursor-zoom-in focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-amber-200"
+                  >
+                    <img
+                      src={image.src}
+                      alt={copy.imageAlts[index] ?? image.alt}
+                      loading="lazy"
+                      decoding="async"
+                      width={image.width}
+                      height={image.height}
+                      className="h-auto w-full transition-transform duration-700 motion-safe:group-hover:scale-[1.025]"
+                    />
+                  </button>
+                  <figcaption className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-black/35 px-2 py-0.5 font-body text-[10px] tabular-nums text-white/75 backdrop-blur-md md:bottom-3 md:right-3">
+                    {String(index + 1).padStart(2, "0")}
+                  </figcaption>
+                </motion.figure>
+              </div>
             ))}
           </div>
         </div>
