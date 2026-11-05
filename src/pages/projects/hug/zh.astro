@@ -1,0 +1,32 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "@components/BaseLayout.astro";
+import HugLayout from "@components/HugLayout.astro";
+import { hugZh, hugZhScenes } from "@lib/data/hug.zh";
+
+// Chinese mirror of /projects/hug. The English page is the iF entry and does
+// not link here; this page links back to it.
+export const prerender = true;
+
+const entry = await getEntry("projects", "hug");
+if (!entry) throw new Error("The hug project entry is missing.");
+
+const scenes = entry.data.images.map((image) => {
+  const file = image.src.split("/").pop() ?? image.src;
+  const text = hugZhScenes[file];
+  if (!text) throw new Error(`No Chinese text for the Hug scene ${file} in hug.zh.ts.`);
+  return { ...image, ...text };
+});
+---
+
+<BaseLayout
+  lang="zh-Hans"
+  title="Hug · Yilun Zhan 设计"
+  brand={false}
+  favicon="/assets/images/projects/hug/icon.svg"
+  description="一盏台灯：展开时光线宽阔，适合白天；合拢后变成温暖的微光，适合夜晚。"
+  canonical="/projects/hug/zh"
+  ogImage="/assets/images/projects/hug/cover.jpg"
+>
+  <HugLayout entry={entry} copy={hugZh} scenes={scenes} />
+</BaseLayout>

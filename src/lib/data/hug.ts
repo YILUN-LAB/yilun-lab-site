@@ -7,7 +7,12 @@
  *
  * Unpublished content: a drawing appears once its `src` is filled in, and the
  * product film once `development.youtube` is set. Until then nothing renders.
+ *
+ * The Chinese mirror at /projects/hug/zh (`hug.zh.ts`) reuses every number,
+ * image and model path from here and only replaces the words.
  */
+
+import type { LightboxLabels } from "@components/react/PhotoLightbox";
 
 const dir = "/assets/images/projects/hug";
 
@@ -38,6 +43,20 @@ export interface HugDrawing {
   height?: number;
 }
 
+export interface HugGesture {
+  word: string;
+  text: string;
+  /** Translation shown beside the English word on other-language pages. */
+  gloss?: string;
+}
+
+/** Link to the same page in another language. */
+export interface HugLanguageLink {
+  href: string;
+  label: string;
+  lang: string;
+}
+
 export interface HugCriterion {
   id: string;
   label: string;
@@ -46,6 +65,7 @@ export interface HugCriterion {
 }
 
 export const hug = {
+  lang: "en",
   eyebrow: "Lighting design · Table lamp",
   title: "Hug",
   subtitle: "Light you can draw close.",
@@ -66,7 +86,7 @@ export const hug = {
       word: "Gather",
       text: "Drawn together, they dim to a warm, low 2200\u00a0K glow for the evening.",
     },
-  ],
+  ] as HugGesture[],
   meta: ["2026", "Yilun Zhan", "Design concept"],
   award: "Submitted to the iF Design Award 2027",
 
@@ -113,6 +133,8 @@ export const hug = {
       note: "Digital model, drawn as a sketch. Shapes between the three states are interpolated for illustration.",
     },
     renderNote: "Design visualization of the nearest state.",
+    /** Follows the state name in the readout, before its description. */
+    nameStop: ". ",
     views: { label: "View", model: "Sketch", render: "Render" },
     slider: { label: "Opening", start: "Unfold", end: "Gather" },
     hold: {
@@ -395,4 +417,12 @@ export const hug = {
     criteria: "Design criteria",
     enlarge: "Enlarge image",
   },
+};
+
+/** Page copy in any language. English leaves the optional fields unset. */
+export type HugCopy = typeof hug & {
+  /** Photo viewer labels; English uses the viewer's defaults. */
+  lightbox?: LightboxLabels;
+  /** The English page has none: the iF jury page stays English only. */
+  languageLink?: HugLanguageLink;
 };

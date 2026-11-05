@@ -11,20 +11,25 @@ interface Props {
   noOgPreview?: boolean;
   brand?: boolean;
   favicon?: string;
+  /** Document language, e.g. "zh-Hans". */
+  lang?: string;
 }
 
-const props = Astro.props;
+const { lang = "en", ...props } = Astro.props;
+const noscript = lang.startsWith("zh")
+  ? "启用 JavaScript 后浏览效果最佳。"
+  : "This page is best experienced with JavaScript enabled.";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <BaseHead {...props} />
     <slot name="head" />
   </head>
   <body class="font-body text-white">
     <noscript class="block p-6 font-body text-white/70">
-      This page is best experienced with JavaScript enabled.
+      {noscript}
     </noscript>
     <slot />
     <Analytics />

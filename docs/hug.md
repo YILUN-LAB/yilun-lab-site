@@ -20,6 +20,39 @@ lamp's outline (`icon.svg`). The domain cannot change. Do not mention the iF
 application number or the model's internal revision name on the page; the test
 in `tests/hug.test.tsx` guards both and the studio name.
 
+## Chinese mirror (/projects/hug/zh)
+
+Added 5 November 2026 at the owner's request: the same page in Chinese for
+Chinese readers. It is not part of the iF entry. iF asks for an English-only
+site, so the English page never links to it; the Chinese page has an "English"
+link back. Like the English page it is unlisted and out of the sitemap, and it
+keeps the personal-name rules (Yilun Zhan written in Latin letters until the
+owner gives a Chinese form).
+
+- `src/pages/projects/hug/zh.astro` is the route (`lang="zh-Hans"`, title
+  "Hug · Yilun Zhan 设计"). It renders `HugLayout` with the Chinese copy.
+- `src/lib/data/hug.zh.ts` holds only the words. It spreads the English copy
+  and takes every number, image, size, color temperature and model path from
+  `hug.ts`, so those change in one place. `hugZhScenes` gives Chinese alt text
+  and captions per scene file; the captions are the titles of the owner's
+  Drive files. The route fails the build if a scene in `hug.mdx` has no entry.
+- `HugProject` takes a `copy` prop (English by default) and passes it to its
+  parts through `hug-copy.ts`. The Hold, Unfold and Gather gestures stay in
+  English, since their initials spell the name, with a Chinese `gloss` beside
+  them.
+- `global.css` gives the Chinese page Chinese fallback fonts (Songti for
+  headings, PingFang for text), turns off synthesized italics so only Latin
+  words slant, and sizes Chinese section headings smaller with balanced line
+  breaks.
+- `tests/hug-zh.test.tsx` checks the Chinese render, the single link back to
+  English, the banned names, that the Chinese copy has the same shape and the
+  same numbers and paths as the English copy, and that every scene is
+  translated.
+
+When English copy changes, update the matching words in `hug.zh.ts` and polish
+them with the humanizer-zh guidelines. Keep the claims at the English page's
+strength ("按照设计", "计划" where the English says intended or planned).
+
 ## Sources
 
 The owner supplied this [Drive folder](https://drive.google.com/drive/folders/1I7NrKyifjU-iHmLVnAyDvw8o4spy7dac)

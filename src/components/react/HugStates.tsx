@@ -1,14 +1,16 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "motion/react";
-import { hug } from "@lib/data/hug";
 import { STATE_PROGRESS, glowAt, kelvinAt, nearestStateIndex } from "@lib/hug-opening";
 import { HugModelViewer } from "./HugModelViewer";
+import { useHugCopy } from "./hug-copy";
 
 const HOLD_MS = 700;
 const TWEEN_MS = 900;
 const RING = 2 * Math.PI * 30;
 
+/** Picks out the first letter of an English word; other scripts show as written. */
 function Initial({ word }: { word: string }) {
+  if (!/^[A-Za-z]/.test(word)) return <>{word}</>;
   return (
     <>
       <span className="text-[rgb(var(--amber-1))]">{word[0]}</span>
@@ -23,6 +25,7 @@ function Initial({ word }: { word: string }) {
  * view morphs the model shell to match, the render view shows the nearest state.
  */
 export function HugStates() {
+  const hug = useHugCopy();
   const { items, model, views, slider, hold } = hug.states;
   const [progress, setProgress] = useState(0);
   const [power, setPower] = useState(true);
@@ -254,7 +257,9 @@ export function HugStates() {
               {power ? `${kelvin} K` : hold.off}
             </p>
             <p className="mt-3 font-body text-base font-light text-white/85">
-              <span className="font-medium text-white">{nearest.name}.</span> {nearest.description}
+              <span className="font-medium text-white">{nearest.name}</span>
+              {hug.states.nameStop}
+              {nearest.description}
             </p>
             <dl className="mt-4 font-body text-sm">
               <dt className="text-xs text-white/50">{hug.states.sizeLabel}</dt>

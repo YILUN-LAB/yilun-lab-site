@@ -1,16 +1,21 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { HugProject } from "@components/react/HugProject";
+import type { HugCopy } from "@lib/data/hug";
 
 // Hug is submitted under Yilun Zhan's own name, so this page stands alone:
 // no studio navigation, footer or links into the studio portfolio.
 interface Props {
   entry: CollectionEntry<"projects">;
+  /** Page language; English when omitted. */
+  copy?: HugCopy;
+  /** Scene renders with their text in the page language. */
+  scenes?: CollectionEntry<"projects">["data"]["images"];
 }
 
-const { entry } = Astro.props;
+const { entry, copy, scenes = entry.data.images } = Astro.props;
 ---
 
 <main>
-  <HugProject client:load scenes={entry.data.images} />
+  <HugProject client:load scenes={scenes} copy={copy} />
 </main>

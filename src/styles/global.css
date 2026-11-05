@@ -149,6 +149,44 @@
   scrollbar-color: rgb(255 255 255 / 20%) transparent;
 }
 
+/* Chinese mirror (/projects/hug/zh). Instrument Serif and Barlow have no
+   Chinese glyphs, so name Chinese fallbacks. Latin words keep their real
+   italic; Chinese is never slanted. Chinese headings need more line height
+   and no negative tracking. */
+.hug:lang(zh) {
+  font-synthesis-style: none;
+  line-break: strict;
+}
+
+.hug:lang(zh) .font-heading {
+  font-family:
+    "Instrument Serif", "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC",
+    "Noto Serif CJK SC", serif;
+}
+
+.hug:lang(zh) .font-body {
+  font-family:
+    "Barlow", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.hug:lang(zh) :is(h2, h3, .hug-lead).font-heading {
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  text-wrap: balance;
+}
+
+/* Chinese glyphs are about twice as wide as the Latin italic; a smaller size
+   keeps short section headings on one line. */
+.hug:lang(zh) h2.font-heading {
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hug:lang(zh) h2.font-heading {
+    font-size: 3rem;
+  }
+}
+
 /* Light path elevation labels: SVG user units, larger on narrow screens where
    the drawing is scaled down. */
 .hug-drawing-text {
