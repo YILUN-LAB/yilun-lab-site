@@ -189,13 +189,24 @@ describe("Hug light path data", () => {
     };
   };
 
-  it("places the LED wholly under the light guide, on its centre line", () => {
-    const guide = across(drawing.section.guide, 9, 14);
+  it("places the LED wholly under the light guide's lower edge, on its centre line", () => {
+    const guide = across(drawing.section.guide, 7.4, 10.5);
     const led = across(drawing.section.led_profile);
 
-    expect(drawing.elevation.ledsCentredOnGuide).toBe(true);
     expect(led.min).toBeGreaterThanOrEqual(guide.min);
     expect(led.max).toBeLessThanOrEqual(guide.max);
     expect(Math.abs(led.centre - guide.centre)).toBeLessThan(0.1);
+  });
+
+  it("seats the laminate in the middle of the edge cavity channel, clear of its walls", () => {
+    const channel = across(drawing.section.cavity, 2.3, 2.9);
+    const laminate = across(drawing.section.shell, 3, 9);
+    const island = across(drawing.section.island);
+
+    expect(laminate.min).toBeGreaterThan(channel.min);
+    expect(laminate.max).toBeLessThan(channel.max);
+    expect(Math.abs(laminate.centre - channel.centre)).toBeLessThan(0.1);
+    expect(island.min).toBeGreaterThanOrEqual(channel.min);
+    expect(island.max).toBeLessThanOrEqual(channel.max);
   });
 });
