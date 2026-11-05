@@ -40,7 +40,8 @@ digital model, and behavior that is proposed or intended is described that way.
 - `src/components/HugLayout.astro` and `src/components/react/HugProject.tsx`
   render the page; `HugStates`, `HugDayStrip`, `HugLightPath`, and
   `HugZoomImage` are its parts. `tests/hug.test.tsx` covers the state selector,
-  criteria sections, the light path drawing, placeholders, lightbox, the
+  criteria sections, the light path drawing, hidden unpublished content,
+  lightbox, the
   standalone personal page, and a no-dash rule for the copy.
 
 | Website asset                                 | Source                                |
@@ -140,12 +141,23 @@ the guide. The .blend file is unchanged; once the placeholders are moved there,
 the offsets drop to zero and the flag no longer changes anything. A test checks
 that the drawn LED lies wholly under the guide, on its centre line.
 
-## Filling the placeholders
+## Tone
+
+On 5 November 2026 the owner asked to remove copy that undersells the entry:
+the "Not yet claimed" sustainability note, the list of properties still to
+validate, "not been tested" in the drawing note and the long development
+status. Proposed behavior is still described as intended or planned, but the
+page does not list caveats. A test in `tests/hug.test.tsx` guards these phrases.
+
+## Publishing drawings and the film
+
+Unfinished content stays off the page; nothing renders for an empty slot.
 
 - Drawings: in `hug.ts`, give each entry in `development.drawings` a `src`, `alt`,
-  `width`, and `height` (images under `public/assets/images/projects/hug/`).
-  Drawings are shown on a light card, suited to dark linework on white.
-- Film: set `development.youtube` to the YouTube video ID. iF requires the video
+  `width`, and `height` (images under `public/assets/images/projects/hug/`). Only
+  drawings with a `src` appear, on a light card suited to dark linework on white.
+- Film: set `development.youtube` to the YouTube video ID; the film block then
+  appears. iF requires the video
   to be publicly viewable, at most two minutes, in English or with English
   subtitles.
 - More scenes: add them to `images` in `hug.mdx` in morning-to-night order.
