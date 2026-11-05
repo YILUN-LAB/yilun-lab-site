@@ -36,11 +36,15 @@ describe("Hug product page", () => {
     expect(screen.getByText(hug.award)).toBeInTheDocument();
   });
 
-  it("spells the name with its three gestures", () => {
+  it("lists the three gestures, whose initials quietly spell the name", () => {
     renderHug();
 
-    expect(hug.gestures.map((word) => word[0]).join("")).toBe(hug.title.toUpperCase());
-    expect(screen.getByText("Hold, unfold, gather")).toBeInTheDocument();
+    const list = screen.getByRole("heading", { name: hug.gesturesLabel }).nextElementSibling;
+    const words = hug.gestures.map((gesture) => gesture.word);
+    expect(words.map((word) => word[0]).join("")).toBe(hug.title.toUpperCase());
+    for (const word of words) {
+      expect(within(list as HTMLElement).getByText(word)).toBeInTheDocument();
+    }
   });
 
   it("starts in the open state and switches the light when another state is chosen", () => {

@@ -52,11 +52,13 @@ are in use.
 
 ## Name and gestures
 
-The owner kept the name Hug (not an acronym) and added "Hold · Unfold · Gather"
-as a tagline on 4 November 2026. The hero shows the three words under the title
-with amber initials; they open out from H·U·G on load and gather back on hover
-(CSS only, `.hug-gesture-rest` in `global.css`). Hold refers to the proposed
-hold-to-toggle touch zone, Unfold to the open state, Gather to the gathered state.
+The owner kept the name Hug (not an acronym) and added the gestures Hold, Unfold
+and Gather on 4 November 2026. Their initials spell the name, but the page never
+says so: the hero shows only the title and subtitle, and the three words appear
+after the statement as a quiet row describing each gesture. An earlier version
+with amber initials and an unfolding animation under the title was dropped as
+too explicit. Hold refers to the proposed hold-to-toggle touch zone, Unfold to
+the open state, Gather to the gathered state.
 
 ## Filling the placeholders
 
