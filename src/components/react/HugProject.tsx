@@ -50,7 +50,7 @@ export function HugProject({ scenes }: HugProjectProps) {
         hug.form.embrace,
         hug.form.edge,
         hug.form.base,
-        hug.differentiation.day.image,
+        hug.differentiation.dusk.image,
         hug.differentiation.night.image,
         ...drawings.flatMap((d) => (d.src ? [{ src: d.src, alt: d.alt ?? d.label }] : [])),
       ]),
@@ -118,7 +118,7 @@ export function HugProject({ scenes }: HugProjectProps) {
       case "differentiation":
         return (
           <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
-            {[hug.differentiation.day, hug.differentiation.night].map((moment) => (
+            {[hug.differentiation.dusk, hug.differentiation.night].map((moment) => (
               <figure key={moment.label}>
                 <HugZoomImage
                   image={moment.image}

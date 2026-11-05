@@ -52,7 +52,10 @@ digital model, and behavior that is proposed or intended is described that way.
 | `states-lineup.webp`                          | PDF page 8, three states side by side |
 | `detail-embrace.webp`                         | PDF page 4                            |
 | `detail-edge.webp`, `detail-base.webp`        | PDF pages 8 and 7                     |
-| `day-unlit.webp`, `night-gathered.webp`       | PDF page 6                            |
+| `night-gathered.webp`                         | PDF page 6                            |
+
+The Differentiation pair uses `scene-08.webp` for "At dusk" (owner's choice,
+5 November 2026; it replaced the unlit daytime image with dry stems).
 
 Renders are encoded as WebP at quality 82, PDF images at quality 86, without
 resizing. The three state images are small in the PDF; replace them with larger

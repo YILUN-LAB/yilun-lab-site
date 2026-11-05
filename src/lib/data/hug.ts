@@ -317,12 +317,12 @@ export const hug = {
   },
 
   differentiation: {
-    day: {
-      label: "By day",
-      text: "Unlit, holding dry stems inside the embrace.",
+    dusk: {
+      label: "At dusk",
+      text: "A soft light on the window seat as the day ends.",
       image: {
-        src: `${dir}/day-unlit.webp`,
-        alt: "Hug unlit on a bedside table in daylight, with dried flowers rising from inside the wings",
+        src: `${dir}/scene-08.webp`,
+        alt: "Hug glowing on a window seat at dusk, beside cushions, a blanket and a closed book",
         width: 1448,
         height: 1086,
       } satisfies HugImage,
