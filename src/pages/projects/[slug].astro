@@ -3,6 +3,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "@components/BaseLayout.astro";
 import CaseStudyLayout from "@components/CaseStudyLayout.astro";
 import SoftBoundaryLayout from "@components/SoftBoundaryLayout.astro";
+import HugLayout from "@components/HugLayout.astro";
 import JsonLd from "@components/JsonLd.astro";
 import { SITE_URL } from "@lib/data/seo";
 
@@ -71,6 +72,8 @@ const breadcrumbLd = {
   {
     entry.id === "soft-boundary" ? (
       <SoftBoundaryLayout entry={entry} next={next} />
+    ) : entry.id === "hug" ? (
+      <HugLayout entry={entry} next={next} />
     ) : (
       <CaseStudyLayout entry={entry} next={next} />
     )
