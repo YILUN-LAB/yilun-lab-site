@@ -217,10 +217,10 @@ export function HugProject({ scenes, copy = english }: HugProjectProps) {
               <div className="lg:col-span-5 lg:pb-4">
                 <p className="mb-4 font-body text-sm text-white/80">// {hug.eyebrow}</p>
                 {/* mb in em clears the g descender (~0.22em) at every title size. */}
-                <h1 className="mb-[0.26em] font-heading text-[6rem] italic leading-[0.8] tracking-[-4px] md:text-[9rem] lg:text-[10.5rem]">
+                <h1 className="hug-latin mb-[0.26em] font-heading text-[6rem] italic leading-[0.8] tracking-[-4px] md:text-[9rem] lg:text-[10.5rem]">
                   {hug.title}
                 </h1>
-                <p className="font-heading text-2xl italic text-white/85 md:text-3xl">
+                <p className="hug-subtitle font-heading text-2xl italic text-white/85 md:text-3xl">
                   {hug.subtitle}
                 </p>
                 <p className="mt-6 max-w-md font-body text-base font-light leading-relaxed text-white/80 md:text-lg">
@@ -285,7 +285,7 @@ export function HugProject({ scenes, copy = english }: HugProjectProps) {
             <ol className="mx-auto grid max-w-6xl gap-10 border-y border-white/10 py-12 md:grid-cols-3 md:gap-12 md:py-16">
               {hug.gestures.map((gesture) => (
                 <motion.li key={gesture.word} {...reveal}>
-                  <p className="font-heading text-5xl italic leading-none tracking-[-1px] md:text-6xl">
+                  <p className="hug-latin font-heading text-5xl italic leading-none tracking-[-1px] md:text-6xl">
                     <span className="text-[rgb(var(--amber-1))]">{gesture.word[0]}</span>
                     {gesture.word.slice(1)}
                     {gesture.gloss && (

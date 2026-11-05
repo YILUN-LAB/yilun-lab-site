@@ -40,10 +40,14 @@ owner gives a Chinese form).
   parts through `hug-copy.ts`. The Hold, Unfold and Gather gestures stay in
   English, since their initials spell the name, with a Chinese `gloss` beside
   them.
-- `global.css` gives the Chinese page Chinese fallback fonts (Songti for
-  headings, PingFang for text), turns off synthesized italics so only Latin
-  words slant, and sizes Chinese section headings smaller with balanced line
-  breaks.
+- `global.css` sets the Chinese page in sans-serif throughout, after Apple's
+  Chinese site (owner's request): the system face, so SF Pro with PingFang SC
+  on Apple devices, upright, with semibold headings. Only the "Hug" title and
+  the English gesture words (class `hug-latin`) keep the italic serif.
+  Chinese section headings are smaller with balanced line breaks, and the
+  statement breaks at its commas.
+- The Chinese wording was retranslated with Gemini on 5 November 2026 and
+  reviewed against the English claims.
 - `tests/hug-zh.test.tsx` checks the Chinese render, the single link back to
   English, the banned names, that the Chinese copy has the same shape and the
   same numbers and paths as the English copy, and that every scene is
