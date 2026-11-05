@@ -1,5 +1,5 @@
 import "lite-youtube-embed/src/lite-yt-embed.css";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { MotionConfig, motion } from "motion/react";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { useActiveSection } from "@lib/use-active-section";
@@ -219,7 +219,27 @@ export function HugProject({ scenes, next }: HugProjectProps) {
               <h1 className="font-heading text-[6rem] italic leading-[0.8] tracking-[-4px] md:text-[9rem] lg:text-[10.5rem]">
                 {hug.title}
               </h1>
-              <p className="mt-5 font-heading text-2xl italic text-white/85 md:text-3xl">
+              <p className="hug-gestures relative z-10 mt-5 font-heading text-3xl italic md:text-4xl">
+                <span className="sr-only">
+                  {hug.gestures.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(", ")}
+                </span>
+                <span aria-hidden="true" className="flex flex-wrap gap-x-[0.4em]">
+                  {hug.gestures.map((word, index) => (
+                    <span key={word} className="whitespace-nowrap">
+                      <span className="text-[rgb(var(--amber-1))] [text-shadow:0_0_18px_rgb(var(--amber-1)/0.45)]">
+                        {word[0]}
+                      </span>
+                      <span
+                        className="hug-gesture-rest text-white/85"
+                        style={{ "--i": index } as CSSProperties}
+                      >
+                        <span>{word.slice(1)}</span>
+                      </span>
+                    </span>
+                  ))}
+                </span>
+              </p>
+              <p className="mt-4 font-body text-xl font-light text-white/85 md:text-2xl">
                 {hug.subtitle}
               </p>
               <p className="mt-6 max-w-md font-body text-base font-light leading-relaxed text-white/80 md:text-lg">
