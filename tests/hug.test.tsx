@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { HugProject } from "../src/components/react/HugProject";
 import { photoLightboxLabels } from "../src/components/react/PhotoLightbox";
@@ -43,11 +43,11 @@ describe("Hug product page", () => {
     const words = hug.gestures.map((gesture) => gesture.word);
     expect(words.map((word) => word[0]).join("")).toBe(hug.title.toUpperCase());
     for (const word of words) {
-      expect(within(list as HTMLElement).getByText(word)).toBeInTheDocument();
+      expect(list).toHaveTextContent(word);
     }
   });
 
-  it("starts in the open state and switches the light when another state is chosen", () => {
+  it("starts in the open state and moves to another state when it is chosen", async () => {
     renderHug();
     const states = screen.getByRole("group", { name: hug.states.heading });
 
@@ -58,11 +58,46 @@ describe("Hug product page", () => {
 
     fireEvent.click(gathered);
 
-    expect(gathered).toHaveAttribute("aria-pressed", "true");
+    await waitFor(() => expect(gathered).toHaveAttribute("aria-pressed", "true"), {
+      timeout: 2000,
+    });
     expect(open).toHaveAttribute("aria-pressed", "false");
     const readout = screen.getByTestId("hug-state-readout");
     expect(within(readout).getByText("2200 K")).toBeInTheDocument();
     expect(within(readout).getByText("140 × 128 × 300 mm")).toBeInTheDocument();
+  });
+
+  it("warms the light gradually as the opening slider gathers the wings", () => {
+    renderHug();
+    const slider = screen.getByRole("slider", { name: hug.states.slider.label });
+
+    fireEvent.change(slider, { target: { value: "25" } });
+
+    const readout = screen.getByTestId("hug-state-readout");
+    expect(within(readout).getByText("3500 K")).toBeInTheDocument();
+    expect(slider).toHaveAttribute("aria-valuetext", "Half-open, 3500 K");
+  });
+
+  it("switches the light off and on with the Hold control", () => {
+    renderHug();
+    const holdButton = screen.getByRole("button", { name: hug.states.hold.label });
+    const readout = screen.getByTestId("hug-state-readout");
+
+    fireEvent.click(holdButton);
+    expect(holdButton).toHaveAttribute("aria-pressed", "false");
+    expect(within(readout).getByText(hug.states.hold.off)).toBeInTheDocument();
+
+    fireEvent.click(holdButton);
+    expect(holdButton).toHaveAttribute("aria-pressed", "true");
+    expect(within(readout).getByText("4000 K")).toBeInTheDocument();
+  });
+
+  it("shows the studio renders when the 3D model cannot run", () => {
+    renderHug();
+
+    expect(screen.queryByRole("group", { name: hug.states.views.label })).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: hug.states.items[0].image.alt })).toBeInTheDocument();
+    expect(screen.getByText(hug.states.renderNote)).toBeInTheDocument();
   });
 
   it("covers each iF judging criterion with its own section", () => {

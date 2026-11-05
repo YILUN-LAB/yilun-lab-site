@@ -60,6 +60,44 @@ with amber initials and an unfolding animation under the title was dropped as
 too explicit. Hold refers to the proposed hold-to-toggle touch zone, Unfold to
 the open state, Gather to the gathered state.
 
+## Interactive sketch model
+
+The three-states section shows the R13 model as a pencil sketch on paper,
+after the owner's reference of car design sketches (4 November 2026). It sits
+in the stage with a Sketch / Render switch; Render shows the studio images.
+
+- Controls: the state buttons snap to open, half-open or gathered; the Unfold /
+  Gather slider sets any opening in between and moves the color temperature
+  continuously (`src/lib/hug-opening.ts`); Hold switches the light with a
+  700 ms press, matching the proposed hold-to-toggle touch zone (keyboard and
+  assistive activation switch at once). Turn buttons and dragging rotate the
+  model; it turns slowly on its own after 4 s idle unless reduced motion is on.
+- Drawing (`src/lib/hug-model-scene.ts`): a normal and depth pass feeds a
+  composite shader that finds outlines (silhouette, creases, wing overlap),
+  traces each twice with a slight wobble, hatches the shaded side and lays a
+  marker wash in the current color temperature. Switched off, the wash goes.
+  The construction ellipse, ground line, shadow strokes, axis and 300 mm mark
+  are SVG over the canvas (`HugModelViewer.tsx`).
+- Loading: three.js and the model load only when the stage nears the screen.
+  Without WebGL 2, or if loading fails, the stage falls back to Render.
+- The meshopt decoder uses WebAssembly, so the site CSP in `vercel.json`
+  allows `'wasm-unsafe-eval'`. Without it the model fails only in production.
+
+To regenerate `public/assets/models/hug/hug-states.glb` from the owner's
+`HUG_R13_三态完整版_全开半开闭合.blend` (scene 00):
+
+```sh
+blender -b HUG_R13_三态完整版_全开半开闭合.blend --python scripts/export-hug-model.py -- /tmp/hug-states.glb
+npx @gltf-transform/cli@4 meshopt /tmp/hug-states.glb public/assets/models/hug/hug-states.glb --level high
+```
+
+The script takes each state in its local frame. The scene's object rotations
+are camera staging (half-open is turned -38°), so dropping them faces all three
+states forward and keeps the morph from spinning. The shell and edge light
+cavity share one topology across states (50,038 and 4,256 vertices), so
+half-open and gathered export as morph targets. The compressed file is about
+635 KB (about 255 KB gzipped).
+
 ## Filling the placeholders
 
 - Drawings: in `hug.ts`, give each entry in `development.drawings` a `src`, `alt`,

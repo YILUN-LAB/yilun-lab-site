@@ -97,6 +97,53 @@
   transition: background-color 0.8s ease-out;
 }
 
+/* Unfold / Gather slider: the track runs from the open to the gathered color
+   temperature, the thumb glows in the current one. */
+.hug-range {
+  appearance: none;
+  height: 1.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.hug-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--hug-from), var(--hug-to));
+}
+
+.hug-range::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--hug-from), var(--hug-to));
+}
+
+.hug-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  background: rgb(var(--hug-glow));
+  box-shadow: 0 0 16px rgb(var(--hug-glow));
+}
+
+.hug-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  border-radius: 9999px;
+  background: rgb(var(--hug-glow));
+  box-shadow: 0 0 16px rgb(var(--hug-glow));
+}
+
+.hug-range:focus-visible {
+  outline: 2px solid rgb(253 230 138);
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+
 .hug-strip {
   scrollbar-width: thin;
   scrollbar-color: rgb(255 255 255 / 20%) transparent;

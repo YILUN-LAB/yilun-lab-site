@@ -284,7 +284,8 @@ export function HugProject({ scenes, next }: HugProjectProps) {
             {hug.gestures.map((gesture) => (
               <motion.li key={gesture.word} {...reveal}>
                 <p className="font-heading text-5xl italic leading-none tracking-[-1px] md:text-6xl">
-                  {gesture.word}
+                  <span className="text-[rgb(var(--amber-1))]">{gesture.word[0]}</span>
+                  {gesture.word.slice(1)}
                 </p>
                 <p className="mt-5 max-w-xs font-body text-sm font-light leading-relaxed text-white/65">
                   {gesture.text}

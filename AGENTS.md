@@ -141,7 +141,10 @@ public, and reachable from Germany through April 2027. As a competition entry it
 `unlisted`: it does not appear on the homepage. Its copy, studio images,
 drawing slots, and film ID live in `src/lib/data/hug.ts`; the MDX entry keeps card
 metadata and the scene renders. Empty drawing and film slots render as labelled
-placeholders. Copy must stay within what the owner's iF materials claim (an R13
+placeholders. The three-states section has an interactive three.js sketch of the
+R13 model (loaded on demand, falling back to studio renders); keep
+`'wasm-unsafe-eval'` in the `vercel.json` CSP for its meshopt decoder. The page is
+excluded from the sitemap. Copy must stay within what the owner's iF materials claim (an R13
 digital model with proposed behavior). See `docs/hug.md`.
 
 ### Ashlar layout engine
