@@ -49,7 +49,9 @@ export const hug = {
   eyebrow: "Lighting design · Table lamp",
   title: "Hug",
   subtitle: "Light you can draw close.",
-  lede: "Hug is a table lamp with two curved wings, designed so that the way you open it sets the light. Opened out, it gives a broad, neutral light for the day. Drawn together, it dims to a warm, low glow for the evening.",
+  /** The initials spell the name; the hero unfolds H·U·G into these words. */
+  gestures: ["Hold", "Unfold", "Gather"],
+  lede: "Hug is a table lamp with two curved wings, designed so that three gestures set its light. A deliberate hold on a concealed touch zone switches it on. Unfolded, the wings give a broad, neutral light for the day. Gathered in, they dim it to a warm, low glow for the evening.",
   meta: ["2026", "Yilun Zhan, YILUN LAB", "Design concept"],
   award: "iF Design Award 2027 · Entry 817254",
 

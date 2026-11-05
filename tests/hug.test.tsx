@@ -36,6 +36,13 @@ describe("Hug product page", () => {
     expect(screen.getByText(hug.award)).toBeInTheDocument();
   });
 
+  it("spells the name with its three gestures", () => {
+    renderHug();
+
+    expect(hug.gestures.map((word) => word[0]).join("")).toBe(hug.title.toUpperCase());
+    expect(screen.getByText("Hold, unfold, gather")).toBeInTheDocument();
+  });
+
   it("starts in the open state and switches the light when another state is chosen", () => {
     renderHug();
     const states = screen.getByRole("group", { name: hug.states.heading });
