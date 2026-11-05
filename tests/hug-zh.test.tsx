@@ -148,6 +148,11 @@ describe("Hug Chinese copy", () => {
     expect(Object.keys(hugZhScenes).sort()).toEqual(files.sort());
   });
 
+  it("keeps numbers and their units on one line", () => {
+    expect(hugZh.facts[1].value).toContain("4000\u00a0K");
+    expect(hugZh.function.drawing.legend[0]).toContain("0.4\u00a0mm");
+  });
+
   it("uses no em or en dashes", () => {
     const text = JSON.stringify({ hugZh, hugZhScenes });
 

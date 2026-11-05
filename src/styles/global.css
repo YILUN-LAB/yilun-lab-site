@@ -149,29 +149,52 @@
   scrollbar-color: rgb(255 255 255 / 20%) transparent;
 }
 
-/* Chinese mirror (/projects/hug/zh). Instrument Serif and Barlow have no
-   Chinese glyphs, so name Chinese fallbacks. Latin words keep their real
-   italic; Chinese is never slanted. Chinese headings need more line height
-   and no negative tracking. */
+/* Chinese mirror (/projects/hug/zh). Sans-serif throughout, after Apple's
+   Chinese site: the system face (SF Pro with PingFang SC on Apple devices),
+   upright, semibold headings. Only the "Hug" title and the English gesture
+   words (.hug-latin) keep the italic serif of the English page. */
 .hug:lang(zh) {
+  --hug-zh-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Text", "PingFang SC",
+    "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
   font-synthesis-style: none;
   line-break: strict;
 }
 
-.hug:lang(zh) .font-heading {
-  font-family:
-    "Instrument Serif", "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC",
-    "Noto Serif CJK SC", serif;
+.hug:lang(zh) .font-body {
+  font-family: var(--hug-zh-sans);
 }
 
-.hug:lang(zh) .font-body {
-  font-family:
-    "Barlow", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+.hug:lang(zh) .font-light {
+  font-weight: 400;
+}
+
+.hug:lang(zh) .font-heading:not(.hug-latin) {
+  font-family: var(--hug-zh-sans);
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* Break the statement at its commas, never inside a word; a phrase too long
+   for the line still wraps. */
+.hug:lang(zh) .hug-lead {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .hug:lang(zh) .hug-lead {
+    font-size: 1.5rem;
+  }
+}
+
+.hug:lang(zh) .hug-subtitle {
+  font-weight: 500;
 }
 
 .hug:lang(zh) :is(h2, h3, .hug-lead).font-heading {
   line-height: 1.25;
-  letter-spacing: 0.02em;
   text-wrap: balance;
 }
 
