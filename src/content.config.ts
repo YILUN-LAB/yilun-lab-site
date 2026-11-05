@@ -68,8 +68,17 @@ const projects = defineCollection({
 
       order: z.number().optional(),
       draft: z.boolean().default(false),
+      // Keeps the project page but leaves it off the homepage and next-work links.
+      unlisted: z.boolean().default(false),
     })
     .superRefine((data, ctx) => {
+      if (data.unlisted && data.featured !== undefined) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["featured"],
+          message: "unlisted projects cannot be featured on the homepage",
+        });
+      }
       if (data.variant === "video-hero" && !data.youtube) {
         ctx.addIssue({
           code: "custom",

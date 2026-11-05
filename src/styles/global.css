@@ -75,6 +75,52 @@
   filter: blur(48px);
 }
 
+/* Hug: warm glow behind the hero and the state selector, which follows the
+   chosen color temperature through --hug-glow ("r g b"). */
+.hug-aura {
+  position: absolute;
+  inset: -8rem -10% 0 30%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 62% 42%, rgb(255 170 90 / 18%), transparent 50%),
+    radial-gradient(ellipse at 40% 70%, rgb(255 205 150 / 8%), transparent 45%);
+  filter: blur(40px);
+}
+
+.hug-stage-glow {
+  position: absolute;
+  inset: 10% 8% 4%;
+  border-radius: 50%;
+  pointer-events: none;
+  background-color: rgb(var(--hug-glow) / 26%);
+  filter: blur(72px);
+  transition: background-color 0.8s ease-out;
+}
+
+.hug-strip {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 20%) transparent;
+}
+
+.hug-guide-flow {
+  animation: hug-guide-flow 2.4s linear infinite;
+}
+
+@keyframes hug-guide-flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hug-guide-flow {
+    animation: none;
+  }
+  .hug-stage-glow {
+    transition: none;
+  }
+}
+
 /* ====== Theme: dark + amber/golden glow ====== */
 :root {
   --amber-1: 255, 196, 110;

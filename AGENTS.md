@@ -95,6 +95,8 @@ Use a development server for local browser checks when adapter preview is unavai
    size or position. There is no `aspect` field — see "Ashlar layout engine" below.
 4. Use `order` for ascending public ordering. Entries with `draft: true` are excluded
    from the homepage and generated project routes, including preview builds.
+   Entries with `unlisted: true` keep their project route but are left off the
+   homepage and out of other projects' next-work links; they cannot be `featured`.
 5. Keep exactly three non-draft projects with distinct `featured` values of 1, 2,
    and 3. `src/lib/data/highlights.ts` throws when this contract is violated.
 
@@ -132,6 +134,15 @@ navigation, other pages, or a saved site-wide preference. The homepage announcem
 shows both languages together. The exhibition flyer is displayed as an image
 without a download control.
 See `docs/soft-boundary.md` for content sources, assets, and maintenance details.
+
+`hug` uses `HugLayout.astro` and `HugProject.tsx`, an English-only product page
+submitted as the Web URL for the iF Design Award 2027. Keep `/projects/hug` stable,
+public, and reachable from Germany through April 2027. As a competition entry it is
+`unlisted`: it does not appear on the homepage. Its copy, studio images,
+drawing slots, and film ID live in `src/lib/data/hug.ts`; the MDX entry keeps card
+metadata and the scene renders. Empty drawing and film slots render as labelled
+placeholders. Copy must stay within what the owner's iF materials claim (an R13
+digital model with proposed behavior). See `docs/hug.md`.
 
 ### Ashlar layout engine
 
