@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { MotionConfig, motion } from "motion/react";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { useActiveSection } from "@lib/use-active-section";
-import { hug } from "@lib/data/hug";
+import { hug, type HugDrawing } from "@lib/data/hug";
 import { PhotoLightbox, type LightboxPhoto } from "./PhotoLightbox";
 import { HugStates } from "./HugStates";
 import { HugDayStrip, type HugScene } from "./HugDayStrip";
@@ -24,16 +24,6 @@ function uniqueBySrc(photos: LightboxPhoto[]) {
   return photos.filter((photo, index) => photos.findIndex((p) => p.src === photo.src) === index);
 }
 
-function Placeholder({ label, className }: { label: string; className: string }) {
-  return (
-    <div
-      className={`flex items-center justify-center rounded-[1rem] border border-dashed border-white/20 bg-white/[0.02] px-4 text-center font-body text-xs text-white/45 ${className}`}
-    >
-      {label}
-    </div>
-  );
-}
-
 export function HugProject({ scenes }: HugProjectProps) {
   // Same props on server and client; MotionConfig drops movement for reduced motion.
   const reveal = fadeBlurIn(0);
@@ -46,7 +36,10 @@ export function HugProject({ scenes }: HugProjectProps) {
   }, [criterionInView]);
   const { development } = hug;
 
-  const drawings = development.drawings;
+  // Unpublished drawings (no src yet) stay off the page.
+  const drawings = development.drawings.filter((drawing): drawing is HugDrawing & { src: string } =>
+    Boolean(drawing.src)
+  );
   const photos = useMemo(
     () =>
       uniqueBySrc([
@@ -144,30 +137,20 @@ export function HugProject({ scenes }: HugProjectProps) {
         );
       case "sustainability":
         return (
-          <div className="space-y-4 md:space-y-5">
-            <ul className="grid gap-3 sm:grid-cols-3 md:gap-5">
-              {hug.sustainability.strategies.map((strategy) => (
-                <li key={strategy.term} className="liquid-glass rounded-[1.25rem] p-5">
-                  <span
-                    aria-hidden="true"
-                    className="mb-4 block h-2 w-2 rounded-full bg-[rgb(var(--amber-1))] shadow-[0_0_12px_rgb(var(--amber-1))]"
-                  />
-                  <p className={termClass}>{strategy.term}</p>
-                  <p className="mt-2 font-body text-sm font-light leading-relaxed text-white/70">
-                    {strategy.text}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <div className="rounded-[1.25rem] border border-white/10 p-5 md:flex md:gap-8">
-              <p className="shrink-0 font-body text-[11px] uppercase tracking-[0.18em] text-white/45 md:w-40 md:pt-0.5">
-                {hug.sustainability.limitsLabel}
-              </p>
-              <p className="mt-3 max-w-2xl font-body text-sm font-light leading-relaxed text-white/70 md:mt-0">
-                {hug.sustainability.limits}
-              </p>
-            </div>
-          </div>
+          <ul className="grid gap-3 sm:grid-cols-3 md:gap-5">
+            {hug.sustainability.strategies.map((strategy) => (
+              <li key={strategy.term} className="liquid-glass rounded-[1.25rem] p-5">
+                <span
+                  aria-hidden="true"
+                  className="mb-4 block h-2 w-2 rounded-full bg-[rgb(var(--amber-1))] shadow-[0_0_12px_rgb(var(--amber-1))]"
+                />
+                <p className={termClass}>{strategy.term}</p>
+                <p className="mt-2 font-body text-sm font-light leading-relaxed text-white/70">
+                  {strategy.text}
+                </p>
+              </li>
+            ))}
+          </ul>
         );
       default:
         return null;
@@ -191,21 +174,16 @@ export function HugProject({ scenes }: HugProjectProps) {
     }
     if (id === "function") {
       return (
-        <>
-          <dl className="mt-10 grid gap-6 border-t border-white/10 pt-6 md:grid-cols-2 lg:grid-cols-4">
-            {hug.function.specs.map((spec) => (
-              <div key={spec.term}>
-                <dt className={termClass}>{spec.term}</dt>
-                <dd className="mt-1 font-body text-sm font-light leading-relaxed text-white/70">
-                  {spec.text}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-6 font-body text-xs leading-relaxed text-white/50">
-            {hug.function.validation}
-          </p>
-        </>
+        <dl className="mt-10 grid gap-6 border-t border-white/10 pt-6 md:grid-cols-2 lg:grid-cols-4">
+          {hug.function.specs.map((spec) => (
+            <div key={spec.term}>
+              <dt className={termClass}>{spec.term}</dt>
+              <dd className="mt-1 font-body text-sm font-light leading-relaxed text-white/70">
+                {spec.text}
+              </dd>
+            </div>
+          ))}
+        </dl>
       );
     }
     return null;
@@ -446,8 +424,10 @@ export function HugProject({ scenes }: HugProjectProps) {
               ))}
             </ol>
 
-            <div className="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-12">
-              <div className="lg:col-span-4">
+            <div
+              className={`mt-16 ${drawings.length ? "grid gap-10 lg:grid-cols-12 lg:gap-12" : "max-w-md"}`}
+            >
+              <div className={drawings.length ? "lg:col-span-4" : undefined}>
                 <table className="w-full font-body text-sm">
                   <caption className="mb-4 text-left text-[11px] uppercase tracking-[0.18em] text-white/45">
                     {development.sizesLabel}
@@ -468,15 +448,15 @@ export function HugProject({ scenes }: HugProjectProps) {
                 </p>
               </div>
 
-              <div className="lg:col-span-8">
-                <p className="mb-4 font-body text-[11px] uppercase tracking-[0.18em] text-white/45">
-                  {development.drawingsLabel}
-                </p>
-                <ul className="grid gap-3 sm:grid-cols-3">
-                  {drawings.map((drawing) => (
-                    <li key={drawing.label}>
-                      <figure>
-                        {drawing.src ? (
+              {drawings.length > 0 && (
+                <div className="lg:col-span-8">
+                  <p className="mb-4 font-body text-[11px] uppercase tracking-[0.18em] text-white/45">
+                    {development.drawingsLabel}
+                  </p>
+                  <ul className="grid gap-3 sm:grid-cols-3">
+                    {drawings.map((drawing) => (
+                      <li key={drawing.label}>
+                        <figure>
                           <div className="rounded-[1rem] bg-[#f4efe8] p-3">
                             <HugZoomImage
                               image={{
@@ -488,36 +468,29 @@ export function HugProject({ scenes }: HugProjectProps) {
                               onOpen={openPhoto}
                             />
                           </div>
-                        ) : (
-                          <Placeholder
-                            label={development.placeholder}
-                            className="aspect-[16/7] sm:aspect-[4/3]"
-                          />
-                        )}
-                        <figcaption className="mt-2 font-body text-sm text-white/70">
-                          {drawing.label}
-                        </figcaption>
-                      </figure>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                          <figcaption className="mt-2 font-body text-sm text-white/70">
+                            {drawing.label}
+                          </figcaption>
+                        </figure>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
-            <div className="mt-16">
-              <p className="mb-4 font-body text-[11px] uppercase tracking-[0.18em] text-white/45">
-                {development.filmLabel}
-              </p>
-              {development.youtube ? (
+            {development.youtube && (
+              <div className="mt-16">
+                <p className="mb-4 font-body text-[11px] uppercase tracking-[0.18em] text-white/45">
+                  {development.filmLabel}
+                </p>
                 <div className="liquid-glass relative aspect-video overflow-hidden rounded-[1.25rem]">
                   {embedReady && (
                     <lite-youtube videoid={development.youtube} class="h-full w-full" />
                   )}
                 </div>
-              ) : (
-                <Placeholder label={development.filmPlaceholder} className="h-36 md:h-44" />
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="liquid-glass mt-16 grid gap-8 rounded-[1.25rem] p-6 md:grid-cols-[2fr_1fr] md:p-8">
               <div>

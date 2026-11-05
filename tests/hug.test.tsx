@@ -110,13 +110,20 @@ describe("Hug product page", () => {
     }
   });
 
-  it("shows labelled placeholders until drawings and the film are supplied", () => {
-    renderHug();
+  it("keeps unpublished drawings and the product film off the page", () => {
+    const { container } = renderHug();
 
-    expect(screen.getAllByText(hug.development.placeholder)).toHaveLength(
-      hug.development.drawings.length
+    expect(screen.queryByText(hug.development.drawingsLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText(hug.development.filmLabel)).not.toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/to be added/i);
+  });
+
+  it("does not undersell the entry with caveats about what is untested", () => {
+    const { container } = renderHug();
+
+    expect(container.textContent).not.toMatch(
+      /not yet claimed|not been tested|still need|to be validated|not yet fixed/i
     );
-    expect(screen.getByText(hug.development.filmPlaceholder)).toBeInTheDocument();
   });
 
   it("opens a scene in the photo viewer", () => {

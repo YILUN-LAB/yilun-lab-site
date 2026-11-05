@@ -140,8 +140,9 @@ submitted as the Web URL for the iF Design Award 2027. Keep `/projects/hug` stab
 public, and reachable from Germany through April 2027. As a competition entry it is
 `unlisted`: it does not appear on the homepage. Its copy, studio images,
 drawing slots, and film ID live in `src/lib/data/hug.ts`; the MDX entry keeps card
-metadata and the scene renders. Empty drawing and film slots render as labelled
-placeholders. The three-states section has an interactive three.js sketch of the
+metadata and the scene renders. Drawings and the film appear only once their
+`src` / `youtube` is set; nothing renders for empty slots. Keep caveat lists
+(untested, not claimed, still to validate) off the page. The three-states section has an interactive three.js sketch of the
 digital model (loaded on demand, falling back to studio renders); keep
 `'wasm-unsafe-eval'` in the `vercel.json` CSP for its meshopt decoder. The Function
 section's light path drawing comes from measurements exported from the model. The

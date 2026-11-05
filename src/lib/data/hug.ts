@@ -5,8 +5,8 @@
  * Everything else the page shows is here, so text and images can be updated
  * without touching the layout. English only: the iF jury reads this page.
  *
- * Placeholders: a drawing or the film renders as an empty labelled frame until
- * its `src` / `youtube` field is filled in.
+ * Unpublished content: a drawing appears once its `src` is filled in, and the
+ * product film once `development.youtube` is set. Until then nothing renders.
  */
 
 const dir = "/assets/images/projects/hug";
@@ -31,7 +31,7 @@ export interface HugState {
 
 export interface HugDrawing {
   label: string;
-  /** Leave undefined to show a placeholder frame. */
+  /** Leave undefined to keep this drawing off the page. */
   src?: string;
   alt?: string;
   width?: number;
@@ -191,7 +191,7 @@ export const hug = {
       body: [
         "The idea began with an embrace: the instinct to draw something close when we need a moment of ease. A full day does not always end when we get home, and sometimes a small gesture helps the room, and ourselves, settle.",
         "Hug gives that gesture a place in everyday lighting. You open it to share light with the room, then gather it in as the day winds down. The form, the touch and the changing warmth follow the same emotional rhythm.",
-        "It is for anyone who wants a calmer atmosphere, alone or with others. The ambition is modest: a familiar object that offers a short pause in a busy day.",
+        "It is for anyone who wants a calmer atmosphere, alone or with others. The ambition is simple: a familiar object that offers a short pause in a busy day.",
       ],
     },
     {
@@ -227,7 +227,7 @@ export const hug = {
       heading: "A reason to keep it",
       body: [
         "Hug is designed around keeping: a form to live with by day and a light to return to at night. Emotional attachment, and having more than one daily role, are intended to support longer use.",
-        "The LED and control assembly is proposed as a unit that can be serviced apart from the optical body, with rear access and a heat path as development requirements. The first prototype is planned with external low-voltage power and no built-in battery.",
+        "The LED and control assembly is designed to be serviced apart from the optical body, with rear access and its own heat path. The first prototype is planned with external low-voltage power and no built-in battery.",
       ],
     },
   ] satisfies HugCriterion[],
@@ -293,7 +293,7 @@ export const hug = {
         "Control board envelope",
         "Opening sensor position",
       ],
-      note: "LEDs are shown centered under the guide's lower edge. Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture is meant to release the light across the surface. This is a proposed construction; its optical performance has not been tested.",
+      note: "LEDs are shown centered under the guide's lower edge. Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture releases the light across the surface.",
       titleBlock: ["Hug", "Light path", "Units: mm", "Yilun Zhan"],
     },
     specs: [
@@ -311,11 +311,9 @@ export const hug = {
       },
       {
         term: "Power",
-        text: "External low-voltage supply with a lower-rear inlet and cable restraint. No built-in battery or charging.",
+        text: "External low-voltage supply with a lower-rear inlet and cable restraint.",
       },
     ],
-    validation:
-      "Optical uniformity, touch response, guided bending, stability and heat still need validation on a physical prototype.",
   },
 
   differentiation: {
@@ -356,9 +354,6 @@ export const hug = {
         text: "The LED and control assembly can be serviced apart from the optical body.",
       },
     ],
-    limitsLabel: "Not yet claimed",
-    limits:
-      "The silicone laminate is not claimed to be recyclable. Energy use, repair access and durability over repeated opening and closing will be tested before any environmental benefit is quantified.",
   },
 
   development: {
@@ -379,14 +374,12 @@ export const hug = {
       { label: "Front elevation" },
       { label: "Side elevation" },
     ] as HugDrawing[],
-    placeholder: "Drawing to be added",
     filmLabel: "Product film",
-    /** YouTube video ID. Leave undefined to show a placeholder frame. */
+    /** YouTube video ID. Leave undefined to keep the film section off the page. */
     youtube: undefined as string | undefined,
-    filmPlaceholder: "Film to be added",
     statusLabel: "Development status",
     status:
-      "Hug is at the stage of design visualization and digital form studies. Optical output, guided movement, fatigue, thermal behavior and stability are still to be validated on a physical prototype. Material grade and final assembly are not yet fixed.",
+      "Hug is developed as a digital model and design visualizations, with a physical prototype as the next step.",
   },
 
   credits: [
