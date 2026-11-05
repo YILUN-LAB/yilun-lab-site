@@ -216,10 +216,11 @@ export function HugProject({ scenes, next }: HugProjectProps) {
           <div className="relative mx-auto grid max-w-6xl items-end gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="lg:col-span-5 lg:pb-4">
               <p className="mb-4 font-body text-sm text-white/80">// {hug.eyebrow}</p>
-              <h1 className="font-heading text-[6rem] italic leading-[0.8] tracking-[-4px] md:text-[9rem] lg:text-[10.5rem]">
+              {/* mb in em clears the g descender (~0.22em) at every title size. */}
+              <h1 className="mb-[0.26em] font-heading text-[6rem] italic leading-[0.8] tracking-[-4px] md:text-[9rem] lg:text-[10.5rem]">
                 {hug.title}
               </h1>
-              <p className="hug-gestures relative z-10 mt-5 font-heading text-3xl italic md:text-4xl">
+              <p className="hug-gestures relative z-10 font-heading text-3xl italic md:text-4xl">
                 <span className="sr-only">
                   {hug.gestures.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(", ")}
                 </span>
