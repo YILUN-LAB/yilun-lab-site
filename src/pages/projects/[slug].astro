@@ -6,6 +6,7 @@ import SoftBoundaryLayout from "@components/SoftBoundaryLayout.astro";
 import HugLayout from "@components/HugLayout.astro";
 import JsonLd from "@components/JsonLd.astro";
 import { SITE_URL } from "@lib/data/seo";
+import { nextWorkFor } from "@lib/data/project-sequence";
 
 // Case studies stay static in both production and preview deployments.
 export const prerender = true;
@@ -20,13 +21,10 @@ export async function getStaticPaths() {
       (a.data.order ?? 9999) - (b.data.order ?? 9999)
   );
 
-  return entries.map((entry: CollectionEntry<"projects">, i: number) => {
-    const next = entries[(i + 1) % entries.length];
-    return {
-      params: { slug: entry.id },
-      props: { entry, next },
-    };
-  });
+  return entries.map((entry: CollectionEntry<"projects">) => ({
+    params: { slug: entry.id },
+    props: { entry, next: nextWorkFor(entries, entry) },
+  }));
 }
 
 interface Props {

@@ -7,6 +7,11 @@ to April, so keep the URL stable and publicly accessible: give iF the production
 URL, never a Vercel preview URL behind deployment protection. The iF username and
 password fields are only for password-protected pages and stay empty.
 
+Because it is a competition entry, the owner decided on 4 November 2026 to keep
+Hug off the homepage: `hug.mdx` sets `unlisted: true`, so the page exists only at
+its direct URL and other projects' next-work links skip it. Remove the flag to
+list it in Works later.
+
 ## Sources
 
 The owner supplied this [Drive folder](https://drive.google.com/drive/folders/1I7NrKyifjU-iHmLVnAyDvw8o4spy7dac)

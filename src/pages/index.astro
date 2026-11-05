@@ -5,7 +5,10 @@ import { HomePage } from "@components/react/HomePage";
 import heroBootstrap from "@lib/hero-bootstrap.js?raw";
 import { HERO_VIDEO_ASSETS } from "@lib/hero-video-assets";
 
-const entries = await getCollection("projects", (e: CollectionEntry<"projects">) => !e.data.draft);
+const entries = await getCollection(
+  "projects",
+  (e: CollectionEntry<"projects">) => !e.data.draft && !e.data.unlisted
+);
 entries.sort(
   (a: CollectionEntry<"projects">, b: CollectionEntry<"projects">) =>
     (a.data.order ?? 9999) - (b.data.order ?? 9999)
