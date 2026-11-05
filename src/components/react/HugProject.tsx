@@ -37,7 +37,13 @@ function Placeholder({ label, className }: { label: string; className: string })
 export function HugProject({ scenes }: HugProjectProps) {
   // Same props on server and client; MotionConfig drops movement for reduced motion.
   const reveal = fadeBlurIn(0);
-  const activeCriterion = useActiveSection(criterionIds);
+  // Keep the last section highlighted between sections and at the end of the
+  // page, where the short final section never reaches the detection band.
+  const criterionInView = useActiveSection(criterionIds);
+  const [activeCriterion, setActiveCriterion] = useState<string | null>(null);
+  useEffect(() => {
+    if (criterionInView) setActiveCriterion(criterionInView);
+  }, [criterionInView]);
   const { development } = hug;
 
   const drawings = development.drawings;
@@ -207,7 +213,7 @@ export function HugProject({ scenes }: HugProjectProps) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <article className="hug relative isolate overflow-hidden pb-20 pt-28 text-white">
+      <article className="hug relative isolate overflow-clip pb-20 pt-28 text-white">
         {/* Hero */}
         <header className="relative px-8 pb-12 md:px-16 lg:px-20">
           <div aria-hidden="true" className="hug-aura" />
@@ -331,7 +337,7 @@ export function HugProject({ scenes }: HugProjectProps) {
         <section aria-labelledby="hug-criteria" className={section}>
           <div className="mx-auto max-w-6xl lg:grid lg:grid-cols-[10rem_minmax(0,1fr)] lg:gap-16">
             <nav aria-label={hug.labels.criteria} className="hidden lg:block">
-              <ol className="sticky top-32 space-y-1 font-body text-sm">
+              <ol className="sticky top-16 space-y-1 font-body text-sm">
                 {hug.criteria.map((criterion, index) => {
                   const isActive = activeCriterion === `hug-${criterion.id}`;
                   return (
@@ -368,7 +374,7 @@ export function HugProject({ scenes }: HugProjectProps) {
                     key={criterion.id}
                     id={`hug-${criterion.id}`}
                     aria-labelledby={`hug-${criterion.id}-title`}
-                    className="scroll-mt-28"
+                    className="scroll-mt-16"
                   >
                     <p className={kicker}>
                       <span className="tabular-nums text-white/40">
