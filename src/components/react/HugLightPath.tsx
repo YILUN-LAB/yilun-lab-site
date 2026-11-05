@@ -317,12 +317,18 @@ function SectionAA({ id }: { id: string }) {
   const shellLeft = Math.min(...shellU);
   const shellRight = Math.max(...shellU);
 
-  // Light enters where the LED meets the guide, then reflects inside it.
-  const bounce: Point[] = [[inner + 0.05, ledTop]];
-  for (let z = 7.5, side = 0; z < cut - 2; z += 3.4, side ^= 1) {
+  const ledU = led.map(([u]) => u);
+  const ledCentre = (Math.min(...ledU) + Math.max(...ledU)) / 2;
+  const guideBottom = elevation.guideStart;
+  // Light leaves the LED, enters the guide's lower edge, then reflects inside it.
+  const bounce: Point[] = [
+    [ledCentre, ledTop],
+    [ledCentre, guideBottom],
+  ];
+  for (let z = guideBottom + 2.6, side = 1; z < cut - 2; z += 3.4, side ^= 1) {
     bounce.push([side ? outer : inner, z]);
   }
-  const exits: Array<[number, number]> = bounce.slice(2).map(([u, z]) => [u, z]);
+  const exits: Array<[number, number]> = bounce.slice(3).map(([u, z]) => [u, z]);
 
   const breakLine = `M${shellLeft - 1.2} ${-cut} L${shellLeft + 0.6} ${-cut - 0.8} L${shellRight - 0.6} ${-cut + 0.8} L${shellRight + 1.2} ${-cut}`;
 
@@ -451,8 +457,8 @@ function SectionAA({ id }: { id: string }) {
       <Callout n={2} from={[(inner + outer) / 2, 18.5]} to={[12.5, 21]} size={size} />
       <Callout n={3} from={[shellRight - 0.25, 15]} to={[12.5, 15]} size={size} />
       <Callout n={6} from={[-2.4, 9]} to={[-10.5, 14]} size={size} />
-      <Callout n={4} from={[-0.6, 5.2]} to={[-10.5, 7]} size={size} />
-      <Callout n={5} from={[-0.9, 4]} to={[-10.5, 2]} size={size} />
+      <Callout n={4} from={[ledCentre - 0.5, ledTop - 0.4]} to={[-10.5, 7]} size={size} />
+      <Callout n={5} from={[ledCentre - 0.9, ledTop - 1.6]} to={[-10.5, 2]} size={size} />
     </svg>
   );
 }

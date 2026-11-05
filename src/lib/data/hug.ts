@@ -209,7 +209,7 @@ export const hug = {
       heading: "Opening becomes the control",
       body: [
         "A concealed position sensor is intended to link the guided movement to dimming and tunable white light, from 4000\u00a0K fully open through 3000\u00a0K half-open to 2200\u00a0K gathered.",
-        "LEDs hidden along the lower edge feed light into a flexible light-guide laminate, and an optical structure releases it across the curved surface. The aim is a broad glow with gradual changes in brightness instead of a bright line at the base.",
+        "Fourteen LED positions run along a 10\u00a0mm cavity at the lower edge, each with its own heat island, and light the guide from below. An optical structure in the flexible laminate then releases the light across the curved surface. The aim is a broad glow with gradual changes in brightness instead of a bright line at the base.",
       ],
     },
     {
@@ -287,16 +287,20 @@ export const hug = {
         "Outer diffuser, 0.4\u00a0mm",
         "Clear optical guide, 2.4\u00a0mm",
         "Inner diffuser, 0.4\u00a0mm",
-        "LED position, 2200 to 4000\u00a0K, 14 along the lower edge",
+        "LED, 2200 to 4000\u00a0K, centered under the guide (14 along the lower edge)",
         "Heat island, one under each LED",
         "Edge cavity, closed at both ends",
         "Control board envelope",
         "Opening sensor position",
       ],
-      note: "Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture is meant to release the light across the surface. This is a proposed construction; its optical performance has not been tested.",
+      note: "LEDs are shown centered under the guide's lower edge. Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture is meant to release the light across the surface. This is a proposed construction; its optical performance has not been tested.",
       titleBlock: ["Hug", "Light path", "Units: mm", "Yilun Zhan"],
     },
     specs: [
+      {
+        term: "Light source",
+        text: "14 LEDs in a 10\u00a0mm edge cavity, centered under the 2.4\u00a0mm guide, each on its own heat island.",
+      },
       {
         term: "Light",
         text: "Dimmable tunable white, 2200 to 4000\u00a0K, linked to the position of the wings.",

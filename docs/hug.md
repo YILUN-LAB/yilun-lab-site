@@ -128,10 +128,17 @@ blender -b hug.blend --python scripts/export-hug-function-drawing.py -- src/lib/
 npx prettier --write src/lib/data/hug-function-drawing.json
 ```
 
-In the model, the LED placeholders sit about 1.8 mm toward the outer face from
-the guide's centre line, so section A-A shows them only partly under the guide.
-The drawing follows the model; move the placeholders in the .blend and
-re-export if that is not the intent.
+In the model, all 14 LED placeholders (and their heat islands) sit 1.8 mm
+toward the outer face from the guide's centre line, so only about 15 % of each
+LED's width faces the guide and more than half lies outside the laminate. Built
+that way, most light would miss the guide and leave a bright line at the base,
+which the design is meant to avoid. On 5 November 2026 the owner's side chose to
+show the intended position: with `ALIGN_LEDS` the export moves each LED and
+island across the edge onto the guide's centre line and records the measured
+offsets in `modelLedOffsets`. The page notes that LEDs are shown centered under
+the guide. The .blend file is unchanged; once the placeholders are moved there,
+the offsets drop to zero and the flag no longer changes anything. A test checks
+that the drawn LED lies wholly under the guide, on its centre line.
 
 ## Filling the placeholders
 
