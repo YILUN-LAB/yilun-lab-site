@@ -293,7 +293,7 @@ export const hug = {
         "Control board envelope",
         "Opening sensor position",
       ],
-      note: "LEDs are shown centered under the guide's lower edge. Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture releases the light across the surface.",
+      note: "Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture releases the light across the surface.",
       titleBlock: ["Hug", "Light path", "Units: mm", "Yilun Zhan"],
     },
     specs: [

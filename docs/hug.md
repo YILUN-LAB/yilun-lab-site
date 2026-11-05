@@ -100,7 +100,7 @@ To regenerate `public/assets/models/hug/hug-states.glb` from the owner's
 three-state .blend file (scene 00):
 
 ```sh
-blender -b hug.blend --python scripts/export-hug-model.py -- /tmp/hug-states.glb
+blender -b HUG_三态_入光组件居中.blend --python scripts/export-hug-model.py -- /tmp/hug-states.glb
 npx @gltf-transform/cli@4 meshopt /tmp/hug-states.glb public/assets/models/hug/hug-states.glb --level high
 ```
 
@@ -128,21 +128,33 @@ profiles of shell, guide, cavity, LED and heat island. The laminate measures
 exploded layer scene (05). Regenerate with:
 
 ```sh
-blender -b hug.blend --python scripts/export-hug-function-drawing.py -- src/lib/data/hug-function-drawing.json
+blender -b HUG_三态_入光组件居中.blend --python scripts/export-hug-function-drawing.py -- src/lib/data/hug-function-drawing.json
 npx prettier --write src/lib/data/hug-function-drawing.json
 ```
 
-In the model, all 14 LED placeholders (and their heat islands) sit 1.8 mm
-toward the outer face from the guide's centre line, so only about 15 % of each
-LED's width faces the guide and more than half lies outside the laminate. Built
-that way, most light would miss the guide and leave a bright line at the base,
-which the design is meant to avoid. On 5 November 2026 the owner's side chose to
-show the intended position: with `ALIGN_LEDS` the export moves each LED and
-island across the edge onto the guide's centre line and records the measured
-offsets in `modelLedOffsets`. The page notes that LEDs are shown centered under
-the guide. The .blend file is unchanged; once the placeholders are moved there,
-the offsets drop to zero and the flag no longer changes anything. A test checks
-that the drawn LED lies wholly under the guide, on its centre line.
+### Light-entry correction (5 November 2026)
+
+In the owner's original file the U-channel edge cavity sat about 0.8 to 1.7 mm
+off the laminate in all 12 lamp assemblies: the laminate cut into the channel's
+right wall, and the LEDs, centred in the channel, faced only about 15 % of the
+light guide. With the owner's agreement, `scripts/center-hug-light-entry.py`
+produced `HUG_三态_入光组件居中.blend`, a copy in which, for each assembly and
+square to the laminate (its local direction, since the gathered base curves
+tightly and leans about 7 degrees):
+
+- each edge-cavity vertex moves so the channel centre meets the laminate's
+  centre where it sits in the channel;
+- the end caps, control board envelope and opening sensor move with it;
+- each LED and heat island moves onto the centre of the guide's lower edge.
+
+Nothing else changes (384 objects moved, 12 cavity meshes reshaped; materials
+and scenes identical). Its `--check` mode reports, per assembly, the channel
+to laminate offset (now at most 0.04 mm), whether each LED sits under the
+guide, each heat island in the channel, and the laminate clear of the walls.
+The base band is now roughly symmetric (about 1.8 and 1.5 mm proud of the
+laminate instead of 3.3 mm and flush). The light path data and the web model
+are exported from this file, and tests check the LED and laminate placement in
+the drawing data.
 
 ## Tone
 

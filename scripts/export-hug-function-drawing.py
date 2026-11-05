@@ -14,11 +14,9 @@ Reads the open state in scene 00 of the owner's model and writes, in mm:
   cut by a vertical plane through the middle LED, square to the lower edge.
 
 The web drawing (HugLightPath.tsx) draws from this file only, so it matches
-the model, with one deliberate exception: in the model the LED placeholders
-(and their heat islands) sit about 1.8 mm toward the outer face from the light
-guide's centre line, so most of each LED misses the guide. With ALIGN_LEDS the
-export moves each LED and island across the edge onto the guide's centre line,
-as intended, and records the measured offsets. The .blend file is not changed.
+the model. Export from the version with the light-entry assembly centred under
+the laminate (HUG_三态_入光组件居中.blend, 5 November 2026); in the earlier file
+the edge cavity sat about 1.5 mm off the laminate.
 """
 
 import json
@@ -37,7 +35,6 @@ SECTION_LED = 7
 SECTION_HALF_WIDTH = 14.0  # mm either side of the guide
 SECTION_HEIGHT = 32.0  # mm from the table
 PX_PER_MM = 4
-ALIGN_LEDS = True  # centre the LED placeholders on the guide (see docstring)
 
 
 def state_collection(scene):
@@ -215,14 +212,6 @@ def edge_frame(centres, index):
     return tangent, Vector((tangent.y, -tangent.x, 0))
 
 
-def guide_centre(lines):
-    """Centre of the guide's cut just above its lower edge, across the edge."""
-    us = [u for line in lines for u, z in line if 9.0 < z < 14.0]
-    if not us:
-        raise ValueError("Guide section has no points just above its lower edge")
-    return (min(us) + max(us)) / 2
-
-
 def main():
     out_path = sys.argv[sys.argv.index("--") + 1]
     scene = bpy.data.scenes[0]
@@ -237,31 +226,17 @@ def main():
     board = part(collection, "05 |")[0]
     sensor = part(collection, "06 |")[0]
 
-    def rect(obj, dx=0.0):
+    def rect(obj):
         lo, hi = box(obj, shell, depsgraph)
-        return {"x": r(lo.x + dx), "z": r(lo.z), "w": r(hi.x - lo.x), "h": r(hi.z - lo.z)}
+        return {"x": r(lo.x), "z": r(lo.z), "w": r(hi.x - lo.x), "h": r(hi.z - lo.z)}
 
     led_boxes = [box(o, shell, depsgraph) for o in leds]
     centres = [((lo + hi) / 2) for lo, hi in led_boxes]
     shell_lo, shell_hi = box(shell, depsgraph=depsgraph, shell=shell)
     guide_lo, _ = box(guide, shell, depsgraph)
 
-    # How far each LED sits from the guide's centre line, across the edge.
-    offsets = []
-    for index, centre in enumerate(centres):
-        tangent_i, across_i = edge_frame(centres, index)
-        lines = section(guide, shell, depsgraph, centre, tangent_i, across_i)
-        offsets.append((guide_centre(lines), across_i))
-    shifts = [(u if ALIGN_LEDS else 0.0) for u, _ in offsets]
-    # Elevation x moves by the shift's x component (the shift is horizontal).
-    dxs = [shift * across_i.x for shift, (_, across_i) in zip(shifts, offsets)]
-
     origin = centres[SECTION_LED - 1].copy()
     tangent, across = edge_frame(centres, SECTION_LED - 1)
-    section_shift = shifts[SECTION_LED - 1]
-
-    def shifted(lines):
-        return [[[r(u + section_shift), z] for u, z in line] for line in lines]
 
     data = {
         "source": "Open state, scene 00 of the owner's three-state model. Units: mm.",
@@ -270,10 +245,8 @@ def main():
             "height": r(shell_hi.z - shell_lo.z),
             "outline": [[r(x), r(z)] for x, z in trace_silhouette(shell, depsgraph)],
             "cavity": rect(cavity),
-            "leds": [rect(o, dx) for o, dx in zip(leds, dxs)],
-            "islands": [rect(o, dx) for o, dx in zip(islands, dxs)],
-            "ledsCentredOnGuide": ALIGN_LEDS,
-            "modelLedOffsets": [r(u) for u, _ in offsets],
+            "leds": [rect(o) for o in leds],
+            "islands": [rect(o) for o in islands],
             "board": rect(board),
             "sensor": rect(sensor),
             "guideStart": r(guide_lo.z),
@@ -284,19 +257,14 @@ def main():
             "shell": section(shell, shell, depsgraph, origin, tangent, across),
             "guide": section(guide, shell, depsgraph, origin, tangent, across),
             "cavity": section(cavity, shell, depsgraph, origin, tangent, across),
-            "led_profile": shifted(
-                section(leds[SECTION_LED - 1], shell, depsgraph, origin, tangent, across)
-            ),
-            "island": shifted(
-                section(islands[SECTION_LED - 1], shell, depsgraph, origin, tangent, across)
-            ),
+            "led_profile": section(leds[SECTION_LED - 1], shell, depsgraph, origin, tangent, across),
+            "island": section(islands[SECTION_LED - 1], shell, depsgraph, origin, tangent, across),
         },
     }
     with open(out_path, "w", encoding="utf-8") as handle:
         json.dump(data, handle, ensure_ascii=False, separators=(",", ":"))
     e = data["elevation"]
     print(f"EXPORTED {out_path}: outline {len(e['outline'])} points, {len(e['leds'])} LEDs")
-    print(f"LED offsets from guide centre (mm): {e['modelLedOffsets']}, centred: {ALIGN_LEDS}")
     for name, lines in data["section"].items():
         if isinstance(lines, list):
             print(f"SECTION {name}: {len(lines)} lines, {sum(len(l) for l in lines)} points")
