@@ -21,8 +21,9 @@ export default defineConfig({
       rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
     }),
     sitemap({
-      // /connect is QR-only — keep it out of crawler indexes.
-      filter: (page) => !page.endsWith("/connect/") && !page.endsWith("/connect"),
+      // /connect is QR-only; /projects/hug is an unlisted competition entry
+      // reached only by its direct link. Keep both out of the sitemap.
+      filter: (page) => !/\/(connect|projects\/hug)\/?$/.test(page),
     }),
   ],
   vite: {

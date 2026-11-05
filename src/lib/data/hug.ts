@@ -101,6 +101,26 @@ export const hug = {
       "Hug is one continuous form that changes through the day. A concealed position sensor is intended to read how far the wings are open and adjust brightness and color temperature to match.",
     sizeLabel: "Size, R13 digital model",
     scaleLabel: "Color temperature",
+    model: {
+      src: "/assets/models/hug/hug-states.glb",
+      label:
+        "Pencil sketch of the R13 digital model, showing the current opening. Drag it or use the turn buttons to see it from other sides.",
+      hint: "Drag to turn",
+      turnLeft: "Turn the model left",
+      turnRight: "Turn the model right",
+      loading: "Loading model",
+      dimension: "300 mm",
+      note: "R13 digital model, drawn as a sketch. Shapes between the three states are interpolated for illustration.",
+    },
+    renderNote: "Design visualization of the nearest state.",
+    views: { label: "View", model: "Sketch", render: "Render" },
+    slider: { label: "Opening", start: "Unfold", end: "Gather" },
+    hold: {
+      label: "Hold",
+      hintOn: "Press and hold to switch off",
+      hintOff: "Press and hold to switch on",
+      off: "Off",
+    },
     lineup: {
       src: `${dir}/states-lineup.webp`,
       alt: "The three states side by side: open and wide on the left, half-open in the middle, gathered and warmest on the right",
