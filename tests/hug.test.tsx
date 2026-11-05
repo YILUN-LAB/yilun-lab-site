@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { HugProject } from "../src/components/react/HugProject";
 import { photoLightboxLabels } from "../src/components/react/PhotoLightbox";
 import { hug } from "../src/lib/data/hug";
+import drawing from "../src/lib/data/hug-function-drawing.json";
 
 const scenes = [
   {
@@ -165,5 +166,29 @@ describe("Hug copy", () => {
     collect(hug);
 
     expect(strings.filter((text) => /[–—]/.test(text))).toEqual([]);
+  });
+});
+
+describe("Hug light path data", () => {
+  const across = (lines: number[][][], low = -Infinity, high = Infinity) => {
+    const us = lines
+      .flat()
+      .filter(([, z]) => z > low && z < high)
+      .map(([u]) => u);
+    return {
+      min: Math.min(...us),
+      max: Math.max(...us),
+      centre: (Math.min(...us) + Math.max(...us)) / 2,
+    };
+  };
+
+  it("places the LED wholly under the light guide, on its centre line", () => {
+    const guide = across(drawing.section.guide, 9, 14);
+    const led = across(drawing.section.led_profile);
+
+    expect(drawing.elevation.ledsCentredOnGuide).toBe(true);
+    expect(led.min).toBeGreaterThanOrEqual(guide.min);
+    expect(led.max).toBeLessThanOrEqual(guide.max);
+    expect(Math.abs(led.centre - guide.centre)).toBeLessThan(0.1);
   });
 });

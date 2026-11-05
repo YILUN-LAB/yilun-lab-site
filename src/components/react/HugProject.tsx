@@ -192,7 +192,7 @@ export function HugProject({ scenes }: HugProjectProps) {
     if (id === "function") {
       return (
         <>
-          <dl className="mt-10 grid gap-6 border-t border-white/10 pt-6 md:grid-cols-3">
+          <dl className="mt-10 grid gap-6 border-t border-white/10 pt-6 md:grid-cols-2 lg:grid-cols-4">
             {hug.function.specs.map((spec) => (
               <div key={spec.term}>
                 <dt className={termClass}>{spec.term}</dt>
