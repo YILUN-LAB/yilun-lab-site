@@ -1,23 +1,16 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { Navbar } from "@components/react/Navbar";
-import { Footer } from "@components/react/Footer";
 import { HugProject } from "@components/react/HugProject";
 
+// Hug is submitted under Yilun Zhan's own name, so this page stands alone:
+// no studio navigation, footer or links into the studio portfolio.
 interface Props {
   entry: CollectionEntry<"projects">;
-  next: CollectionEntry<"projects">;
 }
 
-const { entry, next } = Astro.props;
+const { entry } = Astro.props;
 ---
 
-<Navbar client:load mode="page" />
 <main>
-  <HugProject
-    client:load
-    scenes={entry.data.images}
-    next={{ title: next.data.title, href: `/projects/${next.id}` }}
-  />
+  <HugProject client:load scenes={entry.data.images} />
 </main>
-<Footer />

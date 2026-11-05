@@ -20,10 +20,9 @@ const scenes = [
     height: 1086,
   },
 ];
-const next = { title: "A Human Permeability", href: "/projects/human-permeability" };
 
 function renderHug() {
-  return render(<HugProject scenes={scenes} next={next} />);
+  return render(<HugProject scenes={scenes} />);
 }
 
 afterEach(cleanup);
@@ -130,13 +129,28 @@ describe("Hug product page", () => {
     expect(within(dialog).getByRole("img")).toHaveAttribute("src", scenes[1].src);
   });
 
-  it("links to the next work", () => {
-    renderHug();
+  it("stands alone under the designer's own name", () => {
+    const { container } = renderHug();
 
-    expect(screen.getByRole("link", { name: new RegExp(next.title) })).toHaveAttribute(
-      "href",
-      next.href
-    );
+    const offPage = screen
+      .queryAllByRole("link")
+      .filter((link) => !link.getAttribute("href")?.startsWith("#"));
+    expect(offPage).toEqual([]);
+    expect(screen.getByText(hug.footer)).toBeInTheDocument();
+    for (const banned of [/yilun lab/i, /\bR13\b/, /817254/]) {
+      expect(container.textContent).not.toMatch(banned);
+    }
+  });
+
+  it("draws the light path from the model in two views with every part named", () => {
+    renderHug();
+    const drawing = hug.function.drawing;
+
+    expect(screen.getByRole("img", { name: drawing.elevation })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: drawing.section })).toBeInTheDocument();
+    for (const part of drawing.legend) {
+      expect(screen.getByText(part.replace(/\u00a0/g, " "))).toBeInTheDocument();
+    }
   });
 });
 

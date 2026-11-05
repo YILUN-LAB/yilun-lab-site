@@ -2,10 +2,10 @@
 
 Run with Blender (tested with 5.2):
 
-    blender -b HUG_R13_三态完整版_全开半开闭合.blend \
+    blender -b <owner's three-state hug .blend> \
       --python scripts/export-hug-model.py -- /tmp/hug-states.glb
 
-Reads scene 00 (the R13 submission scene), where each state collection holds
+Reads scene 00 (the submission scene), where each state collection holds
 the outer shell ("01 | HUG ...") and the edge light cavity ("04 | ..."). The
 three states share one topology, so the open state becomes the base mesh and
 half-open / gathered become shape keys (glTF morph targets).

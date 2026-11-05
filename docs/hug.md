@@ -1,7 +1,7 @@
 # Hug product page (iF Design Award 2027)
 
 `/projects/hug` is the product page submitted as the Web URL for Yilun Zhan's iF
-Design Award 2027 entry (No. 817254). The jury opens only this page, in English.
+Design Award 2027 entry. The jury opens only this page, in English.
 iF requires the material to stay online and reachable from Germany from November
 to April, so keep the URL stable and publicly accessible: give iF the production
 URL, never a Vercel preview URL behind deployment protection. The iF username and
@@ -12,6 +12,14 @@ Hug off the homepage: `hug.mdx` sets `unlisted: true`, so the page exists only a
 its direct URL and other projects' next-work links skip it. Remove the flag to
 list it in Works later.
 
+The entry is submitted under Yilun Zhan's own name (owner's decision, 5 November
+2026). The page therefore stands alone: no studio navigation, footer, next-work
+link or studio name, a personal page title ("Hug by Yilun Zhan"), a person as
+JSON-LD creator with no organization data, and its own icon traced from the
+lamp's outline (`icon.svg`). The domain cannot change. Do not mention the iF
+application number or the model's internal revision name on the page; the test
+in `tests/hug.test.tsx` guards both and the studio name.
+
 ## Sources
 
 The owner supplied this [Drive folder](https://drive.google.com/drive/folders/1I7NrKyifjU-iHmLVnAyDvw8o4spy7dac)
@@ -19,7 +27,7 @@ on 4 November 2026: nine scene renders (`01_…png` to `12_…png`, 1448 × 1086
 `Hug_iF2027_Project_Presentation_EN.pdf`, the eight-page PDF uploaded to iF.
 Page copy combines the PDF with the iF form answers (Design Statement, Idea,
 Form, Function, Differentiation, Sustainability), edited for the web with the
-humanizer guidelines. Claims stay at the level of the source: the lamp is an R13
+humanizer guidelines. Claims stay at the level of the source: the lamp is a
 digital model, and behavior that is proposed or intended is described that way.
 
 ## Content and assets
@@ -30,9 +38,10 @@ digital model, and behavior that is proposed or intended is described that way.
   three states with their color temperatures and sizes, the drawing slots, and
   the film ID.
 - `src/components/HugLayout.astro` and `src/components/react/HugProject.tsx`
-  render the page; `HugStates`, `HugDayStrip`, `HugLaminateDiagram`, and
+  render the page; `HugStates`, `HugDayStrip`, `HugLightPath`, and
   `HugZoomImage` are its parts. `tests/hug.test.tsx` covers the state selector,
-  criteria sections, placeholders, lightbox, and a no-dash rule for the copy.
+  criteria sections, the light path drawing, placeholders, lightbox, the
+  standalone personal page, and a no-dash rule for the copy.
 
 | Website asset                                 | Source                                |
 | --------------------------------------------- | ------------------------------------- |
@@ -62,7 +71,7 @@ the open state, Gather to the gathered state.
 
 ## Interactive sketch model
 
-The three-states section shows the R13 model as a pencil sketch on paper,
+The three-states section shows the digital model as a pencil sketch on paper,
 after the owner's reference of car design sketches (4 November 2026). It sits
 in the stage with a Sketch / Render switch; Render shows the studio images.
 
@@ -84,10 +93,10 @@ in the stage with a Sketch / Render switch; Render shows the studio images.
   allows `'wasm-unsafe-eval'`. Without it the model fails only in production.
 
 To regenerate `public/assets/models/hug/hug-states.glb` from the owner's
-`HUG_R13_三态完整版_全开半开闭合.blend` (scene 00):
+three-state .blend file (scene 00):
 
 ```sh
-blender -b HUG_R13_三态完整版_全开半开闭合.blend --python scripts/export-hug-model.py -- /tmp/hug-states.glb
+blender -b hug.blend --python scripts/export-hug-model.py -- /tmp/hug-states.glb
 npx @gltf-transform/cli@4 meshopt /tmp/hug-states.glb public/assets/models/hug/hug-states.glb --level high
 ```
 
@@ -97,6 +106,32 @@ states forward and keeps the morph from spinning. The shell and edge light
 cavity share one topology across states (50,038 and 4,256 vertices), so
 half-open and gathered export as morph targets. The compressed file is about
 635 KB (about 255 KB gzipped).
+
+## Light path drawing (Function)
+
+`HugLightPath.tsx` is a technical drawing on the same paper as the sketch
+model: a front elevation of the open state and section A-A through the
+middle LED (enlarged), with numbered parts, dimensions
+and a title block. Light rises from each LED in the elevation and reflects
+inside the guide in the section; reduced motion stops both.
+
+It draws only from `src/lib/data/hug-function-drawing.json`, measured from the
+open state in scene 00 by `scripts/export-hug-function-drawing.py`: the traced
+front silhouette (266.7 × 300 mm), the 10 mm edge cavity, 14 LED positions and
+heat islands, the control board envelope, the opening sensor, and the cut
+profiles of shell, guide, cavity, LED and heat island. The laminate measures
+3.4 mm with a 2.4 mm guide; the 0.4 mm diffuser values come from the owner's
+exploded layer scene (05). Regenerate with:
+
+```sh
+blender -b hug.blend --python scripts/export-hug-function-drawing.py -- src/lib/data/hug-function-drawing.json
+npx prettier --write src/lib/data/hug-function-drawing.json
+```
+
+In the model, the LED placeholders sit about 1.8 mm toward the outer face from
+the guide's centre line, so section A-A shows them only partly under the guide.
+The drawing follows the model; move the placeholders in the .blend and
+re-export if that is not the intent.
 
 ## Filling the placeholders
 
