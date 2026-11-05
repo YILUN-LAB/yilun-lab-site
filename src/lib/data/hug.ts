@@ -49,9 +49,24 @@ export const hug = {
   eyebrow: "Lighting design · Table lamp",
   title: "Hug",
   subtitle: "Light you can draw close.",
-  /** The initials spell the name; the hero unfolds H·U·G into these words. */
-  gestures: ["Hold", "Unfold", "Gather"],
-  lede: "Hug is a table lamp with two curved wings, designed so that three gestures set its light. A deliberate hold on a concealed touch zone switches it on. Unfolded, the wings give a broad, neutral light for the day. Gathered in, they dim it to a warm, low glow for the evening.",
+  lede: "Hug is a table lamp with two curved wings, designed so that the way you open it sets the light. Opened out, it gives a broad, neutral light for the day. Drawn together, it dims to a warm, low glow for the evening.",
+
+  /** Their initials spell the name. The page never points this out. */
+  gesturesLabel: "Three gestures",
+  gestures: [
+    {
+      word: "Hold",
+      text: "A deliberate hold on a concealed touch zone at the lower rear turns the light on or off.",
+    },
+    {
+      word: "Unfold",
+      text: "Opened out, the wings give a broad, neutral 4000\u00a0K light for the day.",
+    },
+    {
+      word: "Gather",
+      text: "Drawn together, they dim to a warm, low 2200\u00a0K glow for the evening.",
+    },
+  ],
   meta: ["2026", "Yilun Zhan, YILUN LAB", "Design concept"],
   award: "iF Design Award 2027 · Entry 817254",
 
@@ -64,9 +79,9 @@ export const hug = {
 
   facts: [
     { label: "Type", value: "Table lamp" },
-    { label: "Light", value: "Dimmable tunable white, 2200 to 4000 K" },
-    { label: "Height", value: "300 mm" },
-    { label: "Estimated mass", value: "0.35 to 0.50 kg" },
+    { label: "Light", value: "Dimmable tunable white, 2200 to 4000\u00a0K" },
+    { label: "Height", value: "300\u00a0mm" },
+    { label: "Estimated mass", value: "0.35 to 0.50\u00a0kg" },
     { label: "Power", value: "External low-voltage supply" },
     { label: "Status", value: "Digital model R13, prototype planned" },
   ],
@@ -100,7 +115,7 @@ export const hug = {
         kelvin: 4000,
         glow: "255 209 163",
         description: "A broader, neutral light for the day.",
-        size: "265 × 86 × 300 mm",
+        size: "265 × 86 × 300\u00a0mm",
         image: {
           src: `${dir}/state-open.webp`,
           alt: "Hug fully open, its two wings spread into a wide, flat silhouette",
@@ -114,7 +129,7 @@ export const hug = {
         kelvin: 3000,
         glow: "255 180 107",
         description: "An inviting light for shared moments.",
-        size: "143 × 167 × 300 mm",
+        size: "143 × 167 × 300\u00a0mm",
         image: {
           src: `${dir}/state-half-open.webp`,
           alt: "Hug half-open, one wing partly turned behind the other",
@@ -128,7 +143,7 @@ export const hug = {
         kelvin: 2200,
         glow: "255 147 44",
         description: "A lower, warmer glow for winding down.",
-        size: "140 × 128 × 300 mm",
+        size: "140 × 128 × 300\u00a0mm",
         image: {
           src: `${dir}/state-gathered.webp`,
           alt: "Hug gathered, the wings wrapped into a narrow oval with a warm glow",
@@ -173,7 +188,7 @@ export const hug = {
       label: "Function",
       heading: "Opening becomes the control",
       body: [
-        "A concealed position sensor is intended to link the guided movement to dimming and tunable white light, from 4000 K fully open through 3000 K half-open to 2200 K gathered.",
+        "A concealed position sensor is intended to link the guided movement to dimming and tunable white light, from 4000\u00a0K fully open through 3000\u00a0K half-open to 2200\u00a0K gathered.",
         "LEDs hidden along the lower edge feed light into a flexible light-guide laminate, and an optical structure releases it across the curved surface. The aim is a broad glow with gradual changes in brightness instead of a bright line at the base.",
       ],
     },
@@ -247,11 +262,11 @@ export const hug = {
     ledLabel: "Hidden LEDs along the lower edge",
     diagramTitle: "Proposed light-guide laminate",
     diagramNote:
-      "Nominal thickness about 3.4 mm. Optical silicone is the leading material candidate. This is a proposed construction; its optical performance has not been tested.",
+      "Nominal thickness about 3.4\u00a0mm. Optical silicone is the leading material candidate. This is a proposed construction; its optical performance has not been tested.",
     specs: [
       {
         term: "Light",
-        text: "Dimmable tunable white, 2200 to 4000 K, linked to the position of the wings.",
+        text: "Dimmable tunable white, 2200 to 4000\u00a0K, linked to the position of the wings.",
       },
       {
         term: "On and off",
@@ -320,7 +335,7 @@ export const hug = {
       { term: "Shape the light", text: "Open, half-open and gathered states." },
     ],
     sizesLabel: "Size, R13 digital model",
-    massNote: "Estimated mass 0.35 to 0.50 kg, without the power adapter.",
+    massNote: "Estimated mass 0.35 to 0.50\u00a0kg, without the power adapter.",
     drawingsLabel: "Drawings",
     drawings: [
       { label: "Plan" },

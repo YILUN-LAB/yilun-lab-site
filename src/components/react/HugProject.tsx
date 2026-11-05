@@ -1,5 +1,5 @@
 import "lite-youtube-embed/src/lite-yt-embed.css";
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MotionConfig, motion } from "motion/react";
 import { fadeBlurIn } from "@lib/motion-presets";
 import { useActiveSection } from "@lib/use-active-section";
@@ -220,27 +220,7 @@ export function HugProject({ scenes, next }: HugProjectProps) {
               <h1 className="mb-[0.26em] font-heading text-[6rem] italic leading-[0.8] tracking-[-4px] md:text-[9rem] lg:text-[10.5rem]">
                 {hug.title}
               </h1>
-              <p className="hug-gestures relative z-10 font-heading text-3xl italic md:text-4xl">
-                <span className="sr-only">
-                  {hug.gestures.map((word, i) => (i === 0 ? word : word.toLowerCase())).join(", ")}
-                </span>
-                <span aria-hidden="true" className="flex flex-wrap gap-x-[0.4em]">
-                  {hug.gestures.map((word, index) => (
-                    <span key={word} className="whitespace-nowrap">
-                      <span className="text-[rgb(var(--amber-1))] [text-shadow:0_0_18px_rgb(var(--amber-1)/0.45)]">
-                        {word[0]}
-                      </span>
-                      <span
-                        className="hug-gesture-rest text-white/85"
-                        style={{ "--i": index } as CSSProperties}
-                      >
-                        <span>{word.slice(1)}</span>
-                      </span>
-                    </span>
-                  ))}
-                </span>
-              </p>
-              <p className="mt-4 font-body text-xl font-light text-white/85 md:text-2xl">
+              <p className="font-heading text-2xl italic text-white/85 md:text-3xl">
                 {hug.subtitle}
               </p>
               <p className="mt-6 max-w-md font-body text-base font-light leading-relaxed text-white/80 md:text-lg">
@@ -293,6 +273,25 @@ export function HugProject({ scenes, next }: HugProjectProps) {
               ))}
             </div>
           </motion.div>
+        </section>
+
+        {/* Three gestures. The initials spell the name; the page leaves that to be noticed. */}
+        <section aria-labelledby="hug-gestures" className="relative px-8 py-8 md:px-16 lg:px-20">
+          <h2 id="hug-gestures" className="sr-only">
+            {hug.gesturesLabel}
+          </h2>
+          <ol className="mx-auto grid max-w-6xl gap-10 border-y border-white/10 py-12 md:grid-cols-3 md:gap-12 md:py-16">
+            {hug.gestures.map((gesture) => (
+              <motion.li key={gesture.word} {...reveal}>
+                <p className="font-heading text-5xl italic leading-none tracking-[-1px] md:text-6xl">
+                  {gesture.word}
+                </p>
+                <p className="mt-5 max-w-xs font-body text-sm font-light leading-relaxed text-white/65">
+                  {gesture.text}
+                </p>
+              </motion.li>
+            ))}
+          </ol>
         </section>
 
         {/* Three states */}
