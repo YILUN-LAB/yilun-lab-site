@@ -20,7 +20,7 @@ function Initial({ word }: { word: string }) {
 /**
  * The three states as one control. Unfold / Gather is a slider over the
  * opening; the state buttons snap to it; Hold switches the light. The model
- * view morphs the R13 shell to match, the render view shows the nearest state.
+ * view morphs the model shell to match, the render view shows the nearest state.
  */
 export function HugStates() {
   const { items, model, views, slider, hold } = hug.states;

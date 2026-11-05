@@ -67,8 +67,8 @@ export const hug = {
       text: "Drawn together, they dim to a warm, low 2200\u00a0K glow for the evening.",
     },
   ],
-  meta: ["2026", "Yilun Zhan, YILUN LAB", "Design concept"],
-  award: "iF Design Award 2027 · Entry 817254",
+  meta: ["2026", "Yilun Zhan", "Design concept"],
+  award: "Submitted to the iF Design Award 2027",
 
   hero: {
     src: `${dir}/cover.webp`,
@@ -83,7 +83,7 @@ export const hug = {
     { label: "Height", value: "300\u00a0mm" },
     { label: "Estimated mass", value: "0.35 to 0.50\u00a0kg" },
     { label: "Power", value: "External low-voltage supply" },
-    { label: "Status", value: "Digital model R13, prototype planned" },
+    { label: "Status", value: "Digital model, prototype planned" },
   ],
 
   statement: {
@@ -99,18 +99,18 @@ export const hug = {
     heading: "Open, half-open, gathered",
     intro:
       "Hug is one continuous form that changes through the day. A concealed position sensor is intended to read how far the wings are open and adjust brightness and color temperature to match.",
-    sizeLabel: "Size, R13 digital model",
+    sizeLabel: "Size, digital model",
     scaleLabel: "Color temperature",
     model: {
       src: "/assets/models/hug/hug-states.glb",
       label:
-        "Pencil sketch of the R13 digital model, showing the current opening. Drag it or use the turn buttons to see it from other sides.",
+        "Pencil sketch of the digital model, showing the current opening. Drag it or use the turn buttons to see it from other sides.",
       hint: "Drag to turn",
       turnLeft: "Turn the model left",
       turnRight: "Turn the model right",
       loading: "Loading model",
       dimension: "300 mm",
-      note: "R13 digital model, drawn as a sketch. Shapes between the three states are interpolated for illustration.",
+      note: "Digital model, drawn as a sketch. Shapes between the three states are interpolated for illustration.",
     },
     renderNote: "Design visualization of the nearest state.",
     views: { label: "View", model: "Sketch", render: "Render" },
@@ -278,11 +278,24 @@ export const hug = {
   },
 
   function: {
-    layers: ["Milky diffuser", "Clear optical guide", "Milky diffuser"],
-    ledLabel: "Hidden LEDs along the lower edge",
-    diagramTitle: "Proposed light-guide laminate",
-    diagramNote:
-      "Nominal thickness about 3.4\u00a0mm. Optical silicone is the leading material candidate. This is a proposed construction; its optical performance has not been tested.",
+    drawing: {
+      title: "Light path, measured from the digital model",
+      elevation: "Front elevation, open",
+      section: "Section A-A, enlarged",
+      legendLabel: "Parts",
+      legend: [
+        "Outer diffuser, 0.4\u00a0mm",
+        "Clear optical guide, 2.4\u00a0mm",
+        "Inner diffuser, 0.4\u00a0mm",
+        "LED position, 2200 to 4000\u00a0K, 14 along the lower edge",
+        "Heat island, one under each LED",
+        "Edge cavity, closed at both ends",
+        "Control board envelope",
+        "Opening sensor position",
+      ],
+      note: "Optical silicone is the leading material candidate for the guide. LEDs light its lower edge, and an extraction texture is meant to release the light across the surface. This is a proposed construction; its optical performance has not been tested.",
+      titleBlock: ["Hug", "Light path", "Units: mm", "Yilun Zhan"],
+    },
     specs: [
       {
         term: "Light",
@@ -354,7 +367,7 @@ export const hug = {
       { term: "Refine the edge", text: "Rounded shoulders and a smooth lower return." },
       { term: "Shape the light", text: "Open, half-open and gathered states." },
     ],
-    sizesLabel: "Size, R13 digital model",
+    sizesLabel: "Size, digital model",
     massNote: "Estimated mass 0.35 to 0.50\u00a0kg, without the power adapter.",
     drawingsLabel: "Drawings",
     drawings: [
@@ -373,15 +386,16 @@ export const hug = {
   },
 
   credits: [
-    { label: "Design", value: "Yilun Zhan, YILUN LAB" },
-    { label: "Images", value: "Design visualizations of the R13 digital model" },
+    { label: "Design", value: "Yilun Zhan" },
+    { label: "Images", value: "Design visualizations of the digital model" },
   ],
+
+  footer: "© 2026 Yilun Zhan",
 
   labels: {
     about: "About",
     facts: "Key facts",
     criteria: "Design criteria",
-    nextWork: "Next work",
     enlarge: "Enlarge image",
   },
 };

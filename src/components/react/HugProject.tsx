@@ -5,15 +5,13 @@ import { fadeBlurIn } from "@lib/motion-presets";
 import { useActiveSection } from "@lib/use-active-section";
 import { hug } from "@lib/data/hug";
 import { PhotoLightbox, type LightboxPhoto } from "./PhotoLightbox";
-import { ArrowUpRight } from "./icons";
 import { HugStates } from "./HugStates";
 import { HugDayStrip, type HugScene } from "./HugDayStrip";
-import { HugLaminateDiagram } from "./HugLaminateDiagram";
+import { HugLightPath } from "./HugLightPath";
 import { HugZoomImage } from "./HugZoomImage";
 
 interface HugProjectProps {
   scenes: HugScene[];
-  next: { title: string; href: string };
 }
 
 const section = "relative px-8 py-16 md:px-16 md:py-24 lg:px-20";
@@ -36,7 +34,7 @@ function Placeholder({ label, className }: { label: string; className: string })
   );
 }
 
-export function HugProject({ scenes, next }: HugProjectProps) {
+export function HugProject({ scenes }: HugProjectProps) {
   // Same props on server and client; MotionConfig drops movement for reduced motion.
   const reveal = fadeBlurIn(0);
   const activeCriterion = useActiveSection(criterionIds);
@@ -117,7 +115,7 @@ export function HugProject({ scenes, next }: HugProjectProps) {
           </div>
         );
       case "function":
-        return <HugLaminateDiagram />;
+        return <HugLightPath />;
       case "differentiation":
         return (
           <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
@@ -188,7 +186,7 @@ export function HugProject({ scenes, next }: HugProjectProps) {
     if (id === "function") {
       return (
         <>
-          <dl className="mt-8 space-y-5 border-t border-white/10 pt-6">
+          <dl className="mt-10 grid gap-6 border-t border-white/10 pt-6 md:grid-cols-3">
             {hug.function.specs.map((spec) => (
               <div key={spec.term}>
                 <dt className={termClass}>{spec.term}</dt>
@@ -362,7 +360,9 @@ export function HugProject({ scenes, next }: HugProjectProps) {
               </h2>
               {hug.criteria.map((criterion, index) => {
                 const wide =
-                  criterion.id === "differentiation" || criterion.id === "sustainability";
+                  criterion.id === "function" ||
+                  criterion.id === "differentiation" ||
+                  criterion.id === "sustainability";
                 return (
                   <section
                     key={criterion.id}
@@ -392,6 +392,7 @@ export function HugProject({ scenes, next }: HugProjectProps) {
                         <motion.div {...reveal} className="mt-10">
                           {criterionVisual(criterion.id)}
                         </motion.div>
+                        {criterionExtras(criterion.id)}
                       </>
                     ) : (
                       <div className="mt-8 grid gap-10 md:grid-cols-12 md:gap-12">
@@ -535,22 +536,11 @@ export function HugProject({ scenes, next }: HugProjectProps) {
           </div>
         </section>
 
-        <nav
-          aria-label={hug.labels.nextWork}
-          className="mx-auto mt-4 max-w-6xl px-8 md:box-content md:px-16 lg:px-20"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-5 border-t border-white/10 pt-10">
-            <span className="font-body text-xs uppercase tracking-[0.18em] text-white/55">
-              {hug.labels.nextWork}
-            </span>
-            <a
-              href={next.href}
-              className="liquid-glass-strong liquid-glass-tint inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
-            >
-              {next.title} <ArrowUpRight className="h-4 w-4" />
-            </a>
-          </div>
-        </nav>
+        <footer className="mx-auto mt-4 max-w-6xl px-8 md:box-content md:px-16 lg:px-20">
+          <p className="border-t border-white/10 pt-8 font-body text-xs uppercase tracking-[0.18em] text-white/50">
+            {hug.footer}
+          </p>
+        </footer>
 
         {activePhoto !== null && (
           <PhotoLightbox

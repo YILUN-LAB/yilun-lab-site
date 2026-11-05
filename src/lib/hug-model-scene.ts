@@ -2,7 +2,7 @@
  * Three.js scene for the Hug study model, drawn like a designer's pencil
  * sketch: graphite outlines found by edge detection, each traced twice with a
  * small hand wobble, hatching on the shaded side, and a marker wash in the
- * light's color temperature. The R13 shell morphs between open, half-open and
+ * light's color temperature. The model shell morphs between open, half-open and
  * gathered. Loaded on demand by HugModelViewer, so three.js stays out of the
  * main bundle.
  */
@@ -42,7 +42,7 @@ export interface HugScene {
   dispose: () => void;
 }
 
-const HEIGHT = 0.3; // metres, from the R13 model
+const HEIGHT = 0.3; // metres, from the digital model
 const BASE_RADIUS = 0.17;
 const DIMENSION_X = 0.2;
 const START_YAW = -0.45;

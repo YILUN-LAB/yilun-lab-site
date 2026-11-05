@@ -1,6 +1,6 @@
 /**
  * Hug's opening as one number: 0 is fully open, 0.5 half-open, 1 gathered.
- * The R13 model only defines the three states; values in between are
+ * The digital model only defines the three states; values in between are
  * interpolated for illustration, the way the proposed control is meant to
  * change brightness and color temperature gradually with the opening.
  */

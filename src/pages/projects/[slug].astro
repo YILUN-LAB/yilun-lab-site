@@ -34,6 +34,9 @@ interface Props {
 
 const { entry, next } = Astro.props;
 const projectUrl = `${SITE_URL}/projects/${entry.id}`;
+// Hug is submitted under Yilun Zhan's own name: personal title, creator and
+// icon, and no studio breadcrumb.
+const personal = entry.id === "hug";
 
 const creativeWorkLd = {
   "@context": "https://schema.org",
@@ -44,7 +47,9 @@ const creativeWorkLd = {
   url: projectUrl,
   image: `${SITE_URL}/assets/images/projects/${entry.id}/cover.jpg`,
   dateCreated: entry.data.year,
-  creator: { "@id": `${SITE_URL}/about#person` },
+  creator: personal
+    ? { "@type": "Person", name: "Yilun Zhan" }
+    : { "@id": `${SITE_URL}/about#person` },
   keywords: entry.data.category.map((c: string) => `Light & ${c[0].toUpperCase() + c.slice(1)}`),
 };
 
@@ -60,18 +65,20 @@ const breadcrumbLd = {
 ---
 
 <BaseLayout
-  title={entry.data.title}
+  title={personal ? `${entry.data.title} by Yilun Zhan` : entry.data.title}
+  brand={!personal}
+  favicon={personal ? "/assets/images/projects/hug/icon.svg" : undefined}
   description={entry.data.tagline}
   canonical={`/projects/${entry.id}`}
   ogImage={`/assets/images/projects/${entry.id}/cover.jpg`}
 >
   <JsonLd data={creativeWorkLd} slot="head" />
-  <JsonLd data={breadcrumbLd} slot="head" />
+  {!personal && <JsonLd data={breadcrumbLd} slot="head" />}
   {
     entry.id === "soft-boundary" ? (
       <SoftBoundaryLayout entry={entry} next={next} />
     ) : entry.id === "hug" ? (
-      <HugLayout entry={entry} next={next} />
+      <HugLayout entry={entry} />
     ) : (
       <CaseStudyLayout entry={entry} next={next} />
     )

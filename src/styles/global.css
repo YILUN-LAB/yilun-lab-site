@@ -149,18 +149,43 @@
   scrollbar-color: rgb(255 255 255 / 20%) transparent;
 }
 
-.hug-guide-flow {
-  animation: hug-guide-flow 2.4s linear infinite;
+/* Light path elevation labels: SVG user units, larger on narrow screens where
+   the drawing is scaled down. */
+.hug-drawing-text {
+  font-size: 8px;
 }
 
-@keyframes hug-guide-flow {
+@media (max-width: 767px) {
+  .hug-drawing-text {
+    font-size: 13px;
+  }
+}
+
+/* Light path drawing: light rising from the LEDs and reflecting in the guide. */
+.hug-light-rise {
+  stroke-dasharray: 3 9;
+  animation: hug-light-rise 2.4s linear infinite;
+}
+
+.hug-light-bounce {
+  animation: hug-light-bounce 1.6s linear infinite;
+}
+
+@keyframes hug-light-rise {
   to {
-    stroke-dashoffset: -40;
+    stroke-dashoffset: -12;
+  }
+}
+
+@keyframes hug-light-bounce {
+  to {
+    stroke-dashoffset: -1.3;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hug-guide-flow {
+  .hug-light-rise,
+  .hug-light-bounce {
     animation: none;
   }
   .hug-stage-glow {

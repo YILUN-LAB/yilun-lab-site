@@ -123,7 +123,7 @@ function SketchGuides({ layout, label }: { layout: HugSketchLayout; label: strin
 }
 
 /**
- * The R13 model as a pencil sketch on paper, morphing with `progress` and
+ * The digital model as a pencil sketch on paper, morphing with `progress` and
  * turning when dragged. three.js loads only when the viewer nears the screen.
  */
 export function HugModelViewer({

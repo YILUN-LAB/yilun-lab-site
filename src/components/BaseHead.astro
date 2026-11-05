@@ -9,6 +9,10 @@ interface Props {
   ogImage?: string;
   canonical?: string;
   noOgPreview?: boolean;
+  /** False for pages published under a person's own name: no studio suffix or organization data. */
+  brand?: boolean;
+  /** SVG icon replacing the studio favicon set. */
+  favicon?: string;
 }
 
 const {
@@ -17,9 +21,11 @@ const {
   ogImage = "/og-image.jpg",
   canonical = Astro.url.pathname,
   noOgPreview = false,
+  brand = true,
+  favicon,
 } = Astro.props;
 
-const fullTitle = title === "YILUN LAB" ? title : `${title} — YILUN LAB`;
+const fullTitle = !brand || title === "YILUN LAB" ? title : `${title} — YILUN LAB`;
 const canonicalURL = new URL(canonical, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
 
@@ -32,11 +38,19 @@ const isPreviewBuild = process.env.VERCEL_ENV === "preview";
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL} />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+{
+  favicon ? (
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  ) : (
+    <>
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+      <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+      <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    </>
+  )
+}
 
 {(noOgPreview || isPreviewBuild) && <meta name="robots" content="noindex,nofollow" />}
 
@@ -54,7 +68,7 @@ const isPreviewBuild = process.env.VERCEL_ENV === "preview";
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImageURL} />
 
-      <JsonLd data={ORGANIZATION_LD} />
+      {brand && <JsonLd data={ORGANIZATION_LD} />}
     </>
   )
 }
