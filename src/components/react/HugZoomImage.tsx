@@ -1,4 +1,4 @@
-import { hug } from "@lib/data/hug";
+import { useHugCopy } from "./hug-copy";
 
 export interface HugZoomImageSource {
   src: string;
@@ -24,6 +24,7 @@ export function HugZoomImage({
   className = "",
   aspectClass,
 }: HugZoomImageProps) {
+  const hug = useHugCopy();
   const imageFit = aspectClass ? "absolute inset-0 h-full w-full object-cover" : "h-auto w-full";
 
   return (

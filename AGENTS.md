@@ -149,7 +149,11 @@ section's light path drawing comes from measurements exported from the model. Th
 entry is under Yilun Zhan's own name: the page has no studio navigation, footer,
 name or next-work link, and never shows the iF application number or the model's
 revision name. It is excluded from the sitemap. Copy must stay within what the
-owner's iF materials claim (a digital model with proposed behavior). See `docs/hug.md`.
+owner's iF materials claim (a digital model with proposed behavior). A Chinese mirror
+at `/projects/hug/zh` (`src/pages/projects/hug/zh.astro`, words in
+`src/lib/data/hug.zh.ts`, numbers and assets shared with `hug.ts`) links back to the
+English page; the English page must not link to it. It is also unlisted and out of
+the sitemap. See `docs/hug.md`.
 
 ### Ashlar layout engine
 

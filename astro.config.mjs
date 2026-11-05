@@ -21,9 +21,10 @@ export default defineConfig({
       rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
     }),
     sitemap({
-      // /connect is QR-only; /projects/hug is an unlisted competition entry
-      // reached only by its direct link. Keep both out of the sitemap.
-      filter: (page) => !/\/(connect|projects\/hug)\/?$/.test(page),
+      // /connect is QR-only; /projects/hug (and its Chinese mirror at
+      // /projects/hug/zh) is an unlisted competition entry reached only by
+      // its direct link. Keep them out of the sitemap.
+      filter: (page) => !/\/(connect|projects\/hug(\/zh)?)\/?$/.test(page),
     }),
   ],
   vite: {

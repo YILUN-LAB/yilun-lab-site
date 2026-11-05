@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useReducedMotion } from "motion/react";
-import { hug } from "@lib/data/hug";
 import { HugZoomImage } from "./HugZoomImage";
+import { useHugCopy } from "./hug-copy";
 
 export interface HugScene {
   src: string;
@@ -22,6 +22,7 @@ export function HugDayStrip({
   scenes: HugScene[];
   onOpen: (src: string) => void;
 }) {
+  const hug = useHugCopy();
   const scroller = useRef<HTMLUListElement>(null);
   const reducedMotion = useReducedMotion();
 

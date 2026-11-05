@@ -1,6 +1,6 @@
 import { useId } from "react";
-import { hug } from "@lib/data/hug";
 import drawing from "@lib/data/hug-function-drawing.json";
+import { useHugCopy } from "./hug-copy";
 
 /**
  * Technical drawing of Hug's light path, drawn only from measurements
@@ -129,7 +129,7 @@ function Dimension({
   );
 }
 
-function Elevation({ id }: { id: string }) {
+function Elevation({ id, label }: { id: string; label: string }) {
   const { outline, cavity, leds, islands, board, sensor, guideStart, sectionX } = elevation;
   const xs = outline.map(([x]) => x);
   const left = Math.min(...xs);
@@ -138,12 +138,7 @@ function Elevation({ id }: { id: string }) {
   const text = "hug-drawing-text";
   const hidden = { strokeDasharray: "4 3", vectorEffect: "non-scaling-stroke" as const };
   return (
-    <svg
-      viewBox="-175 -335 350 381"
-      role="img"
-      aria-label={hug.function.drawing.elevation}
-      className="h-auto w-full"
-    >
+    <svg viewBox="-175 -335 350 381" role="img" aria-label={label} className="h-auto w-full">
       <defs>
         <clipPath id={`${id}-outline`}>
           <path d={toPath(outline, true)} />
@@ -301,7 +296,7 @@ function Elevation({ id }: { id: string }) {
   );
 }
 
-function SectionAA({ id }: { id: string }) {
+function SectionAA({ id, label }: { id: string; label: string }) {
   const size = 1.8;
   const cut = 35;
   const shell = section.shell[0];
@@ -333,12 +328,7 @@ function SectionAA({ id }: { id: string }) {
   const breakLine = `M${shellLeft - 1.2} ${-cut} L${shellLeft + 0.6} ${-cut - 0.8} L${shellRight - 0.6} ${-cut + 0.8} L${shellRight + 1.2} ${-cut}`;
 
   return (
-    <svg
-      viewBox="-15 -42 36 48"
-      role="img"
-      aria-label={hug.function.drawing.section}
-      className="h-auto w-full"
-    >
+    <svg viewBox="-15 -42 36 48" role="img" aria-label={label} className="h-auto w-full">
       <defs>
         <pattern
           id={`${id}-hatch`}
@@ -465,7 +455,7 @@ function SectionAA({ id }: { id: string }) {
 
 export function HugLightPath() {
   const id = useId().replace(/:/g, "");
-  const copy = hug.function.drawing;
+  const copy = useHugCopy().function.drawing;
   return (
     <figure className="overflow-hidden rounded-[1.25rem] bg-[#f2ede4] text-[#2f2b27]">
       <figcaption className="border-b border-[#2f2b27]/15 px-5 py-3 font-body text-[11px] uppercase tracking-[0.18em] md:px-7">
@@ -473,11 +463,11 @@ export function HugLightPath() {
       </figcaption>
       <div className="grid gap-6 px-5 pb-2 pt-6 md:grid-cols-[3fr_2fr] md:gap-8 md:px-7">
         <div>
-          <Elevation id={id} />
+          <Elevation id={id} label={copy.elevation} />
           <p className="mt-2 font-body text-xs">{copy.elevation}</p>
         </div>
         <div className="mx-auto w-full max-w-[18rem] md:max-w-none">
-          <SectionAA id={id} />
+          <SectionAA id={id} label={copy.section} />
           <p className="mt-2 font-body text-xs">{copy.section}</p>
         </div>
       </div>
