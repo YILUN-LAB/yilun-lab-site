@@ -155,6 +155,15 @@ at `/projects/hug/zh` (`src/pages/projects/hug/zh.astro`, words in
 English page; the English page must not link to it. It is also unlisted and out of
 the sitemap. See `docs/hug.md`.
 
+`/projects/the-unlit-cut-devlog` (and its Chinese mirror at `/zh`) is an
+unlisted long-form devlog under the YILUN LAB byline, not a project entry: it is
+reachable only by direct link, excluded from the sitemap, and only the Chinese
+page links to the other language. Each language's text is one Markdown file in
+`src/content/devlog/the-unlit-cut/` (`en.md`, `zh.md`), copied in unchanged and
+rendered by `DevlogLayout.astro`; `src/lib/remark-devlog-figures.ts` maps its
+`../images/*.jpg` links to WebPs in `public/assets/images/projects/the-unlit-cut-devlog/`.
+See `docs/the-unlit-cut-devlog.md`.
+
 ### Ashlar layout engine
 
 Lab and Works share `EditorialGrid.tsx`, which lays out every card through

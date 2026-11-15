@@ -1,0 +1,15 @@
+---
+import DevlogLayout from "@components/DevlogLayout.astro";
+
+// The Unlit Cut devlog, English. Unlisted: reachable only by its direct link,
+// out of the sitemap, and it does not link to the Chinese page.
+// The text is src/content/devlog/the-unlit-cut/en.md.
+export const prerender = true;
+---
+
+<DevlogLayout
+  entryId="the-unlit-cut/en"
+  lang="en"
+  canonical="/projects/the-unlit-cut-devlog"
+  description="How YILUN LAB made The Unlit Cut, a first-person light sandbox, in four days for the 2026 Epic AI MegaJam."
+/>
