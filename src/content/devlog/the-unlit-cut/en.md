@@ -1,154 +1,230 @@
-# The Unlit Cut: a devlog
+# The Unlit Cut: an illustrated development log
 
-*The Unlit Cut* is a first-person light sandbox built in Unreal Engine 5.8 during the four-day 2026 Epic AI MegaJam, between 23:00 on November 11 and 19:59 on November 15 (Austin time, UTC-6). Set in November 1994 in Soho, London—inside a basement black-box rehearsal room and editing room in a converted Victorian warehouse on the night a film shoot was stopped—the game has two characters: the director, Julian Vance, who is heard but never seen, and the player, the lighting artist. With a flashlight in your right hand and a cut paper gobo box in your left, you warm or cool the beam, slide the lamp into the box, open painted gauze curtains, project a paper skyline onto the gauze wall, and print what you frame into the scene.
+*The Unlit Cut* is a first-person light sandbox built in Unreal Engine 5.8 by team YILUN LAB during the four-day 2026 Epic AI MegaJam. Holding a flashlight and a cut-paper gobo box, you step onto the dark, scrapped sets of a halted film shoot. By warming or cooling your beam and sliding the lamp into the box, you open painted stage gauze, project a paper skyline, and print your own frames.
 
-The game was made by Yilun Lab, a two-person team that worked in Chinese: Yilia, the project's lead creator, lighting artist and designer, and Team Owner, and a second member—referred to here as Yilun Lab—who handled engine integration and directed the AI sessions. Rather than adding AI co-author lines to commits, the team chose "no AI attribution" in git history and used the development log to record which AI tool made what, noting where the files do not say.
+## Inspiration
 
-## How it started
+Our creative lead works professionally as a lighting artist and designer, so the project began with a single question: what kind of game could grow out of real lighting craft, using reflection, transmission, stage gauze, a flashlight, and a few reflective materials? When the jam opened at 23:00 on November 11 with the theme *Director's Cut*, we read it as a question of power. In cinema, the director's scissors decide what is worth showing; in our game, the player is the lighting artist who walks back onto the dark stage to light the corners that were cut. Each lit composition is printed as a film frame, and the reel screened at the end is your own *Lighting Artist's Cut*.
 
-Because Yilia's own profession is lighting artist and designer, the project started from a single question: what kind of game could her real lighting craft—reflection, transmission, the stage-gauze effect, a flashlight, and a few reflective materials—become? From the beginning, the direction was clear: no puzzles, immersion first, and an ending that moves people. When the jam began at 23:00 on November 11, the team read its theme, *Director's Cut*, as a question of power: the director's scissors decide what is worth showing, while the player is the lighting artist who lights the corners that were cut.
+![One opening storyboard frame generated with GPT Image: the first version and the darker old-film version](../images/12-intro-frame-old-and-dark.jpg)
+*One opening storyboard frame generated with GPT Image: the first version (left) and the darker old-film version (right).*
 
-That reading shaped the elevator pitch. In *The Unlit Cut*, you are a lighting artist who walks onto the scrapped sets the director cut, and with one flashlight whose distance and colour temperature you can change, turns cardboard and old gauze into a city, an eye, and stardust. Each lit composition is printed as a film frame, and the film screened at the end is your own *Lighting Artist's Cut*. Three mechanics make that premise a playable game: colour temperature changes the space (under cold light, stage gauze is a solid wall, while where warm light passes it turns transparent and you can walk through), projections become real space (filling the director's viewfinder with light and holding for three seconds prints a film frame and turns the projection on the wall into three-dimensional architecture), and transitions happen directly in the space without black screens. Scope boundaries were set just as firmly: no hard puzzles, no fail state, no timer, no combat, and people appearing only as silhouettes and shadows, with the first-person hands as the single exception.
-
-Eight named design principles guided the project: *light is the protagonist*; *warmth lands in corners*; *immersion, not puzzles*; *the ending should move people*; *it has to be a game*; *the time and place should read at a glance*; *the lighting artist is not someone picking up scraps*; and *props must not look too old*.
-
-The dated brainstorming documents trace how quickly those ideas locked into place after the jam began:
-- At 00:45 on November 12, the one-page GDD was created.
-- At 00:57 on November 12 (and edited until 11:20), the moodboard was assembled around a one-line art direction of black-box light painting: painting with real light on cardboard models in a pitch-black small theatre where the world has no colour of its own and all colour comes from the player's light. On the moodboard, Yilia explored three scene directions. Direction A, a hand-drawn crayon look, was not adopted, though its colours were kept as a reference for warm and cold projections. Direction B, "Bling Bling", won out by pairing a black background with cream props, pearl iridescence, and sparse sparkle where light lands. Direction C, a warm fairy-tale watercolour, was not adopted.
-- Alongside the scene directions, Yilia built two prop boards. Prop board version 1, featuring rusty copper and dark brown old props, was dropped because the props looked too old for the art style; version 2, using old cream and warm grey surfaces with light wear and paper-tape repairs, became the input for the 3D models. Together, the moodboard and prop boards established five visual rules: a dark stage; cream stage props with a pearl sheen, creased and taped but clean; light is the only paint, with projections coming from real light-effect photographs with caustics and dispersion; people appear only as shadows; and film is the interface.
-- At 20:15 on November 12, the story copy was written.
-- From the evening of November 12 through November 13, full GDD versions 1.0 to 1.5 were written (followed by an added note on November 14 and version 1.6 on November 15 documenting the game as submitted).
-- At 23:10 on November 12 came the Stage 1 asset review, followed on November 13 by the "Demo check" whiteboard where Yilia wrote playtest notes (from 03:41), the Act 1 question list (11:29), the level design drawings (13:40), and Checkpoint 2 (17:37); the Checkpoint 3 play-test guide was created at 00:51 on November 14, and Yilia's answers on build B15 were recorded at 01:38 on November 15.
-
-As the jam unfolded, five parts of the initial design were pared back or reshaped: for the act structure, the first plan was five acts; the 'barrenness' act and the outtake easter eggs were not made; it became a prologue, then Act 1 (the wall, the alley with a bend, and the small plaza), then an optional encore ("The Cut Door"), and then the finale. For the magic wand, the first plan was for it to appear on entering the finale; it became a transformation where the flashlight becomes the wand on entering the small plaza. For narration, the first plan was about 40 lines; it became a little over ten director lines. For length, the first plan was 7 to 9 minutes; it became 4 to 5 minutes as timed by Yilia (and about 5 minutes for a playthrough). And for controls, the first plan was E/Q keys; it became a setup with no letter keys beyond WASD—only the mouse, scroll wheel, left click, and Esc.
-
-## Two People and a Room Full of Sessions
-
-To build the complete course in four days, the team split the work across specialised AI sessions that messaged one another directly.
-
-Yilun Lab mostly talked to the **PM-Producer** session, which set the order of work, routed questions, settled open points, and wrote the briefs for QA and Windows packaging. Alongside it ran four other core Claude Code role sessions—all reporting Claude Fable 5.2 (`claude-fable-5-2`); the Programming-Lead role passed to a new Opus session on Day 3, and the rest stayed on Fable until about noon on Day 4:
-- **Game-Designer** wrote the prototype specifications, dialogue tables, 13 level drawings generated from JSON, the guidance and finale specs, the trailer shot list, the audio pipeline, and the development log.
-- **Art-Director** managed imported meshes, material interfaces, layout numbers, the gauze mural, fonts, and the model request list, delegating Blender and Python texture scripts to Claude Opus subagents at `xhigh` effort without ever committing directly.
-- **Programming-Lead** owned C++ interfaces, merges, editor builds over Epic's experimental Unreal Engine 5.8 MCP server, packaged verification runs, and git commits.
-- **QA-Build** ran on a second Mac (a Mac mini M4 Pro), executing regression suites, crash soaks, Shipping startup checks, Gatekeeper first-open walkthroughs, and automated blind plays.
-
-On Yilia's side, she maintained the design documents and playtest whiteboard notes her prop source models came from Tripo and the magic wand from Meshy, and Codex sessions on her machine kept the Tripo pipeline records, made S1 feedback fixes and a reflector study, and later built her menu design. As the jam progressed, the roster expanded to include **Win-Build** on Yilun Lab's Windows 11 Education N PC, **Programming-Lead-Remote** on the Mac mini, and **PM-Intern** for status patrols.
-
-## Day 1 (November 12): Paper Boxes, 41 Props, and the First Light Toy
-
-The repository opened at 00:52 Austin time on November 12 from `unreal-agentic-template`, which provided project rules, scripts, a smoke test, and the `AgentRun` virtual-input plugin. Yilun Lab decided to stay on Git and Git LFS rather than adopting Diversion, and confirmed Scene Direction B ("Bling Bling") as the visual target.
-
-While the design document had originally planned five close-up props in Rodin, none was made there. Instead, Yilia authorised 3D generation in Tripo Studio `H3.1` using her existing Studio credits. On her machine, Codex's built-in `image_gen` cut 41 single-subject input images from seven prop design boards. An AI session drove the browser to generate 41 prop meshes in Tripo Studio (totalling 2,285 credits, plus four derived meshes by script), including the paper city, the camera, and the EXIT sign. On Yilun Lab's machine, another session ran headless Blender 5.2.1 to check and export 42 prototype meshes—fixing scale, pivots, and decimation—and updated the design document to match the delivered assets. First-person hands were rigged with 22 bones in hold and pick poses and resized to 18 cm.
-
-For 2D target renders, photo gobos, and caustic and bokeh textures, a first round of four jobs on `gpt-6.1-sol` was discarded, and Yilun Lab moved all GPT Image generation to Codex CLI v0.167.2 on `gpt-6-astra` at `xhigh` reasoning effort. Python and Blender scripts ray-cast the window gobo masks directly from the recesses of the 3D box model. Fifteen sound-effect candidates for switches, a music box, and room tone were generated with ElevenLabs Sound Effects v2 (`eleven_text_to_sound_v2`). At 21:25, a call to `agy` (Antigravity CLI) revised ten of Yilia's 18 story lines to match the chosen art direction—turning cardboard into cream paper boxes and masking tape—and drafted 22 additional lines.
-
-![An early prototype frame of the projected paper-city pattern](../images/01-first-paper-city.jpg)
-*An early prototype frame: a projected paper-city pattern on a dark stage, the lamp and a box in the foreground.*
-
-By 00:55 on the morning of November 13, the S1 light toy was running in a showcase level built over the editor MCP: a flashlight, a gobo box, and a test room, with 10 headless tests; packaged checks (92 of 92 expectations) followed. Its core barrier mechanic was the gauze rule: warming the beam opened the stage gauze, while cold light was blocked by it.
-
-![Two frames side by side showing warm light opening the gauze and cold light blocked by it](../images/02-gauze-warm-cold.jpg)
-*Two frames side by side: a warm light opening the gauze (left) and a cold light blocked by it (right).*
-
-## Day 2 (November 13): "The Projection Becomes Real" and the Six Changes
-
-When Yilia played the S1 package on November 13, she sent back an annotated screenshot and whiteboard notes that reshaped the game. Her central rule was that "the projection becomes real"—her tribute to *Gorogoa*—and that the flashlight must go into the box and fill the wall. She noted that the controls were too many to remember, the cold light was too blue, the scene should go from run-down to splendid as light touches it, and only the right-hand lamp should move while the box and left hand stay still. She also wanted to replace the procedural window projection with a blue/red light photograph she had taken herself in October 2021 (declared as a pre-jam asset and cleaned of a wall seam and a "1/3" badge with Codex's `image_gen` edit mode).
-
-On her branch, Yilia's Codex sessions built the new Kelvin default, a fitted grip, a hollow optical box that cast native shadows, a mirrored support hand with lamp orbit, and the blue/red image film. She also ran an isolated reflector study that extracted caustic textures from four January 2025 light videos, though packaging was blocked on that branch and it has not been merged.
-
-On the main development line, Yilun Lab decided that all three mechanics would go into the prototype, simplified the final controls to just the mouse wheel and left click, and asked to turn the straight route into a dogleg—settled by the PM-Producer as one turn with the finale to the left. Through the afternoon, **Programming-Lead** (working with Claude Opus subagents), **Art-Director**, and **Game-Designer** built out the prologue, Act 1, and the finale.
-
-![An early look at the prologue on a dark stage](../images/03-prologue-first-look.jpg)
-*An early look at the prologue: the lamp and box in hand on a dark stage, with an on-screen narration line.*
-
-The Art-Director imported 13 Act 1 meshes, built the skyline box and 2K city textures, and—after Yilun Lab judged the wall city too realistic and the PM-Producer approved a stylisation plan—generated a painted gauze mural across three rounds on `gpt-6-astra`. By 15:10, the Act 1 framing zone, printing mechanic, and left-behind light passed packaged verification.
-
-![A contact sheet from an automated check of Act 1](../images/04-act1-print-sheet.jpg)
-*A contact sheet from an automated check of Act 1, including the moment a frame is printed and the SCRAPPED stamp.*
-
-Sound was assigned to the Game-Designer with Yilun Lab's instruction that it "must fit the character very well". After five auditions in ElevenLabs (`eleven_v4`; three voices designed in `eleven_ttv_v3` were not adopted), Yilun Lab chose "British Theatrical" and asked for acting—pauses, breaths, sighs, raised voice, and whispers—approving the second round with "that is exactly the feeling". Two music beds were generated with `eleven_music_v2_5` (with the cold bed lowered 5 dB at Yilun Lab's note) and crossfaded in code by colour temperature. When a reading of the Official Rules required removing brand names, the first director line was recorded a second time to say "the editing table". At 18:56, Package B03 was cut with sound wired in by Codex `gpt-6.1-sol`. From 19:00 Austin time, Yilun Lab moved all new code-writing to Codex `gpt-6.1-sol` at `xhigh` effort running in separate working copies, while the Programming-Lead handled editor work, merges, builds, and checks.
-
-Watching Yilia play B03 that evening exposed a crucial visual drift. Yilia felt the build looked worn, whereas the Direction B reference pictures she had chosen had a layer of bling; the PM-Producer's written summary ("slightly worn", "80 % black") had drifted away from her pictures. Yilun Lab put that correction first in both the game and the documentation. Watching the same playtest, Yilun Lab noticed that the fourth line's opening words, "Scene Four.", came from nowhere when Act 1 was the first scene the player saw—so the Game-Designer cut "Scene Four." out of the recording while keeping the sigh before it. Yilun Lab also noted there were "too few instructions... very little guidance, very confusing, so it is hard to know the progression", prompting a viewfinder watermark that burned and clocked framing progress. Separately, Yilun Lab asked for a mouse-driven start screen and a pause screen on `Esc`, and QA-Build's agent ran two automated blind plays of Package B05. B05 already required the player to stand under the sign facing it, so walking past could not end the game. When the first blind play obeyed the director and ended the game in 62 seconds, the team lowered the warmth threshold everywhere from 0.85 to 0.65 and added clearer hints.
-
-Even bigger was Yilia's six-point feedback on B03:
-1. No coloured light at the start—colour needed a cause.
-2. Tower windows should be given by her flashlight, fade very slowly, and come back when relit.
-3. She did not recognise the screening at the end as her prints and called the white frame ugly.
-4. The flashlight should become a magic wand in the last scene.
-5. A carousel should turn when lit, turning the light colourful as stars appear around it.
-6. At the end, a sky full of stars should appear while the light slowly tightens.
-
-When the PM-Producer offered cheap versions of those six features, Yilun Lab answered: "not the cheap step, do the better one", while dropping the option of picking the box up again in Act 1.
-
-![Three captures of the paper city with window light fading and relighting](../images/05-city-windows.jpg)
-*Three captures of the paper city with window light: just printed, about 30 seconds later, and with the box's light back in the middle.*
-
-Overnight between 21:30 and 01:14, nine stage props were generated in Tripo Studio `H3.1` (with reference images made inside Tripo Studio using Nano Banana and GPT Image 2.5): four hanging stars, a moon face, a lighting bench, emerald and rose curtains, and a toy carousel that an Opus subagent split in Blender into a still base and a turning top. Yilia also delivered the magic wand, generated in Meshy AI from an uncredited image found on Pinterest (since the reference image itself is not packaged, Yilun Lab kept the 3D model, which a script thickened and decimated from 342,212 to 19,500 triangles). The Art-Director laid out 200 hanging star positions with a generator script written by Codex (45 in the plaza, 155 in the finale), and the Game-Designer built a four-bar waltz loop in E major from a single S1 music-box note.
-
-## Day 3 (November 14): Splitting Roles, Restoring the Theatre, and Detours in the Dark
-
-Day 3 began in the small hours with stability and performance work. In Package B07 (02:56), a 6 s watchdog ended an occasional exit hang. In Round 15, the team fixed a Shipping crash where the render graph was destroyed on a worker thread; setting `r.RDG.ParallelDestruction=0` and `r.RDG.ParallelExecute=1` produced 66 clean runs on the host and 40 on QA's M4 Pro. By mid-morning, in Round 16, configuring Lumen to capture only what changed and bounce once trimmed GPU time by 7 to 13% at 1080p on the M4 Pro.
-
-At 10:55, Yilun Lab relayed feedback after watching Yilia play B08: the paper London did not feel like London and was too linear, needing a bend winding through the alley; the game needed one more scene (behind a switch if unfinished) and a frame-by-frame opening strip; and the toy carousel needed to be real size (scaled 1.75 times to 2.8 metres across). Yilia's ballerina chandelier (Meshy 7.1 Flagship) had already been hung past the right end of the giant gauze that morning.
-
-Minutes later, at about 11:20, Yilun Lab split the Programming-Lead role. The session that had held the role since Day 2 became **Tech-Art-Lead** (owning arm poses and animation, material shaders, Lumen, and near light), while a new **Programming-Lead** session (Claude Opus, high effort) took the editor and packaging line, commits, Shipping, Windows, and check scripts. When two sessions later collided on the Unreal editor, the PM-Producer instituted a host-lock script so only one session could hold the editor, compile, or package at a time. Around 14:10, when Codex's weekly usage reached 74%, Yilun Lab briefly shifted code and scripts back to Opus subagents—a limit that lasted less than an hour before three free resets of Codex allowed `gpt-6.1-sol` at `xhigh` to resume.
-
-The first-person arms and hands were one of the jam's longest detours. Yilun Lab assigned the arm meshes to Codex `gpt-6-astra` at max effort. Because Blender crashed inside Codex's sandbox, the Art-Director ran Codex's scripts outside the sandbox and fed the logs back across five rounds, producing 60 cm sleeves and updated grips. Several experiments never reached the game: three Codex attempts to pose a left hand on the side of the box failed, and a separate Tripo Studio left-hand generation was cancelled by Yilun Lab that afternoon: the existing hold under the box was what they wanted. Their test for the hands was 'it should feel in the game as it feels in the real world'. Right-hand finger parts were dropped because the cut rims showed, and after rejecting wrist rolls of -80, -95, and -45 degrees ("the right hand is completely wrong"), at 16:55 Yilun Lab said they had picked the wrong picture from the three rounds of GPT Image hand-option mocks. They kept the grip turned to -15 degrees outside the box and 0 degrees inside. After a later prologue note from Yilun Lab, the Tech-Art-Lead added a thumb dial on the side and tail of the lamp so scrolling turns the dial rather than twisting the wrist.
-
-![Before and after of the first-person arms and the lamp outside and inside the box](../images/13-arms-before-after.jpg)
-*Before and after of the first-person arms and the lamp, outside and inside the box.*
-
-That afternoon, Yilia noted that while the key models were in place, the hall had no walls, and asked to restore what the rehearsal space would look like. When Yilun Lab asked where the game takes place, the GDD's setting supplied the new first opening caption ("London, 1994. A film is being shot in a rented basement theatre."). Using Tripo Studio `H3.1` through a browser driven by Codex, Yilun Lab had already generated four stage props that morning (a gilded proscenium, burgundy curtain valances, scallop footlights, and a plywood cloud; Yilia also generated Meshy AI versions on her branch, though the game kept Yilun Lab's Tripo set); after Yilia's note, 14 set-dressing models followed. Eleven of those dressing models—including four rows of theatre seats, an editing table, eight stage lanterns on overhead pipes, light stands, a director's chair, a costume rack, a dust-sheet mannequin, six cast-iron columns, two radiators, two cable drums, and a step ladder—were reduced in Blender by Opus subagents and placed inside a 273-piece theatre shell with a cream-painted brick texture on the audience's walls. In Round 24, a shell frame-rate bench measured 117.5 against 117.4 fps, so the shell stayed.
+We set the story in November 1994 in Soho, London, inside a basement black-box rehearsal room in a converted Victorian warehouse on the night the shoot was stopped. An opening storyboard of five frames introduces the hall. We generated those five frames on Day 3 as pencil line and pale watercolour inside a 35 mm border, and redrew them on Day 4 in a darker 1.375:1 old-film ratio. The game has only two characters: the director, Julian Vance, and the lighting artist played by the player.
 
 ![A plan view of the basement theatre as built](../images/15-theatre-plan.jpg)
 *A plan view of the basement theatre as built.*
 
-At 15:55, Yilia sent nine notes on Package B12 that reshaped the second half of the course. Instead of waiting for the finale, the box leaves and the lamp becomes the magic wand as soon as the player enters the plaza, projecting Yilia's October 2021 blue/red photograph from the star at its tip (after Yilun Lab decided to use the blue/red gobo on the wand only and approved deleting the cleaned version that carried the credit line). After a print, city towers now rise one after another from near to far over three seconds to a rising sound built with ffmpeg from pink noise and a sped-up music-box phrase. And the toy carousel starts pure white until the beam touches it, warming through pastel into full colour. New music for the opening strip and the ending was chosen from seven ElevenLabs `eleven_music_v2_5` candidates: Yilia picked Ending A, turned down the first two intros as too ornate, and Intro E was chosen.
+We wrote the one-page GDD at 00:45 on November 12, assembled the moodboard between 00:57 and 11:20, drafted the story copy at 20:15, and wrote full GDD versions 1.0 to 1.6. Eight named design principles guided our choices: *light is the protagonist*, *warmth lands in corners*, *immersion, not puzzles*, *the ending should move people*, *it has to be a game*, *the time and place should read at a glance*, *the lighting artist is not someone picking up scraps*, and *props must not look too old*.
+
+## Design
+
+Three spatial ideas turn our lighting toy into a playable game: colour temperature changes physical space, projections become real space, and transitions happen directly in the theatre without black screens. The game has no hard puzzles, fail state, timer, or combat, and people appear only as silhouettes and shadows, with the first-person hands as the single exception.
+
+![Diagram of one play-through of The Unlit Cut](../images/22-diagram-play-flow.jpg)
+*Diagram of one play-through: start screen, opening, prologue, Act 1 (wall, alley), optional encore, small plaza, finale, and the obedience ending if you walk out before the first print.*
+
+Our first prototype on the night of November 12 tested the premise in a single room. When we playtested that Stage 1 build on November 13, we locked in the rule that *"the projection becomes real"*, a tribute to *Gorogoa*, and required that sliding the flashlight into the box must fill the wall ahead.
+
+![An early prototype frame: a projected paper-city pattern on a dark stage, the lamp and the box in the foreground](../images/01-first-paper-city.jpg)
+*An early prototype frame: a projected paper-city pattern on a dark stage, the lamp and the box in the foreground.*
+
+Under cold light, a stage gauze curtain is a solid barrier. When you scroll the mouse wheel to warm the flashlight, the gauze where the warm beam lands turns transparent and you can walk right through it. After two automated blind playtests on Day 2, we lowered the warmth threshold everywhere from 0.85 to 0.65 and added a warm gold glow beneath the prologue curtain.
+
+![Warm light opening the gauze and cold light blocked by it](../images/02-gauze-warm-cold.jpg)
+*Warm light opening the gauze (left) and cold light blocked by it (right).*
+
+In the prologue, you begin on the dark stage while Julian Vance's voice tells you not to touch the flashlight and to leave by the green EXIT. If you obey the director and walk 120 cm into the open black passage beneath the EXIT sign before printing your first frame, the run ends with *"Sensible choice..."* and a *Director's Cut* card. Once you make your first print, the exit closes, and finishing the course screens your prints in the finale before ending on *THE LIGHTING ARTIST'S CUT*.
+
+![An early look at the prologue: lamp and box in hand on a dark stage, with an on-screen narration line](../images/03-prologue-first-look.jpg)
+*An early look at the prologue: lamp and box in hand on a dark stage, with an on-screen narration line.*
+
+Passing through the prologue curtain brings you to Act 1, *London Skyline*. Left-clicking slides the right-hand lamp into the window-cut gobo box so its skyline projection lands across a painted gauze wall where the director's red viewfinder hangs in space. When you fill the viewfinder with warm light and hold for 3 seconds, a camera flash fires, the composition prints as Frame 1, the gauze wall dissolves, and the flat projection rises into a three-dimensional paper alley from near to far over 3 seconds. A second viewfinder at the far gauze prints Frame 2 and opens the way to the small plaza.
+
+![A contact sheet from an automated check of Act 1, including the moment a frame is printed and the SCRAPPED stamp](../images/04-act1-print-sheet.jpg)
+*A contact sheet from an automated check of Act 1, including the moment a frame is printed and the SCRAPPED stamp.*
+
+In our Day 2 builds, the paper-city alley ran straight ahead. On Day 3 we reshaped the street with a bend in the alley closed by an arched facade, and tucked a side room into the corner for an optional encore.
+
+![The plan for the bend in the alley and the side room of the encore](../images/21-bend-plan.jpg)
+*The plan for the bend in the alley and the side room of the encore.*
+
+We built two versions of that side room on Day 3. In the afternoon we made *"Extra Number 47"*, placing a 20 cm ballet figurine on a chalk mark. That evening we adapted the curved reflective film from Act 2 of our story script for an optional encore called *"The Cut Door"*. Holding warm light close to the 30 cm curved reflective film bends two arcs of light until they lock into an "eye of light" inside a door-frame viewfinder. In Round 24, the eye material failed to compile during packaging and shipped as a white blob, so we fixed the shader and made `package.sh` fail whenever a material fails to compile.
+
+![The Cut Door encore: the light eye before and after the fix](../images/10-door-light-eye.jpg)
+*"The Cut Door" encore: the light eye before (a white blob) and after the fix.*
+
+After five auditions in ElevenLabs (`eleven_v4`), we gave Julian Vance a *"British Theatrical"* voice with performance tags for pauses, breaths, sighs, raised voice, and whispers, paired with two music beds (`eleven_music_v2_5`) that crossfade with colour temperature. During playtesting we cut *"Scene Four."* from the fourth line, and re-recorded the first line to say *"the editing table"* so no brand names appeared.
+
+## Art
+
+Our one-line art direction was *"black-box light painting"*: painting with real light on cardboard models in a pitch-black small theatre where all colour comes from the player's light. On the Day 1 moodboard we adopted Direction B, *"Bling Bling"*: a black background, cream props, pearl iridescence, and sparse sparkle where light lands. On the prop boards we used old cream and warm grey surfaces with light wear and paper-tape repairs for our 3D models.
+
+![Options for the box's hole patterns, drawn by script](../images/16-box-pattern-options.jpg)
+*Options for the box's hole patterns, drawn by script.*
+
+Already on Day 1, Python and Blender scripts (`Scripts/s1/gobo_depth.py` and `gobo_textures.py`) ray-cast the window gobo masks from the box model's recesses. On Day 2 we drafted hole-pattern options by script (`Scripts/s2/box_patterns.py`) and built a hollow optical box that cast native shadows.
+
+![Window gobo masks ray-cast from the box model's recesses, from sharp to soft](../images/17-window-gobo-masks.jpg)
+*Window gobo masks ray-cast from the box model's recesses, from sharp to soft.*
+
+Early playtests on Day 2 caught two visual problems: the cold light looked too blue, and Package B03 felt worn and flat. We corrected the look with a 5000 K cold end and a 3000 K warm end. Inside the paper city, the skyscraper windows use light memory: they light up only where the flashlight's beam touches them, shimmer while lit, and fade very slowly after the beam moves on.
+
+![Three captures of the paper city with window light](../images/05-city-windows.jpg)
+*Three captures of the paper city with window light: just printed, about 30 seconds later, and with the box's light back in the middle.*
+
+For the Act 1 gauze wall, our first city projection looked too photographic, so we generated a stylised painted mural across three rounds with GPT Image and repainted its silhouette on Day 3 into a London skyline. After the player prints the first frame, the painted gauze wall keeps a faint afterglow around the open hole.
+
+![Before and after: the painted gauze wall keeps a faint afterglow around the hole after printing](../images/06-mural-afterglow.jpg)
+*Before and after: the painted gauze wall keeps a faint afterglow around the hole after printing.*
+
+On the final morning, we graded the city's materials toward cream (mural saturation 0.55 and brightness 1.25) and compared sweeps of light across the paper facades.
+
+![Inside the paper city under a sweep of light: two versions of the city's materials compared during the last day's tuning](../images/20-city-sweep-before-after.jpg)
+*Inside the paper city under a sweep of light: two versions of the city's materials compared during the last day's tuning.*
+
+When you step out of the paper alley into the small plaza, the gobo box sinks away and the flashlight transforms into a star-tipped magic wand. In the centre of the plaza stands a 2.8-metre toy carousel. The carousel starts pure white in the darkness; when the wand's beam touches it within 6 metres, it starts turning to a four-bar E-major waltz loop and warms from white through pastel into full colour.
 
 ![The toy carousel white when first lit, then pastel, then full colour](../images/07-carousel-white-to-colour.jpg)
 *The toy carousel white when first lit, then pastel, then full colour.*
 
-In Round 23, the wand received a second mesh with its ribbon in its own material slot, a star flare, and a star trail adjusted to taper cleanly.
+From the star at its tip, the wand casts a star-shaped spot carrying a blue-and-red light photograph taken by our lighting artist in October 2021.
+
+![The carousel lit, with the wand in hand](../images/19-carousel-and-wand.jpg)
+*The carousel lit, with the wand in hand.*
+
+We split the wand's ribbon into its own material slot (`SM_MagicWand_02`) and added a star flare and a star trail that we tuned to taper cleanly.
 
 ![The wand's star trail before and after it was made to taper](../images/08-wand-trail.jpg)
 *The wand's star trail before and after it was made to taper.*
 
-In Round 24, the Act 1 gauze mural—which had been repainted on `gpt-6-astra` to feature a London skyline of a clock tower, a domed cathedral, a bridge with two towers, and chimneys—was tuned so that after printing a frame, the painted wall keeps a faint afterglow around the printed hole.
+Above the plaza and the finale hangs a canopy of 200 stars that wake within 8 metres of the beam and twinkle out of step. Early on Day 4 we added the world-gone moment, hiding the paper city and stage flats once out of view and replacing them with a street boundary, 290 lit void stars, and 260 soft blurred backdrop dots.
 
-![Before and after of the painted gauze wall keeping a faint afterglow around the hole](../images/06-mural-afterglow.jpg)
-*Before and after: the painted gauze wall keeps a faint afterglow around the hole after printing.*
+![After the carousel is lit, looking back: the city is gone and only stars remain](../images/09-world-gone-stars.jpg)
+*After the carousel is lit, looking back: the city is gone and only stars remain.*
 
-Meanwhile, the extra scene off the alley bend changed identity completely. In the afternoon, the team had built "Extra Number 47" inside a side room, featuring a 20 cm ballet dancer cut by an Opus subagent's Blender script from one of the ballerina chandelier's figurines and three director lines recorded in ElevenLabs. Yilia said she liked the curved reflective film from Act 2 of her script (from Day 1's Tripo batch, reduced to 4,998 triangles), and at about 20:00 Yilun Lab chose option B ("B is fine"): keeping the side room's shell and switch, standing the curved film where the dancer had stood for a new encore called "The Cut Door", recording three of Yilia's script lines, and having warm light held close lock two pieces of light into an "eye of light" carrying Yilia's blue/red photograph. Yilia approved the target renders ("the blue-red on the wand stays; the direction of the eye of light is fine"), but in Round 24 the eye's material failed to compile during packaging and shipped as a white blob. The Programming-Lead hardened `package.sh` to fail whenever a material fails to compile, and a fixed eye passed the Art-Director's check for Round 25; on Day 4, the Tech-Art-Lead softened its texture with a 3 px Gaussian blur and centred its iris.
+To make the 1994 Soho rehearsal hall read at a glance, we enclosed the stage in a 273-piece theatre shell with cream-painted brick walls (`T_HouseWall_BaseColor`) and 11 set-dressing models, plus a notice of cancellation and a budget statement drawn by script (`Scripts/s2/ui_drafts.py`).
 
-![The Cut Door encore showing the light eye before as a white blob and after the fix](../images/10-door-light-eye.jpg)
-*"The Cut Door" encore: the light eye before (a white blob) and after the fix.*
+![Period props made for the set: a notice of cancellation and a budget statement](../images/18-cancellation-notices.jpg)
+*Period props made for the set: a notice of cancellation and a budget statement.*
 
-## Day 4 (November 15): The World Disappears, Hanging Letters, and Final Polish
+On the start screen, we replaced our early plain-text layout with cardboard letter cards hanging on threads over a pure black void, lit by a flashlight beam that follows the mouse pointer.
 
-Late on Day 3, in her Demo check notes, Yilia flagged what she called a fatal flaw: the carousel could be heard and triggered from the alley because the light check had no occlusion. Separately, the Art-Director traced a 49 cm curled film strip on the finale floor that had mesh collision and blocked the walk into the finale. The Programming-Lead stripped the collision from the film strips and gated the plaza's carousel, stars, chandelier, moon, cloud, and finale triggers so they answer light only once the player holds the wand.
-
-Yilia also asked that once the carousel is lit, the world behind should disappear. Built in Round 25 and enabled by default in Round 26, the "world-gone" moment waits for the carousel's first wave, hides the city and stage scenery once out of view, closes the street with a boundary (after **Programming-Lead-Remote** fixed a bug where the boundary had been saved at the world origin), and fills the darkness with 290 void stars and 260 soft backdrop dots. When 13 house-wall flats still showed as a faint rectangle under the wand's beam from 26 metres away, they were hidden too in Package B20. Following her Checkpoint 3 answers on B15, recorded at 01:38 on November 15—where she timed her playthrough at 4 to 5 minutes—the ending was shortened from 15 seconds to 13 ("13 seconds is enough") and the wand was allowed to spin the carousel again.
-
-![Looking back after the carousel is lit to see the city gone and only stars remaining](../images/09-world-gone-stars.jpg)
-*After the carousel is lit, looking back: the city is gone and only stars remain, the wand in hand.*
-
-The user interface and narrative framing came together in parallel. On Day 3 afternoon, Yilun Lab delegated all in-game copy editing and writing to `agy`, briefed and reviewed by the Game-Designer: `agy` wrote the extra obedience-ending line for players who warmed their lamp before walking out ("You found the warm light, then settled for the green one."), rewrote hints to start with action verbs after Yilun Lab's prologue playtest, and supplied poetic stage names for the progress menu. After Yilun Lab read a closed door leaf under the EXIT sign as "the EXIT is sealed" and asked that it be "walk in and it goes black", the exit became an open black passage, and on Day 4 morning Yilun Lab had the green EXIT sign blink twice with a tube buzz (behind a switch) when the director's opening line ends "take the green exit". The game has two endings: either the director's "Sensible choice..." and a *Director's Cut* card when walking out before the first print, or *THE LIGHTING ARTIST'S CUT* at the end of the course. Meanwhile, **Programming-Lead-Remote** ported Yilia's custom menu design: cardboard letter cards hanging on threads over a pure black void, a flashlight beam that follows the pointer, and a curtain for the success ending, built from six images generated with `image_gen.imagegen` on Yilia's machine from a reference she iterated with GPT Image. After a check caught that the title read "UNIIT" because the `I` card covered the `L`, Round 27 fixed the draw order and halved the card shadows.
-
-![The start screen showing the first plain text layout and the later menu with hanging letter cards](../images/11-start-screen-before-after.jpg)
+![The start screen: the first plain text layout and the later menu with hanging letter cards](../images/11-start-screen-before-after.jpg)
 *The start screen: the first plain text layout (left) and the later menu with hanging letter cards (right).*
 
-At about 12:00 on November 15, with the weekly allowance for Claude Fable nearly used up, Yilun Lab switched every role session to Claude Opus 5.5 except Tech-Art-Lead, which stayed on Claude Fable 5.2 at high effort. Minutes later, between 12:17 and 12:21, the five opening storyboard frames—first generated on Day 3 as pencil line and pale watercolour inside a 35 mm frame, with frame 5 redrawn for true flashlight perspective and frame 2 redrawn so the director's head was inside the picture—were generated anew with `gpt-6-astra` and GPT Image in a darker 1.375:1 old-film ratio depicting a run-down London basement.
+For the first-person view, we generated 60 cm cream forearm sleeves and updated hand grips via Blender scripts (`build_forearm_hands.py`), and added a thumb dial on the side and tail of the lamp (`SM_WarmthDial_02`) so scrolling turns the dial while the wrist stays still.
 
-![One opening storyboard frame showing the first version and the darker old-film version](../images/12-intro-frame-old-and-dark.jpg)
-*One opening storyboard frame generated with GPT Image: the first version (left) and the darker old-film version (right).*
+![Before and after of the first-person arms and the lamp, outside and inside the box](../images/13-arms-before-after.jpg)
+*Before and after of the first-person arms and the lamp, outside and inside the box.*
 
-## How the Work Was Checked
+## Engineering
 
-Because AI sessions cannot hear audio or feel a physical mouse, verification relied on automated instrumentation, measured numbers, and contact sheets. Packaged Mac builds were driven by `AgentRun` scripts that injected virtual input at the Slate layer without touching the real mouse, keyboard, or window focus. Python judges (`check_run.py`) checked `#expect`, `#black`, `#differs`, `#log`, and `#nolog` assertions, while sessions inspected contact sheets and measured black pixel fractions, viewfinder coverage by distance, voice pause lengths, and frame rates. Headless automation tests grew from 10 in S1 to 263 tests by the morning of Day 4.
+Our project conventions (`AGENTS.md`, rule 9) started with a split where C++ owns systems and math while Blueprints own flow, visuals, and tuning. In practice, we pushed almost everything, including the scene flow, into C++ and Python editor scripts so we could test the rules without opening `.uasset` files by hand. Every gameplay rule is written first as a header of pure `inline` functions with no `UWorld` dependency, across 31 `*Math.h` and `*Rules.h` headers (`GauzeMath`, `FramingMath`, `FilmMath`, `FilmScreenMath`, `LightToyMath`, `FirstPersonPoseMath`, `EndingRules`, `EyeRules`, `MenuRules`, `GuidanceRules`), with default tuning in plain `USTRUCT` types (`FGauzeTuning`, `FFramingTuning`, `FFilmRailTuning`). `ALightArtistCharacter` carries `UFlashlightComponent`, `UGoboBoxComponent`, `UFilmPrinterComponent`, and `UDailiesComponent`, while C++ directors (`APrologueDirector`, `AActDirector`, `AFinaleDirector`) run the story alongside `AUnlitGameMode`, `AUnlitPlayerController`, and `AUnlitHUD`. The codebase has zero `BlueprintImplementableEvent` hooks; Blueprints are thin subclasses generated by `Scripts/editor/s2_act1/build_act1_blueprints.py` to assign assets and data tables.
+
+Python scripts sent over MCP (`execute_tool_script`) build the levels and materials. `build_act1_level.py` places `L_Act1` from `act1_city_layout.json` and overlay JSONs, matching actors by label so reruns move existing actors in place, attaching `Zone_<label>` tags, and wiring references such as `framingZone`. At runtime, parts communicate through `MPC_Flashlight` for shared shader state and dynamic delegates (`AFramingZone::OnPrinted` to `AActDirector::HandleZonePrinted`, `UFilmReelSubsystem::OnPrintAdded`, `AFilmScreen::OnFinished`) for gameplay events. Because the rule headers have no world dependency, 279 automation tests in `Source/TheUnlitCut/Private/Tests/` run in a headless editor (`Scripts/run-tests.sh` with `-nullrhi`, or `UNLIT_TEST_RHI=offscreen` for the few tests that need fonts). Text fit is checked in the packaged game: `Unlit.TextFit` measures every English and Chinese story string with Slate's `FSlateTextLayout`, and agent scripts fail on any overflow.
+
+![Architecture: world-free rule headers under C++ components and actors](../images/34-diagram-architecture.jpg)
+*Architecture: world-free rule headers under C++ components and actors, C++ directors running the flow, thin Blueprints holding assets and tuning, editor Python building the level and materials, and the two test paths (headless automation tests; AgentRun on the packaged game).*
+
+The gauze curtain shows how shaders, collision, and gameplay stay in lockstep. Every frame, `UFlashlightComponent::TickComponent` glides the beam's warmth toward the scroll-wheel target (`0.10` per notch) and calls `Apply()`, which updates the spotlight and writes `BeamOrigin`, `BeamDirection`, `BeamTanOuter`, `BeamOn`, `BeamWarmth`, `BeamColor`, `BeamIntensity`, `ReactiveAmount`, `BeamInBox`, and `CityReveal` into `MPC_Flashlight`. Those cone parameters come from `GetLitCone()`; when the lamp is inside the gobo box, that cone is the 60-degree-capped `LightToyMath::ProjectionCone` leaving the box's patterned face.
+
+![One light, three readers: the flashlight writes its lit cone and warmth to MPC_Flashlight every frame](../images/32-diagram-flashlight-mpc.jpg)
+*One light, three readers: the flashlight writes its lit cone and warmth to MPC_Flashlight every frame; M_Gauze's mask, the gauze's collision and the framing coverage all use the same cone.*
+
+`M_Gauze` is a two-sided `BLEND_Masked` material with `ditherOpacityMask = True`; the shadow pass respects the mask, so warm light physically passes through the hole. Its Custom HLSL node ("S04") measures each pixel's distance along and across the beam ray, computes the hole radius (`HoleRadiusScale = 0.9`, `MinHoleRadius = 75` cm) with a `smoothstep` over the outer 35% (`EdgeSoftness = 0.35`), and scales transmission by `smoothstep(WarmthSolid, WarmthOpen, Warmth)` from `0.45` to `0.65` (with `add_print_hole.py` combining that live hole with a printed hole `PHole * saturate(PrintOpen)`). In `TG_PostUpdateWork`, `AGauzeScreen` evaluates `GauzeMath::IsPassable` with the same math and switches off blocking collision once transmission reaches `PassTransmission = 0.6`.
+
+![Gauze transmission against beam warmth](../images/30-diagram-gauze-warmth.jpg)
+*Gauze transmission against beam warmth: smoothstep(0.45, 0.65) as shipped (dashed: the first 0.85 tuning), the walk-through level at 0.6, and the hole cut around the beam's ray.*
+
+```hlsl
+// Scripts/editor/s1_gameplay/build_gauze.py, lines 12-18
+float3 V = WorldPos - Origin.xyz;
+float Along = max(dot(V, Dir.xyz), 0.0);
+float Across = length(V - Dir.xyz * Along);
+float Radius = max(Along * TanOuter * HoleRadiusScale, MinHoleRadius);
+float Hole = 1.0 - smoothstep(1.0 - EdgeSoftness, 1.0, Across / Radius);
+float Transmission = On * smoothstep(WarmthSolid, WarmthOpen, Warmth);
+return 1.0 - Hole * Transmission;
+```
+
+Each `AFramingZone` is a flat 320 by 180 cm rectangle. At `BeginPlay`, `FramingMath::BuildSamples` places a 16 by 9 grid of cell centres, 144 world-space points in all, across that rectangle. Each tick, `FramingZone.cpp` tests every point against the flashlight's `GetLitCone()` (`FramingMath::IsLit`, checking range and cone angle without shadow or gobo raycasts) and divides the lit count by 144.
+
+![144 sample points on a 320 by 180 cm frame tested against a light cone](../images/31-diagram-framing-coverage.jpg)
+*144 sample points on a 320 × 180 cm frame tested against a light cone (example cone), and the hold clock: run at ≥ 0.70, pause between 0.50 and 0.70, clear below 0.50, print after 3 s (the example cone and coverage trace are illustrative).*
+
+```cpp
+// Source/TheUnlitCut/Public/Framing/FramingMath.h, lines 172-184
+		const FVector ToPoint = Point - Beam.Origin;
+		const double Distance = ToPoint.Size();
+		if (Distance <= UE_KINDA_SMALL_NUMBER || Distance > Beam.Range)
+		{
+			return false;
+		}
+		const double Along = FVector::DotProduct(ToPoint, Beam.Direction);
+		if (Along <= 0.0)
+		{
+			return false;
+		}
+		const double CosCone = FMath::Cos(FMath::DegreesToRadians(static_cast<double>(Beam.OuterConeDegrees)));
+		return Along / Distance >= CosCone;
+```
+
+`FramingMath::Advance` drives the 3.0-second hold clock: at or above `HoldCoverage = 0.70`, the clock advances; between `0.50` and `0.70` it pauses; below `ClearCoverage = 0.50` it resets to zero. Required coverage relaxes to `0.55` after 60 seconds and `0.40` after 120 seconds of allowed time without a print. When a frame prints, `UFilmPrinterComponent::PrintWithScene` captures the player's view into a 1920 by 1080 render target with `USceneCaptureComponent2D`, running `1 + WarmUpCaptures` (three captures in the same frame) so temporal effects settle. `FilmMath::PrintStep` spreads the rest of the work across the next four frames before publishing the print to `UFilmReelSubsystem` and `AFilmRail`. In the finale, `AFilmScreen` (`FilmScreenMath::EvaluateStrip`) plays the reel across the giant gauze as a moving film strip: a 1.5 s leader, an 0.8 s eased slide and 4.0 s hold per print, and a final pull and 2.0 s dissolve.
+
+```cpp
+// Source/TheUnlitCut/Public/Film/FilmMath.h, lines 68-75
+	/** Frame 0 retains the scene exactly as printed. A light and its shadow box must arrive together. */
+	enum class EPrintStep : uint8 { Capture, KeptLightAndBox, RaysAndSound, PublishReel, PrepareNextPicture, Done };
+
+	inline EPrintStep PrintStep(uint64 FramesSincePrint)
+	{
+		return FramesSincePrint < static_cast<uint64>(EPrintStep::Done)
+			? static_cast<EPrintStep>(FramesSincePrint) : EPrintStep::Done;
+	}
+```
+
+To verify packaged builds without human input, the `AgentRun` plugin plays 90 plain-text scripts in `Scripts/agent-runs/` via `Scripts/run-agent.sh` (`-AgentRun -AgentScript=<name> -windowed`). Inside the game, `AgentRun` drops physical input and sends virtual pointer and key events straight to Slate widget handlers, so background runs never steal the developer's mouse, keyboard, or window focus. `Scripts/s1/check_run.py` judges `#log`, `#nolog`, `#logbetween`, `#expect` (against `Unlit.Dump` states), and screenshot luminance rules (`#black`, `#bright`, `#differs`).
+
+![The agent test loop](../images/33-diagram-agent-tests.jpg)
+*The agent test loop, from text script and run-agent.sh to the packaged game with virtual input, log lines, screenshots, and #log or #expect checks that match build-independent tags (the sample numbers are illustrative).*
+
+In Development builds, `GetActorNameOrLabel()` returns the editor label, whereas in Shipping `ACTOR_HAS_LABELS` is off and it returns the internal object name. To keep checks identical across configurations, `build_act1_level.py` bakes a cooked `Zone_<name>` tag onto every framing zone that `DescribeState()` logs as `zone=`. With a Shipping soak variant that routes `UE_LOG` lines to a result file, the same test scripts verify Development packages and the Shipping soak package.
+
+```cpp
+// Source/TheUnlitCut/Private/Framing/FramingZone.cpp, lines 463-473
+	// frame= is the editor label in Development but the object name in Shipping (ACTOR_HAS_LABELS); zone= comes
+	// from the cooked Zone_<name> tag the level script gives every zone, the same in every configuration and
+	// through rebuilds, so checks match on zone=. The print line ("<name> printed: <state>") carries it too.
+	FString ZoneTagName(TEXT("none"));
+	for (const FName ZoneTag : Tags)
+	{
+		const FString TagText = ZoneTag.ToString();
+		if (TagText.StartsWith(TEXT("Zone_"))) { ZoneTagName = TagText.RightChop(5); break; }
+	}
+	return FString::Printf(TEXT("frame=%s zone=%s coverage=%.2f held=%.2f phase=%s hold=%.2f near=%d fade=%.2f burn=%.2f running=%d"),
+		*GetActorNameOrLabel(), *ZoneTagName, Coverage, State.HeldSeconds, *PhaseText, GetHoldCoverage(), bPawnNear ? 1 : 0, DisplayedFade, DisplayedBurn, State.Phase == EFramingPhase::Holding ? 1 : 0);
+```
 
 ![A contact sheet from one automated run of the full course in the packaged game](../images/14-qa-course-sheet.jpg)
 *A contact sheet from one automated run of the full course in the packaged game.*
 
-On the Mac mini M4 Pro, **QA-Build** ran full regression suites, crash soaks, blind plays, and Gatekeeper download checks, passing 76 scripts, 262 of 262 unit tests, and 10 of 10 Shipping course runs on freeze candidate B19. Windows work surfaced platform bugs: the Tech-Art-Lead found the first Windows cook targeted only SM5 without Nanite or virtual shadow maps until D3D12 was set to SM6; Win-Build hit three MSVC shadow and divide-by-zero errors that prompted a pre-push C++ lint; a Git Bash `cp` quirk was fixed with `shutil.copytree`; and Win-Build found that Round 24's Shipping target did not compile, which led to compiling Shipping before every push. Overnight on B19, Windows built three targets with zero warnings, passed 262 of 262 tests, and ran the Shipping course 41 times without a crash; on the morning's latest pushed commit, it built all three targets with zero warnings, passed 263 of 263 tests, and produced a submission zip rehearsal.
+## How we worked
 
-As the log closed on November 15, the log also records what still waited for a human check: no AI session can hear, so while Yilun Lab listened to the voice auditions and music beds outside the game, in-game audio levels and speaker treatments were set by measurement and verified through game logs; mouse look was tested with injected axis values; and while Windows packages ran 41 Shipping course passes by script, launching and playing the final candidate on Windows by hand—along with recording the gameplay trailer and reviewing the new dark opening frames and ending poster candidates—remained ahead as Yilun Lab moved the Sunday content freeze to 15:00 and worked toward the 18:30 submission target.
+Team YILUN LAB is two people, a creative lead and lighting artist and an engine-integration lead. AI role sessions worked alongside us, messaged one another, and tracked tasks in `Saved/Queue/*.md`. PM-Producer set priorities and wrote the QA and Windows briefs; Game-Designer wrote the specs, dialogue tables, level drawings, audio pipeline, and devlog; Art-Director managed meshes, materials, layouts, and fonts; and Programming-Lead owned C++, builds, packaging, and commits. On Day 3 at about 11:20 we split that role into Tech-Art-Lead (arms, shaders, Lumen, near light) and a new Programming-Lead (editor, packaging, Shipping, Windows, checks), joined by QA-Build and Programming-Lead-Remote on a Mac mini M4 Pro, Win-Build on our Windows PC, and PM-Intern. After two sessions collided on the editor on Day 3, `host-lock.sh` serialized all editor, build, and packaging runs.
+
+Claude Code and Claude Opus subagents ran the role sessions, drove Unreal Engine 5.8 over Epic's experimental MCP server, wrote the early C++ systems, and wrote headless Blender and Python texture scripts. Codex CLI and GPT Image wrote C++ feature and UI code in git worktrees and generated the gauze mural, five opening storyboard frames, brick wall texture, and hanging-card menu assets. Tripo Studio and Meshy AI generated the 3D meshes, and those used in the game were cleaned and decimated in Blender. ElevenLabs and ffmpeg produced the voice, sound effects, and music, while Antigravity CLI (`agy`) edited in-game copy, hints, stage names, and video captions.
+
+## What's next
+
+Before submission, we still need to launch and play the final Windows candidate by hand, judge the in-game audio mix and mouse-look feel, review the darker opening frames, and record the gameplay trailer from `TRAILER_SHOTLIST.md`. On macOS, our signing scripts (`7be48a1`) and `docs/submission/README_Mac.txt` wait on a paid Apple Developer certificate for notarisation. For post-jam work, we have queued an upper-body skeleton for the first-person hands, the flashlight-only hand form in the prologue, the fuller flickering EXIT sign sequence, and the unmerged caustic reflector study (`origin/codex/reflector-light-2026-11-14`).
+
+## Appendix: the four days at a glance
+
+- Nov 12 (Day 1): We write the one-page GDD, assemble the moodboard, and generate 41 prop meshes.
+- Nov 12, evening: The Stage 1 light toy runs in the test level, passing 10 headless tests.
+- Nov 13 (Day 2): We build the hollow optical box, paint the gauze mural, and assemble Act 1.
+- Nov 13, evening: Voice and music are wired in, and we lower the gauze warmth threshold.
+- Nov 13, night: Window light memory, film-strip screening, and 200 hanging stars land by dawn.
+- Nov 14 (Day 3): We add `host-lock.sh`, generate the opening storyboard frames, and refine the first-person arms.
+- Nov 14, night: We enclose the stage in a 273-piece theatre shell and integrate the start menu.
+- Nov 15 (Day 4): We add the world-gone starry void, redraw the opening frames, and pass Shipping checks.

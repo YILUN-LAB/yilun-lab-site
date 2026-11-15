@@ -1,154 +1,230 @@
-# 《The Unlit Cut》：开发日志
+# 《The Unlit Cut》：图文开发日志
 
-《The Unlit Cut》是一款第一人称光影沙盒游戏，在为期四天的 2026 Epic AI MegaJam 期间（Austin 时间 UTC-6，11 月 11 日 23:00 至 11 月 15 日 19:59）基于 Unreal Engine 5.8 开发完成。故事设定在 1994 年 11 月的伦敦 Soho 区——在一座由维多利亚时代仓库改建而成的建筑地下室里，一间黑匣子排练室兼剪辑室中，正值一部电影停拍的当晚。游戏里只有两个角色：闻其声不见其人的导演 Julian Vance，以及玩家所扮演的灯光师。你右手握着手电筒，左手托着镂空纸制遮光片盒（gobo box），调暖或调冷光束，将手电滑入盒中，开启彩绘纱幕，把纸艺天际线投射到纱墙之上，并将取景框定格的画面显影进场景之中。
+*The Unlit Cut* 是 YILUN LAB 团队在 2026 Epic AI MegaJam 四天开发期内，用 Unreal Engine 5.8 制作的第一人称光影沙盒游戏。你一手拿着手电筒，一手托着剪纸遮光片盒（gobo box），走上电影停拍后黑暗废弃的布景舞台。通过调暖或调冷光束、把灯推进盒子里，你可以打开彩绘舞台纱幕、投出纸城天际线，冲印出自己的画面。
 
-这款游戏由使用中文协作的双人团队 Yilun Lab 制作：Yilia 是项目的主创、灯光美术兼设计师，以及 Team Owner；另一位成员——在本文中统称为 Yilun Lab——负责引擎集成并指挥各个 AI 会话。团队没有在提交记录中添加 AI 共同作者署名，而是在 git 历史中选择了“不标注 AI 署名（no AI attribution）”，转而用这份开发日志来记录每项内容分别由哪个 AI 工具生成，并在文件本身未作记载处加以说明。
+## 灵感
 
-## 缘起
+我们的创意负责人本身是职业灯光艺术家与设计师，因此项目始于一个问题：只用反射、透射、舞台纱幕、一把手电筒和几种反光材质，真正从灯光手艺出发能做出什么样的游戏？11 月 11 日 23:00 比赛公布主题 *Director's Cut*（导演剪辑版）时，我们把它看作一个关于话语权的问题。电影里，导演的剪刀决定什么值得被看见；在我们的游戏里，玩家扮演灯光师，重返黑暗舞台，照亮那些被剪掉的角落。每一幅布好光的构图都会冲印成一格胶片，终幕放映的那盘胶卷就是你自己的 *Lighting Artist's Cut*（灯光师剪辑版）。
 
-因为 Yilia 本人的职业就是灯光美术与设计师，整个项目最初源于一个单纯的问题：她真正擅长的灯光手艺——反射、透射、舞台纱幕效果、一把手电筒，再加上几种反光材质——究竟能做成一款什么样的游戏？从一开始，方向就非常明确：不做解谜、沉浸感优先，以及一个能够打动人心的结局。当这场 Jam 在 11 月 11 日 23:00 正式开启时，团队将主题 *Director's Cut*（导演剪辑版）解读为一个关于权力的命题：导演的剪刀决定了什么才值得被展示，而玩家则是那个去照亮被剪掉角落的灯光师。
+![用 GPT Image 生成的一张开场分镜：初版与更暗的老电影版本](../images/12-intro-frame-old-and-dark.jpg)
+*用 GPT Image 生成的一张开场分镜：初版（左）与更暗的老电影版本（右）。*
 
-这一解读塑造了游戏的核心概念（elevator pitch）。在《The Unlit Cut》中，你是一名走进被导演废弃布景里的灯光师，仅凭一把可以调节距离与色温的手电筒，将纸板和旧纱幕化作一座城市、一只眼睛与漫天星尘。每一次点亮的构图都会被显影定格为一帧胶片，而在终幕放映的那部影片，正是属于你自己的 *Lighting Artist's Cut*（灯光师剪辑版）。三个核心机制让这一设想落地为可玩的体验：色温改变空间（在冷光下，舞台纱幕是一堵实墙；而当暖光穿过时，它会变得透明并允许你穿行其中）、投影化为真实空间（用光线填满导演取景器并保持三秒，即可显影出一帧胶片，并将墙上的投影转化为三维建筑），以及不借助黑屏、直接在空间内部完成的转场。项目的范围边界同样划定得十分坚决：没有硬核解谜、没有失败状态、没有倒计时、没有战斗，除了第一人称的双手这一唯一例外，所有人物都只以剪影与影子的形式出现。
+我们把故事定在 1994 年 11 月的伦敦 Soho 区，地点是一座维多利亚老仓库改建的地下黑匣子排练厅，时间正是剧组停拍当晚。开场用五张分镜介绍这座排练厅。我们在第 3 天生成了这五张 35 mm 画框内的铅笔淡彩分镜，又在第 4 天重绘成色调更暗的 1.375:1 老电影画幅。游戏只有两个角色：导演 Julian Vance，以及玩家扮演的灯光师。
 
-八条明确命名的设计原则指导了整个项目：*光是主角*；*温暖落在角落*；*重在沉浸，而非解谜*；*结局要能打动人心*；*它首先得是个游戏*；*时代与地点要一眼可辨*；*灯光师不是捡破烂的人*；以及*道具不能显得过于破旧*。
+![地下剧场实际搭建的平面图](../images/15-theatre-plan.jpg)
+*地下剧场实际搭建的平面图。*
 
-带有时间戳的头脑风暴文档，记录了这些想法在 Jam 开始后是如何迅速成型的：
-- 11 月 12 日 00:45，一页纸 GDD 创建完成。
-- 11 月 12 日 00:57（并一直编辑至 11:20），情绪板围绕一句话的美术方向——“黑匣子光绘”——组装完毕：在漆黑的小剧场里，用真实的光线在纸板模型上作画；这个世界本身没有颜色，一切色彩都来自玩家的光。在情绪板上，Yilia 探索了三个场景方向：方向 A 是手绘蜡笔风，最终未被采用，不过它的色彩被保留下来作为冷暖投影的参考；方向 B“Bling Bling”最终胜出，它将黑色背景与奶油色道具、珍珠虹彩，以及光线落处稀疏的星点闪烁结合在一起；方向 C 是温暖的童话水彩风，未被采用。
-- 在探索场景方向的同时，Yilia 还制作了两版道具板。第 1 版道具板采用了生锈铜器与深棕色旧道具，由于道具对整体美术风格而言显得过于破旧而被舍弃；第 2 版改用带有轻微磨损与纸胶带修补痕迹的旧奶油色及暖灰色表面，成为了后续 3D 模型的输入参考。情绪板与道具板共同确立了五条视觉法则：暗色舞台；带有珍珠光泽、有折痕和胶带修补但干净整洁的奶油色舞台道具；光是唯一的颜料，投影源自带有焦散与色散效果的真实光效照片；人物只以影子形态出现；以及胶片即界面。
-- 11 月 12 日 20:15，故事文案撰写完成。
-- 从 11 月 12 日晚间到 11 月 13 日，完整版 GDD 的 1.0 至 1.5 版本陆续写就（随后在 11 月 14 日补充了一条说明，并在 11 月 15 日完成了记录最终提交版本状态的 1.6 版）。
-- 11 月 12 日 23:10 进行了第一阶段（Stage 1）资产审核；紧接着在 11 月 13 日建立了“Demo check”白板，Yilia 在上面写下了试玩笔记（始于 03:41）、第一幕（Act 1）问题清单（11:29）、关卡设计草图（13:40）以及 Checkpoint 2（17:37）；Checkpoint 3 的试玩指引于 11 月 14 日 00:51 建立，Yilia 对 B15 的回答则在 11 月 15 日 01:38 记下。
+我们在 11 月 12 日 00:45 写完一页纸 GDD，00:57 至 11:20 整理好情绪板，20:15 起草剧情文案，并陆续写出完整 GDD 1.0 至 1.6 版。我们按八条设计原则做取舍：*光即主角*、*暖意落在角落*、*重沉浸，轻解谜*、*结局要打动人*、*必须好玩像个游戏*、*年代与地点一眼可辨*、*灯光师绝非捡破烂的人*，以及*道具不能旧过头*。
 
-随着开发推进，最初设计中的五个部分被精简或重塑：在幕结构上，最初计划为五幕，“荒芜（barrenness）”一幕与废片彩蛋（outtake easter eggs）并未制作，最终结构变为序幕（prologue）、第一幕（Act 1：高墙、带弯道的巷子与小广场）、可选的返场幕（“The Cut Door”），以及终幕（finale）；在魔法棒的设计上，原计划是在进入终幕时出现，后来改为进入小广场时手电筒直接变形为魔法棒；在旁白台词上，原计划约为 40 句，最终精简为十余句导演台词；在流程时长上，原计划为 7 至 9 分钟，经 Yilia 实测计时后变为 4 至 5 分钟（完整通关一局大约 5 分钟）；而在操作方式上，原计划使用 E/Q 键，最终改为除 WASD 之外不再使用任何字母键——只保留鼠标、滚轮、左键点击与 Esc。
+## 设计
 
-## 两个人，与一屋子的 AI 会话
+三个空间点子把这套灯光玩具变成了可玩的游戏：色温改变物理空间，投影化为真实空间，转场直接在剧场内完成、全程不黑屏。游戏没有硬核解谜、失败判定、计时器或战斗；除第一人称双手这一处例外，人物全都只以剪影和影子出现。
 
-为了在四天内搭建起完整的流程，团队将工作拆分给多个彼此直接发消息协作的专用 AI 会话。
+![The Unlit Cut 单局完整流程图](../images/22-diagram-play-flow.jpg)
+*单局完整流程图：标题画面、开场、序幕、第一幕（纱幕墙、小巷）、可选加演、小广场、终幕，以及在首次冲印前直接离开触发的顺从结局。*
 
-Yilun Lab 主要与 **PM-Producer** 会话对话，由它来排定工作优先级、分发问题、拍板悬而未决的事项，并编写 QA 与 Windows 打包的任务简报。与它并行运转的还有另外四个核心 Claude Code 角色会话——当时均报告运行于 Claude Fable 5.2（`claude-fable-5-2`）；其中 Programming-Lead 角色在第三天移交给了新的 Opus 会话，其余角色则一直留在 Fable 上，直到第四天中午左右：
-- **Game-Designer** 编写了原型规格说明、台词表、由 JSON 生成的 13 张关卡图纸、引导与终幕规格说明、预告片分镜表、音频管线，以及开发日志。
-- **Art-Director** 负责管理导入的网格体、材质接口、布局数值、纱幕壁画、字体和模型需求清单，并将 Blender 与 Python 贴图脚本委派给运行在 `xhigh` 推理强度下的 Claude Opus 子代理（subagents），自己从不直接提交代码。
-- **Programming-Lead** 负责 C++ 接口、代码合并、通过 Epic 实验性的 Unreal Engine 5.8 MCP 服务器执行的编辑器构建、打包验证运行，以及 git 提交。
-- **QA-Build** 运行在第二台 Mac（一台 Mac mini M4 Pro）上，负责执行回归测试套件、崩溃长时间压力测试（crash soaks）、Shipping 启动检查、Gatekeeper 首次打开流程演练，以及自动化盲测通关。
+11 月 12 日晚上的首个原型在一个单间里验证了核心构想。11 月 13 日试玩这个 Stage 1 版本后，我们敲定了*“投影成真”*这条规则，向 *Gorogoa* 致敬，并要求手电筒推进盒子后投出的画面必须铺满正前方的整面墙。
 
-在 Yilia 这一边，她负责维护设计文档与试玩白板笔记，她的道具源模型来自 Tripo，魔法棒来自 Meshy；她机器上的 Codex 会话整理了 Tripo 流程记录，做了 S1 反馈的修正和一项反光板研究，后来又做了她的菜单设计。随着 Jam 推进，会话阵容进一步扩充，加入了运行在 Yilun Lab 的 Windows 11 Education N PC 上的 **Win-Build**、运行在 Mac mini 上的 **Programming-Lead-Remote**，以及负责状态巡检的 **PM-Intern**。
+![早期原型画面：黑暗舞台上投出的纸城图案，前景是手电筒和遮光片盒](../images/01-first-paper-city.jpg)
+*早期原型画面：黑暗舞台上投出的纸城图案，前景是手电筒和遮光片盒。*
 
-## 第一天（11 月 12 日）：纸盒、41 件道具，与第一个光影玩具
+冷光照射下，舞台纱幕是一道实体屏障。滚动鼠标滚轮调暖手电筒色温后，暖光落点处的纱幕会变透明，玩家可以直接穿过去。第 2 天跑完两轮自动化盲测后，我们把全局暖度阈值从 0.85 调低到 0.65，并在序幕纱幕下方加了一抹暖金色微光。
 
-代码仓库于 Austin 时间 11 月 12 日 00:52 基于 `unreal-agentic-template` 创建，该模板提供了项目规则、脚本、冒烟测试以及 `AgentRun` 虚拟输入插件。Yilun Lab 决定继续使用 Git 和 Git LFS 而不采用 Diversion，并确认以场景方向 B（“Bling Bling”）作为视觉目标。
+![暖光打开纱幕与冷光被纱幕挡住](../images/02-gauze-warm-cold.jpg)
+*暖光打开纱幕（左）与冷光被纱幕挡住（右）。*
 
-虽然设计文档最初计划在 Rodin 中制作五件特写道具，但最终并没有在那里生成任何资产。取而代之的是，Yilia 授权使用她现有的 Studio 积分在 Tripo Studio `H3.1` 中进行 3D 生成。在她的机器上，Codex 内置的 `image_gen` 从七张道具设计板中裁切出了 41 张单主体输入图。一个 AI 会话驱动浏览器在 Tripo Studio 中生成了 41 个道具网格体（共计消耗 2,285 积分，另加四个由脚本派生的网格体），其中包括纸艺城市、摄影机与 EXIT 指示牌。在 Yilun Lab 的机器上，另一个会话运行无头模式（headless）的 Blender 5.2.1 来检查并导出 42 个原型网格体——修正缩放比例、枢轴点与减面——并更新了设计文档以匹配实际交付的资产。第一人称双手绑定了 22 根骨骼，包含持握与拾取姿态，并将尺寸调整为 18 cm。
+序幕开始时，你站在黑暗的舞台上，Julian Vance 的声音叮嘱你别碰手电筒，直接从绿色 EXIT 离开。如果你顺从导演，在冲印第一格画面前走入 EXIT 标志下方敞开的黑色通道达 120 cm，本局就会以一句 *"Sensible choice..."*（“明智的选择……”）和一张 *Director's Cut* 字幕卡结束。一旦你完成首次冲印，出口便会关闭；走完全程后，终幕会放映你冲印的所有画面，最后停在 *THE LIGHTING ARTIST'S CUT* 字幕上。
 
-在 2D 目标渲染图、照片遮光片（photo gobos）以及焦散与散景贴图方面，第一轮在 `gpt-6.1-sol` 上运行的四个任务被废弃，Yilun Lab 将所有 GPT Image 生成工作转移到了运行在 `gpt-6-astra`（`xhigh` 推理强度）上的 Codex CLI v0.167.2。Python 与 Blender 脚本直接从 3D 纸盒模型的凹槽处通过光线投射（ray-cast）生成了窗户遮光片蒙版。开关、八音盒与环境底噪（room tone）的 15 个候选音效由 ElevenLabs Sound Effects v2（`eleven_text_to_sound_v2`）生成。21:25，一次对 `agy`（Antigravity CLI）的调用修改了 Yilia 18 句故事台词中的 10 句，以契合选定的美术方向——将普通纸板改为奶油色纸盒与美纹纸胶带——并另外起草了 22 句补充台词。
+![序幕早期画面：手持电筒与遮光片盒站在黑暗舞台上，屏幕下方显示旁白字幕](../images/03-prologue-first-look.jpg)
+*序幕早期画面：手持电筒与遮光片盒站在黑暗舞台上，屏幕下方显示旁白字幕。*
 
-![An early prototype frame of the projected paper-city pattern](../images/01-first-paper-city.jpg)
-*早期原型画面：幽暗舞台上投射出的纸艺城市图案，前景中是手电与纸盒。*
+穿过序幕纱幕就进入第一幕 *London Skyline*（伦敦天际线）。按下鼠标左键，右手的手电筒会滑入镂空窗户图案的遮光片盒（gobo box），把天际线投影打在彩绘纱幕墙上，导演留下的红色取景框正悬在半空。用暖光填满取景框并保持 3 秒，相机闪光灯亮起，当前构图冲印为 第 1 格（Frame 1），纱幕墙随即消融，平面投影在 3 秒内由近及远升起，变成一条三维纸艺小巷。远端纱幕处的第二个取景框会冲印出 第 2 格（Frame 2），并打开通往小广场的路。
 
-到 11 月 13 日凌晨 00:55，S1 阶段的光影玩具已经在一个通过编辑器 MCP 搭建的展示关卡中跑了起来：一把手电筒、一个遮光片盒、一间测试房，配有 10 项无头测试；随后进行的打包检查（92 项预期全部通过，92/92）也顺利完成。它的核心屏障机制正是纱幕法则：调暖光束能打开舞台纱幕，而冷光则会被纱幕阻挡。
+![第一幕自动化检查生成的缩略图样张，包含画面冲印瞬间与 SCRAPPED 印章](../images/04-act1-print-sheet.jpg)
+*第一幕自动化检查生成的缩略图样张，包含画面冲印瞬间与 SCRAPPED（废弃）印章。*
 
-![Two frames side by side showing warm light opening the gauze and cold light blocked by it](../images/02-gauze-warm-cold.jpg)
-*两帧并排对比：暖光打开纱幕（左），冷光则被纱幕阻挡（右）。*
+第 2 天的版本里，纸城小巷还是一条笔直通道。第 3 天我们重做了街道布局，让小巷拐了个弯，尽头用拱门立面封住，并在转角处藏进一间侧室，作为可选的加演关卡。
 
-## 第二天（11 月 13 日）：“投影成真”与六项改动
+![小巷弯道与加演侧室的平面设计图](../images/21-bend-plan.jpg)
+*小巷弯道与加演侧室的平面设计图。*
 
-当 Yilia 在 11 月 13 日试玩 S1 打包版本后，她发回了一张带有批注的截图和白板笔记，重塑了整个游戏的走向。她的核心法则是“投影成真”——这是她对《Gorogoa》（画中世界）的致敬——并且手电筒必须伸进纸盒里，让投影填满整面墙。她指出当时的操作按键太多难以记住、冷光显得过蓝、场景应当随着光线触碰从破败转为华丽，而且应当只有右手的手电筒在动，纸盒与左手则保持静止。她还希望用自己在 2021 年 10 月亲自拍摄的一张蓝红光效照片（已申报为赛前自有资产，并使用 Codex 的 `image_gen` 编辑模式去除了墙缝与“1/3”角标）来替换程序化生成的窗户投影。
+第 3 天我们为这间侧室做了两个版本。下午做的是 *"Extra Number 47"*（47 号群演），在粉笔标记处放了一尊 20 cm 高的芭蕾人偶。当晚我们把剧情剧本第二幕里的弧形反光膜改造成名为 *"The Cut Door"*（被剪掉的门）的可选加演。把暖光凑近 30 cm 的弧形反光膜，两道弧光会弯曲收拢，在门框取景框内扣合成一只“光之眼”。第 24 轮打包时，光之眼材质编译失败，打出来的包里变成一团白块；我们修复了着色器，并把 `package.sh` 改成只要有任何材质编译失败就直接报错退出。
 
-在她的分支上，Yilia 的 Codex 会话制作了新的开尔文（Kelvin）默认色温、贴合手型的握姿、能投出原生阴影的中空光学暗盒、带手电环绕轨迹的镜像托举左手，以及蓝红光影胶片。她还单独开展了一项反光板实验，从 2025 年 1 月拍摄的四段光效视频中提取焦散贴图，不过该分支上的打包流程受阻，最终并未合入主干。
+![The Cut Door 加演关卡：修复前后的光之眼](../images/10-door-light-eye.jpg)
+*"The Cut Door" 加演关卡：修复前（一团白块）与修复后的光之眼。*
 
-在主开发线上，Yilun Lab 决定将全部三项机制都放进原型，把最终操作简化为仅保留鼠标滚轮与左键点击，并要求将原本笔直的路线改为折线（dogleg）——最终由 PM-Producer 敲定为拐一个弯、终幕位于左侧的布局。整个下午，**Programming-Lead**（与 Claude Opus 子代理协作）、**Art-Director** 和 **Game-Designer** 共同搭建起了序幕、第一幕与终幕。
+在 ElevenLabs（`eleven_v4`）试听五版声线后，我们为 Julian Vance 选定了 *"British Theatrical"*（英式戏剧腔）声线，配上停顿、呼吸、叹气、提高音量和耳语等表演标签，并搭配两轨随色温交叉淡入淡出的背景音乐（`eleven_music_v2_5`）。试玩调整时，我们删掉了第四句台词里的 *"Scene Four."*（“第四场。”），并重录了第一句台词，把剪辑台统一说成 *"the editing table"*，避免出现任何品牌名称。
 
-![An early look at the prologue on a dark stage](../images/03-prologue-first-look.jpg)
-*序幕的早期画面：幽暗舞台上手持电筒与纸盒，屏幕上浮现一行旁白台词。*
+## 美术
 
-Art-Director 导入了第一幕的 13 个网格体，构建了天际线纸盒与 2K 城市贴图；在 Yilun Lab 认为墙上的城市过于写实、PM-Producer 批准了风格化方案之后，又在 `gpt-6-astra` 上经过三轮迭代生成了手绘质感的纱幕壁画。到 15:10，第一幕的取景区域、显影机制以及残留光效均通过了打包验证。
+我们的一句话美术方向是*“黑匣子光绘”*：在全黑的小剧场里，用真实灯光在纸板模型上作画，所有色彩都来自玩家手中的光。第 1 天的情绪板上，我们选定了方向 B *"Bling Bling"*：纯黑背景、奶油色道具、珍珠虹彩，以及光束落点处稀疏的星点闪烁。道具设定板上，3D 模型采用旧奶油色与暖灰表面，带有轻微磨损和纸胶带修补痕迹。
 
-![A contact sheet from an automated check of Act 1](../images/04-act1-print-sheet.jpg)
-*第一幕自动化检查生成的缩略图检视表（contact sheet），包含画格显影瞬间与 SCRAPPED（废弃）印章。*
+![由脚本绘制的遮光片盒镂空图案方案](../images/16-box-pattern-options.jpg)
+*由脚本绘制的遮光片盒镂空图案方案。*
 
-声音设计被交给了 Game-Designer，Yilun Lab 给出的要求是“必须非常贴合角色”。在 ElevenLabs（`eleven_v4`；另有三个在 `eleven_ttv_v3` 中设计的音色未被采用）中进行五次试音后，Yilun Lab 选中了“British Theatrical（英式戏剧腔）”，并要求加入表演细节——停顿、呼吸、叹气、提高音量与低语——随后在第二轮试听时拍板通过：“就是这个感觉”。两段背景音乐铺底（music beds）由 `eleven_music_v2_5` 生成（根据 Yilun Lab 的意见，冷光音乐铺底降低了 5 dB），并在代码中根据色温进行交叉淡入淡出。当团队研读官方规则发现需要移除品牌名称时，导演的第一句台词被重新录制了一遍，改口称为“the editing table（剪辑台）”。18:56，由 Codex `gpt-6.1-sol` 接入音频的构建包 B03 正式打出。从 Austin 时间 19:00 起，Yilun Lab 将所有新代码的编写工作转移给运行在独立工作副本中、`xhigh` 强度下的 Codex `gpt-6.1-sol`，而 Programming-Lead 则专注于编辑器操作、代码合并、编译构建与验证检查。
+早在第 1 天，Python 与 Blender 脚本（`Scripts/s1/gobo_depth.py` 和 `gobo_textures.py`）就通过光线投射，从盒子模型的凹槽生成了窗户遮光片遮罩。第 2 天我们用脚本（`Scripts/s2/box_patterns.py`）绘制了多版镂空图案方案，并做出能投射原生阴影的中空光学盒。
 
-当天晚上看着 Yilia 试玩 B03 的过程，暴露出了一处关键的视觉偏差。Yilia 觉得这个版本看起来很破旧，而她此前选定的方向 B 参考图明明带有一层闪耀的“bling”质感；PM-Producer 用文字总结出的描述（“略带磨损”、“80 % 黑”）在传递中偏离了她的原图。Yilun Lab 立即将这一修正列为游戏与文档双线的最高优先级。在观看同一次试玩时，Yilun Lab 还注意到第四句台词开头的“Scene Four.（第四场。）”来得莫名其妙——因为第一幕明明是玩家看到的第一个场景——于是 Game-Designer 从录音中剪掉了“Scene Four.”，但保留了前面那声叹息。Yilun Lab 同时指出游戏中“提示太少……引导非常弱，让人很困惑，很难知道流程推进到了哪里”，这促成了取景器水印的设计：它会通过灼烧效果与进度计量来直观反馈取景进度。此外，Yilun Lab 要求加入鼠标驱动的开始画面与按 `Esc` 呼出的暂停界面，随后 QA-Build 的代理对构建包 B05 运行了两次自动化盲测。B05 已经要求玩家必须站在指示牌正下方并面对它，因此仅仅路过并不会直接结束游戏。然而当第一次盲测乖乖听从导演的话、在 62 秒内直接走出出口结束游戏时，团队将全局的暖光判定阈值从 0.85 下调到了 0.65，并补上了更清晰的提示。
+![从盒子模型凹槽光线投射生成的窗户遮光片遮罩，从锐利到柔和](../images/17-window-gobo-masks.jpg)
+*从盒子模型凹槽光线投射生成的窗户遮光片遮罩，从锐利到柔和。*
 
-更重磅的是 Yilia 针对 B03 提出的六点反馈：
-1. 开场不能有彩色灯光——色彩的出现必须有其动因。
-2. 塔楼的窗户应当由她的手电筒点亮，随后极其缓慢地黯淡下去，再次照亮时又重新亮起。
-3. 她在结尾放映时根本没认出那是自己显影出来的画面，并直言白色的画框很难看。
-4. 手电筒在最后一个场景中应当变成一根魔法棒。
-5. 旋转木马在被照亮时应当转动起来，在周围浮现星星的同时让光线变得五彩斑斓。
-6. 在结局时刻，应当浮现出漫天繁星，同时光线缓缓收束。
+第 2 天的早期试玩暴露出两个视觉问题：冷光偏蓝过重，同时 Package B03 显得陈旧灰平。我们把色温两端修正为冷光 5000 K、暖光 3000 K。纸城内部，摩天楼的窗户带有光记忆效果：只有手电筒光束扫过的地方才会亮起，点亮时微微闪烁，光束移开后极其缓慢地暗下去。
 
-当 PM-Producer 提出这六项功能的低成本妥协方案时，Yilun Lab 的回答是：“不要廉价的做法，做更好的那个方案”，同时砍掉了在第一幕中重新捡起纸盒的选项。
+![纸城窗户光效的三张截图](../images/05-city-windows.jpg)
+*纸城窗户光效的三张截图：刚冲印完成、约 30 秒后，以及遮光片盒光束重新照回中央。*
 
-![Three captures of the paper city with window light fading and relighting](../images/05-city-windows.jpg)
-*纸艺城市窗户灯光的三张截图：刚刚显影完成、约 30 秒后，以及纸盒光线重新照回中央时。*
+第一幕的纱幕墙上，初版城市投影照片感太强，于是我们用 GPT Image 经过三轮迭代生成了风格化手绘壁画，并在第 3 天把它的剪影重绘成伦敦天际线。玩家冲印出第一格画面后，彩绘纱幕墙会在敞开的破洞边缘留下一圈微弱余晖。
 
-在 21:30 至次日 01:14 的通宵时段里，团队在 Tripo Studio `H3.1` 中生成了九件舞台道具（参考图在 Tripo Studio 内部使用 Nano Banana 与 GPT Image 2.5 制作）：四颗悬挂的星星、一张月亮脸、一张灯光长凳、祖母绿与玫瑰色幕布，以及一座由 Opus 子代理在 Blender 中拆分为静止底座与旋转顶棚的玩具旋转木马。Yilia 还交付了魔法棒模型——它是根据 Pinterest 上找到的一张未署名图片在 Meshy AI 中生成的（由于参考图本身不会被打包进游戏，Yilun Lab 保留了该 3D 模型，并通过脚本将其加厚、由 342,212 个三角面减面至 19,500 个）。Art-Director 用 Codex 编写的生成器脚本排布了 200 个悬挂星星的位置（45 个在广场，155 个在终幕），而 Game-Designer 则基于 S1 八音盒的一个单音，制作出了一段四小节的 E 大调圆舞曲循环。
+![修改前后对比：冲印后彩绘纱幕墙在破洞周围留下一圈微弱余晖](../images/06-mural-afterglow.jpg)
+*修改前后对比：冲印后彩绘纱幕墙在破洞周围留下一圈微弱余晖。*
 
-## 第三天（11 月 14 日）：拆分角色、还原剧场，与暗夜里的弯路
+最后一天的早上，我们把城市材质整体往奶油色调校（壁画饱和度 0.55、亮度 1.25），并对比了光束扫过纸艺立面时的效果。
 
-第三天在凌晨时分的稳定性与性能优化工作中拉开序幕。在构建包 B07（02:56）中，一个 6 秒看门狗（watchdog）解决了偶发的退出卡死问题。在第 15 轮（Round 15）中，团队修复了一个由于渲染图（render graph）在工作线程上被销毁而引发的 Shipping 崩溃；将参数设为 `r.RDG.ParallelDestruction=0` 与 `r.RDG.ParallelExecute=1` 后，在宿主机上实现了 66 次无崩溃运行，在 QA 的 M4 Pro 上实现了 40 次无崩溃运行。到了上午中段，在第 16 轮（Round 16）中，通过将 Lumen 配置为仅捕获变化部分并只计算一次反弹，M4 Pro 在 1080p 分辨率下的 GPU 耗时缩减了 7% 至 13%。
+![光束扫过纸城内部：最后一天调色时两版城市材质的对比](../images/20-city-sweep-before-after.jpg)
+*光束扫过纸城内部：最后一天调色时两版城市材质的对比。*
 
-10:55，Yilun Lab 在观看 Yilia 试玩 B08 后转达了反馈：纸艺伦敦看起来不像伦敦，而且路线过于平直，需要一条蜿蜒穿过巷子的弯道；游戏还需要再增加一个场景（如果做不完就藏在开关后面）以及一段逐帧展开的开场胶片条；此外，玩具旋转木马需要放大到真实尺寸（放大 1.75 倍至直径 2.8 米）。Yilia 制作的芭蕾舞女吊灯（Meshy 7.1 Flagship）当天早上已经悬挂在了巨幅纱幕右端后方。
+当你走出纸艺小巷踏入小广场，遮光片盒会向下收起，手电筒化作一根顶端带星的魔法棒。广场中央立着一座 2.8 米高的玩具旋转木马。黑暗中旋转木马起初是纯白色的；当你在 6 米内用魔法棒的光束照向它，木马便伴随四小节 E 大调华尔兹循环乐句转动起来，由纯白经粉彩渐渐晕染成全彩。
 
-几分钟后，在 11:20 左右，Yilun Lab 拆分了 Programming-Lead 角色。自第二天起一直担任该角色的会话转变为 **Tech-Art-Lead**（负责手臂姿态与动画、材质着色器、Lumen 以及近景光），而一个新的 **Programming-Lead** 会话（Claude Opus，高推理强度）则接管了编辑器与打包管线、代码提交、Shipping、Windows 版本以及检查脚本。当后来有两个会话在 Unreal 编辑器上发生冲突时，PM-Producer 建立了一套宿主机锁（host-lock）脚本，确保同一时间只有一个会话能够占用编辑器、执行编译或打包。14:10 左右，当 Codex 的周配额消耗达到 74% 时，Yilun Lab 曾短暂地将代码与脚本工作切回给 Opus 子代理——不过这一限制持续了不到一个小时，随着三次免费的 Codex 配额重置，`xhigh` 强度的 `gpt-6.1-sol` 便恢复了工作。
+![玩具旋转木马初照亮时呈纯白，随后转为粉彩，最后变为全彩](../images/07-carousel-white-to-colour.jpg)
+*玩具旋转木马初照亮时呈纯白，随后转为粉彩，最后变为全彩。*
 
-第一人称手臂与手部是整个 Jam 期间走得最长的一段弯路。Yilun Lab 将手臂网格体任务交给了最高强度（max effort）下的 Codex `gpt-6-astra`。由于 Blender 在 Codex 的沙盒内会发生崩溃，Art-Director 只能在沙盒外运行 Codex 编写的脚本，并在五轮迭代中将日志贴回给它，最终做出了 60 cm 长的袖子与更新后的握持姿态。好几项尝试最终都未能进入游戏：Codex 三次尝试将左手摆在纸盒侧面的姿态均告失败，而当天下午在 Tripo Studio 中单独生成左手模型的任务也被 Yilun Lab 取消——因为原本从下方托住纸盒的姿势就已经是他们想要的效果。他们检验手部表现的标准是：“它在游戏里的感觉，应该和在现实世界里一模一样。”右手手指的分件因为切口边缘会穿帮而被舍弃；在先后否决了 -80 度、-95 度与 -45 度的手腕翻转角（“右手完全不对”）之后，16:55，Yilun Lab 表示自己此前在三轮 GPT Image 手部方案示意图中挑错了图。最终他们保留了盒外旋转 -15 度、盒内 0 度的握持角度。在 Yilun Lab 稍后提出一条关于序幕的反馈后，Tech-Art-Lead 在手电筒的侧面与尾部加上了一个拇指拨轮，让滚动滚轮时转动的是拨轮，而不再是扭动手腕。
+魔法棒顶端的五角星会投出一个星形光斑，里面带着我们的灯光师在 2021 年 10 月拍摄的一张蓝红光影照片。
 
-![Before and after of the first-person arms and the lamp outside and inside the box](../images/13-arms-before-after.jpg)
-*第一人称手臂与手电筒在盒外与盒内的修改前后对比。*
+![手持魔法棒照亮旋转木马](../images/19-carousel-and-wand.jpg)
+*手持魔法棒照亮旋转木马。*
 
-当天下午，Yilia 指出虽然关键模型都已经就位，但大厅本身没有墙壁，并要求还原出排练空间应有的模样。当 Yilun Lab 询问游戏究竟发生在什么地方时，GDD 中的背景设定提供了新的第一句开场字幕（“London, 1994. A film is being shot in a rented basement theatre.”——“伦敦，1994 年。一部电影正在租来的地下室剧场里拍摄。”）。当天早上，Yilun Lab 已经通过由 Codex 驱动的浏览器在 Tripo Studio `H3.1` 中生成了四件舞台道具（鎏金台口、酒红色帷幔帘头、贝壳形脚光灯以及胶合板云朵；Yilia 也在她的分支上生成了 Meshy AI 版本，不过游戏最终保留了 Yilun Lab 的 Tripo 套件）；在 Yilia 提出上述意见后，团队又追加制作了 14 个布景陈设模型。其中 11 个陈设模型——包括四排剧场座椅、一张剪辑台、挂在顶杆上的八盏舞台灯、灯架、一把导演椅、一个戏服衣架、一个盖着防尘布的人体模型、六根铸铁柱、两个暖气片、两个电缆卷筒以及一架人字梯——由 Opus 子代理在 Blender 中完成减面，并被布置进一个由 273 个构件组成、观众席墙面贴有奶油色刷漆砖墙贴图的剧场外壳之中。在第 24 轮（Round 24）中，剧场外壳的帧率基准测试测得开启前后分别为 117.5 fps 与 117.4 fps，因此整个剧场外壳得以完整保留。
+我们把魔法棒的丝带拆成独立材质槽（`SM_MagicWand_02`），加上星芒辉光和星光拖尾，并把拖尾末端调校得干净利落地收尖。
 
-![A plan view of the basement theatre as built](../images/15-theatre-plan.jpg)
-*建成后的地下室剧场平面图。*
+![魔法棒星光拖尾做成收尖效果前后的对比](../images/08-wand-trail.jpg)
+*魔法棒星光拖尾做成收尖效果前后的对比。*
 
-15:55，Yilia 针对构建包 B12 发来了九条反馈，重塑了整个流程的后半段。纸盒不再等到终幕才退场，而是只要玩家一踏入广场，纸盒便会离开，手电筒随即化为魔法棒，并从顶端星星处投射出 Yilia 那张拍摄于 2021 年 10 月的蓝红光效照片（此前 Yilun Lab 决定仅在魔法棒上使用这张蓝红遮光片，并批准删除了带有署名行的清理版本）。每次完成显影后，城市塔楼如今会在三秒内由近及远依次升起，伴随一段由 ffmpeg 将粉红噪声与加速后的八音盒乐句合成的上升音效。而玩具旋转木马在最初未被光束触碰时呈纯白色，随后由柔和的粉彩（pastel）逐渐升温至全彩状态。开场胶片条与结局的新配乐则是从七首 ElevenLabs `eleven_music_v2_5` 候选曲目中挑选出来的：Yilia 选中了 Ending A，以过于繁复华丽为由否决了前两首开场曲，最终选定了 Intro E。
+小广场与终幕上方悬着由 200 颗星星组成的星幕，星星在光束靠近到 8 米内时苏醒，并错落闪烁。第 4 天一早，我们加入了“世界退场”时刻：当纸城与舞台景片移出视野后便将其隐藏，替换为街道边界、290 颗点亮的虚空星星，以及 260 个柔和虚化的背景光点。
 
-![The toy carousel white when first lit, then pastel, then full colour](../images/07-carousel-white-to-colour.jpg)
-*玩具旋转木马初被照亮时呈白色，随后转为柔和粉彩，最终绽放全彩。*
+![点亮旋转木马后回头望去：城市已经消失，只剩漫天繁星](../images/09-world-gone-stars.jpg)
+*点亮旋转木马后回头望去：城市已经消失，只剩漫天繁星。*
 
-在第 23 轮（Round 23）中，魔法棒获得了第二个网格体，其丝带拥有独立的材质槽，并配上了星芒耀斑与经过调校、能够干净收细的星光拖尾。
+为了让 1994 年 Soho 排练厅的气息一眼可辨，我们用 273 个构件搭起剧场外壳把舞台围合起来，配以奶油色涂漆砖墙（`T_HouseWall_BaseColor`）、11 个置景模型，以及由脚本（`Scripts/s2/ui_drafts.py`）生成的停拍通知与预算报表。
 
-![The wand's star trail before and after it was made to taper](../images/08-wand-trail.jpg)
-*魔法棒的星光拖尾在调整为渐细效果前后的对比。*
+![为布景制作的年代感道具：停拍通知与预算报表](../images/18-cancellation-notices.jpg)
+*为布景制作的年代感道具：停拍通知与预算报表。*
 
-在第 24 轮（Round 24）中，第一幕的纱幕壁画——此前已在 `gpt-6-astra` 上重新绘制，呈现出包含钟楼、穹顶大教堂、双塔大桥与烟囱的伦敦天际线——也经过了微调，使得画格显影之后，彩绘墙面会在显影出的孔洞周围保留一圈微弱的余晖。
+标题画面上，我们换掉了早期的纯文本排版，改为在纯黑虚空中用细线悬挂的纸板字母卡，由一束跟随鼠标指针移动的手电筒光束照亮。
 
-![Before and after of the painted gauze wall keeping a faint afterglow around the hole](../images/06-mural-afterglow.jpg)
-*修改前后对比：显影之后，彩绘纱墙在孔洞周围留有一圈淡淡的余晖。*
+![标题画面：初版纯文本排版与后来的悬挂字母卡菜单](../images/11-start-screen-before-after.jpg)
+*标题画面：初版纯文本排版（左）与后来的悬挂字母卡菜单（右）。*
 
-与此同时，巷子拐弯处那个额外场景的身份也彻底发生了改变。当天下午，团队原本在侧室里搭建了一个名为“Extra Number 47（47 号群演）”的场景，里面放着一个由 Opus 子代理通过 Blender 脚本从芭蕾舞女吊灯的玩偶上裁切下来的 20 cm 芭蕾舞者，并配有在 ElevenLabs 中录制的三句导演台词。Yilia 表示她很喜欢自己剧本第二幕里的弧形反光胶片（来自第一天 Tripo 批次生成的资产，已减面至 4,998 个三角面），于是在 20:00 左右，Yilun Lab 选择了方案 B（“B 就可以”）：保留侧室的外壳与开关，在原本芭蕾舞者站立的位置竖起那面弧形胶片，将其打造为一段名为“The Cut Door（被剪掉的门）”的新返场幕，录制了 Yilia 剧本中的三句台词，并让近距离保持的暖光将两束光锁合为一只承载着 Yilia 蓝红光效照片的“光之眼（eye of light）”。Yilia 批准了目标渲染图（“魔法棒上的蓝红光保留；光之眼的方向没问题”），但在第 24 轮（Round 24）打包期间，眼睛的材质编译失败，导致实际打出的包里变成了一团白斑。Programming-Lead 随即加固了 `package.sh`，使其在任何材质编译失败时直接报错终止；修复后的光之眼顺利通过了 Art-Director 在第 25 轮（Round 25）的检查；到了第四天，Tech-Art-Lead 又用 3 px 的高斯模糊柔化了它的贴图，并将虹膜居中对齐。
+针对第一人称视角，我们通过 Blender 脚本（`build_forearm_hands.py`）生成了 60 cm 长的奶油色小臂衣袖并更新了手部握姿，还在手电筒侧面与尾部加上了拇指拨轮（`SM_WarmthDial_02`），这样滚动滚轮时手腕保持不动，只转动拨轮。
 
-![The Cut Door encore showing the light eye before as a white blob and after the fix](../images/10-door-light-eye.jpg)
-*“The Cut Door”返场幕：修复前的光之眼（一团白斑）与修复后的效果。*
+![第一人称手臂与手电筒在盒子外与盒子内的修改前后对比](../images/13-arms-before-after.jpg)
+*第一人称手臂与手电筒在盒子外与盒子内的修改前后对比。*
 
-## 第四天（11 月 15 日）：世界消隐、悬挂字母，与最终打磨
+## 工程
 
-第三天深夜，Yilia 在她的 Demo check 笔记中标出了一个她称之为“致命缺陷”的问题：由于光照检测没有做遮挡判定，玩家还在巷子里时就能听到并触发旋转木马。此外，Art-Director 排查出终幕地板上有一条 49 cm 长的卷曲胶片条带有网格体碰撞，挡住了通往终幕的去路。Programming-Lead 移除了胶片条的碰撞体，并为广场上的旋转木马、星星、吊灯、月亮、云朵以及终幕触发器加上了前置条件，使它们只有在玩家手持魔法棒之后才会响应光线。
+我们的项目规范（`AGENTS.md` 第 9 条）最初划分由 C++ 负责系统与数学计算，蓝图负责流程、视觉与参数配置。实际开发中，我们把包括场景流程在内的几乎所有逻辑都推进了 C++ 和 Python 编辑器脚本，这样无需手动打开 `.uasset` 文件就能直接测试规则。每一条玩法规则都先写成不依赖 `UWorld` 的纯 `inline` 函数头文件，分布在 31 个 `*Math.h` 和 `*Rules.h` 头文件中（`GauzeMath`、`FramingMath`、`FilmMath`、`FilmScreenMath`、`LightToyMath`、`FirstPersonPoseMath`、`EndingRules`、`EyeRules`、`MenuRules`、`GuidanceRules`），默认调参数据则放在纯 `USTRUCT` 类型里（`FGauzeTuning`、`FFramingTuning`、`FFilmRailTuning`）。`ALightArtistCharacter` 挂载 `UFlashlightComponent`、`UGoboBoxComponent`、`UFilmPrinterComponent` 和 `UDailiesComponent`，而 C++ 导演类（`APrologueDirector`、`AActDirector`、`AFinaleDirector`）配合 `AUnlitGameMode`、`AUnlitPlayerController` 和 `AUnlitHUD` 驱动剧情。代码库里一个 `BlueprintImplementableEvent` 钩子都没有；蓝图只是由 `Scripts/editor/s2_act1/build_act1_blueprints.py` 生成的薄子类，仅用于绑定资产和数据表。
 
-Yilia 还提出，一旦旋转木马被点亮，身后的世界就应当随之消失。这一“世界消隐（world-gone）”时刻在第 25 轮（Round 25）中搭建完成，并在第 26 轮（Round 26）中默认启用：它会等待旋转木马的第一波光浪散开，在城市与舞台布景移出视线后将其隐藏，用一道边界封住街道（此前 **Programming-Lead-Remote** 修复了一个将该边界保存在世界原点处的 bug），并用 290 颗虚空星星与 260 个柔和背景光点填满整片黑暗。当 13 块房屋墙面景片在 26 米外仍会在魔法棒的光束下显出淡淡的矩形轮廓时，它们也在构建包 B20 中被一并隐藏。根据 Yilia 在 11 月 15 日 01:38 记录的针对 B15 的 Checkpoint 3 答复——当时她测得自己的通关时间为 4 至 5 分钟——结局演出从 15 秒缩短到了 13 秒（“13 秒就够了”），同时允许魔法棒再次驱动旋转木马旋转。
+通过 MCP（`execute_tool_script`）发送的 Python 脚本负责构建关卡和材质。`build_act1_level.py` 根据 `act1_city_layout.json` 及叠加 JSON 文件摆放 `L_Act1`，按标签匹配 Actor，因此重复运行时会就地移动已有 Actor，同时挂上 `Zone_<label>` 标签并连好 `framingZone` 等引用。运行时，各模块通过 `MPC_Flashlight` 共享着色器状态，并通过动态委托（`AFramingZone::OnPrinted` 绑定到 `AActDirector::HandleZonePrinted`、`UFilmReelSubsystem::OnPrintAdded`、`AFilmScreen::OnFinished`）传递玩法事件。由于规则头文件不依赖世界上下文，`Source/TheUnlitCut/Private/Tests/` 下的 279 个自动化测试可以直接在无头编辑器中运行（通过带 `-nullrhi` 的 `Scripts/run-tests.sh`，少数需要字体的测试则用 `UNLIT_TEST_RHI=offscreen`）。文本排版适配在打包后的游戏中检查：`Unlit.TextFit` 会用 Slate 的 `FSlateTextLayout` 测量每一条中英文剧情字符串，一旦出现溢出，agent 脚本就会报错失败。
 
-![Looking back after the carousel is lit to see the city gone and only stars remaining](../images/09-world-gone-stars.jpg)
-*点亮旋转木马后回望：城市已然隐去，唯余漫天繁星，手中握着魔法棒。*
+![架构图：C++ 组件与 Actor 底层的无世界依赖规则头文件](../images/34-diagram-architecture.jpg)
+*架构图：C++ 组件与 Actor 底层的无世界依赖规则头文件、驱动流程的 C++ 导演类、承载资产与参数的薄蓝图、构建关卡与材质的编辑器 Python 脚本，以及两条测试路径（无头自动化测试；打包游戏上的 AgentRun）。*
 
-用户界面与叙事框架也在并行收拢。第三天下午，Yilun Lab 将游戏内所有文案的润色与撰写工作委派给了 `agy`，由 Game-Designer 负责下发简报与审校：`agy` 为那些先调暖了手电筒却依然选择走出出口的玩家撰写了额外的顺从结局台词（“You found the warm light, then settled for the green one.”——“你找到了暖光，却还是妥协给了那盏绿光。”），在 Yilun Lab 试玩序幕后将提示重写为以祈使动词开头的句式，并为进度菜单提供了富于诗意的舞台名称。此前 Yilun Lab 将 EXIT 指示牌下方一扇紧闭的门扇解读为“出口被封死了”，并要求改成“走进去就变黑”，于是出口被改为一条敞开的纯黑通道；到了第四天早上，Yilun Lab 又让绿色的 EXIT 指示牌在导演开场台词说到最后一句“take the green exit（走那个绿色出口）”时，伴随灯管电流声闪烁两下（可通过开关控制）。游戏共有两个结局：如果在第一次显影前直接走出出口，会触发导演那句“Sensible choice...（明智的选择……）”以及一张 *Director's Cut* 标题卡；而走完整个流程，则会在终点迎来 *THE LIGHTING ARTIST'S CUT*。与此同时，**Programming-Lead-Remote** 移植了 Yilia 设计的定制菜单：纯黑虚空之上用细线悬挂的纸板字母卡、随鼠标指针移动的手电筒光束，以及用于达成圆满结局的帷幕——这些元素由 Yilia 机器上的 `image_gen.imagegen` 基于她用 GPT Image 反复迭代的一张参考图生成的六张图像构建而成。在一次检查发现由于字母卡 `I` 遮挡了 `L` 导致标题看起来像“UNIIT”之后，第 27 轮（Round 27）修正了绘制顺序，并将卡片阴影减半。
+从纱幕能看出着色器、碰撞和玩法怎样保持一致。每一帧，`UFlashlightComponent::TickComponent` 都会让光束暖度平滑过渡向滚轮目标值（每格滚轮 `0.10`），并调用 `Apply()` 更新聚光灯，同时把 `BeamOrigin`、`BeamDirection`、`BeamTanOuter`、`BeamOn`、`BeamWarmth`、`BeamColor`、`BeamIntensity`、`ReactiveAmount`、`BeamInBox` 和 `CityReveal` 写入 `MPC_Flashlight`。这些光锥参数来自 `GetLitCone()`；当手电筒处于遮光片盒内时，该光锥就是从盒子镂空正面射出、上限 60 度的 `LightToyMath::ProjectionCone`。
 
-![The start screen showing the first plain text layout and the later menu with hanging letter cards](../images/11-start-screen-before-after.jpg)
-*开始画面对比：最初的纯文本布局（左）与后来悬挂字母卡片的菜单（右）。*
+![一束光，三处读取：手电筒每帧将照明光锥与暖度写入 MPC_Flashlight](../images/32-diagram-flashlight-mpc.jpg)
+*一束光，三处读取：手电筒每帧将照明光锥与暖度写入 MPC_Flashlight；M_Gauze 的遮罩、纱幕碰撞与取景覆盖率全都共用同一个光锥。*
 
-11 月 15 日 12:00 左右，随着 Claude Fable 的周配额几近耗尽，Yilun Lab 将除 Tech-Art-Lead 之外的所有角色会话全部切换到了 Claude Opus 5.5，仅保留 Tech-Art-Lead 继续以高推理强度运行在 Claude Fable 5.2 上。几分钟后，在 12:17 至 12:21 之间，五张开场故事板画格——最初在第三天生成时是 35 mm 胶片画框内的铅笔线条与淡彩水彩风格，其中第 5 帧曾为还原真实的手电筒透视而重绘，第 2 帧也曾为了让导演的头部完整留在画面内而重绘——使用 `gpt-6-astra` 与 GPT Image 重新生成了一版色调更暗、采用 1.375:1 老电影画幅比例的画面，描绘出一间破败的伦敦地下室。
+`M_Gauze` 是开启了 `ditherOpacityMask = True` 的双面 `BLEND_Masked` 材质；阴影通道会遵循该遮罩，因此暖光能物理穿过纱幕上的洞。它的 Custom HLSL 节点（"S04"）测量每个像素沿光束方向的距离与横向偏移，计算破洞半径（`HoleRadiusScale = 0.9`，`MinHoleRadius = 75` cm），在外围 35% 区域（`EdgeSoftness = 0.35`）做 `smoothstep` 羽化，再用 `smoothstep(WarmthSolid, WarmthOpen, Warmth)` 在 `0.45` 到 `0.65` 之间缩放透光率（`add_print_hole.py` 则把这个实时光洞与冲印后留下的常驻破洞 `PHole * saturate(PrintOpen)` 合并）。在 `TG_PostUpdateWork` 阶段，`AGauzeScreen` 用同一套数学公式计算 `GauzeMath::IsPassable`，一旦透光率达到 `PassTransmission = 0.6` 就关闭阻挡碰撞。
 
-![One opening storyboard frame showing the first version and the darker old-film version](../images/12-intro-frame-old-and-dark.jpg)
-*由 GPT Image 生成的其中一帧开场故事板：初版（左）与更暗的老电影版本（右）。*
+![纱幕透光率与光束暖度的关系](../images/30-diagram-gauze-warmth.jpg)
+*纱幕透光率与光束暖度的关系：最终出货采用的 smoothstep(0.45, 0.65) 曲线（虚线为最初 0.85 的调参）、0.6 的可穿行阈值，以及围绕光束射线裁出的破洞。*
 
-## 工作是如何被检验的
+```hlsl
+// Scripts/editor/s1_gameplay/build_gauze.py, lines 12-18
+float3 V = WorldPos - Origin.xyz;
+float Along = max(dot(V, Dir.xyz), 0.0);
+float Across = length(V - Dir.xyz * Along);
+float Radius = max(Along * TanOuter * HoleRadiusScale, MinHoleRadius);
+float Hole = 1.0 - smoothstep(1.0 - EdgeSoftness, 1.0, Across / Radius);
+float Transmission = On * smoothstep(WarmthSolid, WarmthOpen, Warmth);
+return 1.0 - Hole * Transmission;
+```
 
-因为 AI 会话听不见声音，也无法感知实体鼠标的手感，所有的验证都依赖于自动化埋点检测、量化数值与缩略图检视表（contact sheets）。打包后的 Mac 版本由 `AgentRun` 脚本驱动，直接在 Slate 层注入虚拟输入，完全不触碰真实的鼠标、键盘或窗口焦点。Python 裁判脚本（`check_run.py`）负责核验 `#expect`、`#black`、`#differs`、`#log` 与 `#nolog` 断言，而各个 AI 会话则通过审阅检视表，测量黑色像素占比、不同距离下的取景器覆盖率、语音停顿时长以及帧率。无头自动化测试也从 S1 阶段的 10 项一路增长到了第四天早上的 263 项。
+每个 `AFramingZone` 都是一个 320 × 180 cm 的平面矩形。在 `BeginPlay` 时，`FramingMath::BuildSamples` 会在该矩形上布置 16 × 9 的网格中心点，共计 144 个世界空间采样点。每一帧，`FramingZone.cpp` 都会用手电筒的 `GetLitCone()` 检测每个采样点（`FramingMath::IsLit`，只检查射程与光锥角度，不做阴影或遮光片光线投射），再把照亮的点数除以 144。
 
-![A contact sheet from one automated run of the full course in the packaged game](../images/14-qa-course-sheet.jpg)
-*打包版本中一次完整流程自动化运行生成的缩略图检视表。*
+![320 × 180 cm 画框上的 144 个采样点与照明光锥的检测示意](../images/31-diagram-framing-coverage.jpg)
+*320 × 180 cm 画框上的 144 个采样点与照明光锥（示例光锥）的检测示意，以及保持计时器逻辑：覆盖率 ≥ 0.70 时计时累加，介于 0.50 与 0.70 之间时暂停，低于 0.50 时清零，满 3 s 触发冲印（图中的示例光锥与覆盖率曲线仅作示意）。*
 
-在 Mac mini M4 Pro 上，**QA-Build** 运行了完整的回归测试套件、崩溃长时间压力测试、盲测以及 Gatekeeper 下载检查，在冻结候选包 B19 上通过了 76 个脚本、全部 262 项单元测试（262/262），以及全部 10 次 Shipping 完整流程运行（10/10）。Windows 端的移植与构建则暴露出了平台相关的 bug：Tech-Art-Lead 发现最初的 Windows 烘焙（cook）仅针对 SM5，没有启用 Nanite 或虚拟阴影贴图（virtual shadow maps），直到将 D3D12 设为 SM6 才得以解决；Win-Build 遇到了三个 MSVC 变量遮蔽（shadow）与除零错误，这促使团队增加了推送前的 C++ 静态检查（lint）；Git Bash 下 `cp` 命令的一个怪异行为通过改用 `shutil.copytree` 得到了修复；此外 Win-Build 还发现第 24 轮（Round 24）的 Shipping 目标无法通过编译，这让团队确立了在每次推送前都必须先编译一次 Shipping 的规矩。在 B19 的通宵测试中，Windows 端以零警告构建了全部三个目标，通过了 262 项测试中的全部 262 项，并连续运行了 41 次 Shipping 完整流程而无一崩溃；在当天早上最新推送的提交上，它同样以零警告构建了全部三个目标，通过了全部 263 项测试（263/263），并生成了一份用于提交演练的 zip 压缩包。
+```cpp
+// Source/TheUnlitCut/Public/Framing/FramingMath.h, lines 172-184
+		const FVector ToPoint = Point - Beam.Origin;
+		const double Distance = ToPoint.Size();
+		if (Distance <= UE_KINDA_SMALL_NUMBER || Distance > Beam.Range)
+		{
+			return false;
+		}
+		const double Along = FVector::DotProduct(ToPoint, Beam.Direction);
+		if (Along <= 0.0)
+		{
+			return false;
+		}
+		const double CosCone = FMath::Cos(FMath::DegreesToRadians(static_cast<double>(Beam.OuterConeDegrees)));
+		return Along / Distance >= CosCone;
+```
 
-当这份日志在 11 月 15 日收笔时，它也如实记下了那些仍在等待人工检验的事项：没有任何一个 AI 会话能够听见声音，因此尽管 Yilun Lab 在游戏外试听了配音选角与音乐铺底，游戏内的音频电平与扬声器效果处理都是通过数值测量来设定、并通过游戏日志来验证的；鼠标视角转动是通过注入轴向数值来测试的；而且尽管 Windows 打包版本已经通过脚本跑完了 41 遍 Shipping 完整流程，但在 Windows 上亲手启动并试玩最终候选版本——连同录制实机预告片、审阅新版暗色开场画格与结局海报候选图——仍是接下来有待完成的工作。此时，Yilun Lab 已将周日的内容冻结时间推迟至 15:00，正朝着 18:30 的最终提交目标全力冲刺。
+`FramingMath::Advance` 驱动着 3.0 秒的保持计时器：覆盖率达到或超过 `HoldCoverage = 0.70` 时计时推进；介于 `0.50` 与 `0.70` 之间时暂停；低于 `ClearCoverage = 0.50` 时归零。如果允许计时内迟迟未完成冲印，所需覆盖率会在 60 秒后放宽到 `0.55`，120 秒后放宽到 `0.40`。冲印画面时，`UFilmPrinterComponent::PrintWithScene` 会用 `USceneCaptureComponent2D` 把玩家视角捕获到一张 1920 × 1080 的渲染目标上，并在同一帧内执行 `1 + WarmUpCaptures`（即同帧连续捕获三次），让时域效果稳定下来。`FilmMath::PrintStep` 把后续工作分摊到接下来的四帧里完成，最后把冲印相片发布给 `UFilmReelSubsystem` 和 `AFilmRail`。到了终幕，`AFilmScreen`（`FilmScreenMath::EvaluateStrip`）会在巨幅纱幕上把整盘胶卷作为移动胶片条播放出来：先是 1.5 s 片头引带，每张冲印画面做 0.8 s 缓动滑入并停留 4.0 s，最后拉出胶片并在 2.0 s 内消融。
+
+```cpp
+// Source/TheUnlitCut/Public/Film/FilmMath.h, lines 68-75
+	/** Frame 0 retains the scene exactly as printed. A light and its shadow box must arrive together. */
+	enum class EPrintStep : uint8 { Capture, KeptLightAndBox, RaysAndSound, PublishReel, PrepareNextPicture, Done };
+
+	inline EPrintStep PrintStep(uint64 FramesSincePrint)
+	{
+		return FramesSincePrint < static_cast<uint64>(EPrintStep::Done)
+			? static_cast<EPrintStep>(FramesSincePrint) : EPrintStep::Done;
+	}
+```
+
+为了在无人值守的情况下验证打包版本，`AgentRun` 插件会通过 `Scripts/run-agent.sh`（`-AgentRun -AgentScript=<name> -windowed`）回放 `Scripts/agent-runs/` 下的 90 个纯文本脚本。在游戏内部，`AgentRun` 会屏蔽物理输入，直接把虚拟鼠标指针与按键事件发给 Slate 控件处理器，因此后台跑测试时不会抢开发者的鼠标、键盘或窗口焦点。`Scripts/s1/check_run.py` 负责校验 `#log`、`#nolog`、`#logbetween`、`#expect`（比对 `Unlit.Dump` 状态）以及截图亮度规则（`#black`、`#bright`、`#differs`）。
+
+![自动化 agent 测试闭环](../images/33-diagram-agent-tests.jpg)
+*自动化 agent 测试闭环：从文本脚本与 run-agent.sh 到接收虚拟输入的打包游戏，产出日志行与截图，再通过匹配跨构建配置一致标签的 #log 或 #expect 规则完成校验（图中示例数字仅作示意）。*
+
+在 Development 构建中，`GetActorNameOrLabel()` 返回编辑器标签；而在 Shipping 构建中，`ACTOR_HAS_LABELS` 被关闭，该函数会返回内部对象名。为了让校验在不同构建配置下完全一致，`build_act1_level.py` 会在每个取景区域上烘焙一个可打包的 `Zone_<name>` 标签，由 `DescribeState()` 以 `zone=` 输出到日志。配合把 `UE_LOG` 行重定向到结果文件的 Shipping soak 变体包，同一套测试脚本可以同时验证 Development 包与 Shipping soak 包。
+
+```cpp
+// Source/TheUnlitCut/Private/Framing/FramingZone.cpp, lines 463-473
+	// frame= is the editor label in Development but the object name in Shipping (ACTOR_HAS_LABELS); zone= comes
+	// from the cooked Zone_<name> tag the level script gives every zone, the same in every configuration and
+	// through rebuilds, so checks match on zone=. The print line ("<name> printed: <state>") carries it too.
+	FString ZoneTagName(TEXT("none"));
+	for (const FName ZoneTag : Tags)
+	{
+		const FString TagText = ZoneTag.ToString();
+		if (TagText.StartsWith(TEXT("Zone_"))) { ZoneTagName = TagText.RightChop(5); break; }
+	}
+	return FString::Printf(TEXT("frame=%s zone=%s coverage=%.2f held=%.2f phase=%s hold=%.2f near=%d fade=%.2f burn=%.2f running=%d"),
+		*GetActorNameOrLabel(), *ZoneTagName, Coverage, State.HeldSeconds, *PhaseText, GetHoldCoverage(), bPawnNear ? 1 : 0, DisplayedFade, DisplayedBurn, State.Phase == EFramingPhase::Holding ? 1 : 0);
+```
+
+![打包游戏中单次全流程自动化跑测生成的截图样张](../images/14-qa-course-sheet.jpg)
+*打包游戏中单次全流程自动化跑测生成的截图样张。*
+
+## 我们怎么协作
+
+YILUN LAB 团队由两个人组成：一位创意负责人兼灯光师，以及一位引擎整合负责人。多个 AI 角色会话与我们并肩工作，彼此收发消息，并在 `Saved/Queue/*.md` 中追踪任务。PM-Producer 制定优先级并撰写 QA 与 Windows 任务简报；Game-Designer 编写设计规格书、台词表、关卡图纸、音频管线与开发日志；Art-Director 管理网格体、材质、场景布局与字体；Programming-Lead 负责 C++、编译、打包与代码提交。第 3 天 11:20 左右，我们把程序角色拆分为 Tech-Art-Lead（手臂、着色器、Lumen、近景补光）和新的 Programming-Lead（编辑器、打包、Shipping、Windows、自动化校验），同时在另一台 Mac mini M4 Pro 上接入了 QA-Build 与 Programming-Lead-Remote，在我们的 Windows PC 上接入了 Win-Build，另外还加入了 PM-Intern。第 3 天发生两个会话同时操作编辑器的冲突后，我们引入 `host-lock.sh`，把所有编辑器操作、编译和打包任务全部串行化。
+
+Claude Code 与 Claude Opus 子代理运行着各个角色会话，通过 Epic 的实验性 MCP 服务器驱动 Unreal Engine 5.8，编写了早期 C++ 系统，并写出了无头 Blender 与 Python 贴图生成脚本。Codex CLI 与 GPT Image 在 git worktree 中编写 C++ 功能与 UI 代码，并生成了纱幕壁画、五张开场分镜、砖墙贴图以及悬挂卡片菜单资产。Tripo Studio 与 Meshy AI 生成了 3D 网格体，实际进游戏的模型都在 Blender 中做了清理与减面。ElevenLabs 与 ffmpeg 制作了配音、音效与音乐，Antigravity CLI（`agy`）则润色了游戏内文案、操作提示、舞台区域名称与视频字幕。
+
+## 下一步
+
+正式提交前，我们还需要亲手启动并试玩最终的 Windows 候选包，评估游戏内的混音效果与鼠标视角手感，审阅调暗后的开场分镜，并按照 `TRAILER_SHOTLIST.md` 录制实机预告片。在 macOS 端，我们的签名脚本（`7be48a1`）和 `docs/submission/README_Mac.txt` 已就绪，只等付费 Apple Developer 证书到位即可完成公证。赛后更新计划中，我们已经排入了第一人称双手的上半身骨骼、序幕中只拿手电筒的手部形态、更完整的 EXIT 标志闪烁序列，以及尚未合并的焦散反光板预研分支（`origin/codex/reflector-light-2026-11-14`）。
+
+## 附录：四天一览
+
+- 11 月 12 日（第 1 天）：写完一页纸 GDD，整理好情绪板，生成 41 个道具网格体。
+- 11 月 12 日傍晚：Stage 1 灯光玩具在测试关卡跑通，通过 10 项无头测试。
+- 11 月 13 日（第 2 天）：做出中空光学盒，绘制纱幕壁画，搭建第一幕。
+- 11 月 13 日傍晚：接入配音与音乐，调低纱幕暖度阈值。
+- 11 月 13 日深夜：窗户光记忆、胶片条放映和 200 颗悬挂星星在黎明前落地。
+- 11 月 14 日（第 3 天）：加入 `host-lock.sh`，生成开场分镜，细化第一人称手臂。
+- 11 月 14 日深夜：用 273 个构件搭起剧场外壳围合舞台，整合标题菜单。
+- 11 月 15 日（第 4 天）：加入世界退场后的星空虚空，重绘开场分镜，通过 Shipping 检查。
