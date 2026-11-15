@@ -99,4 +99,11 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { projects };
+// Long-form devlog text, one plain Markdown file per language, kept free of
+// frontmatter so a revised file can be copied over it unchanged.
+const devlog = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/devlog" }),
+  schema: z.object({}),
+});
+
+export const collections = { projects, devlog };

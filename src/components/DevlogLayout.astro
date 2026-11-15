@@ -1,0 +1,83 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+
+// The Unlit Cut devlog: a standalone, unlisted long read. Like the Hug page it
+// has no studio navigation or footer; the byline is the team, YILUN LAB.
+interface Props {
+  /** Entry in the devlog collection, e.g. "the-unlit-cut/en". */
+  entryId: string;
+  lang: "en" | "zh-Hans";
+  description: string;
+  canonical: string;
+  /** Link to the other language. Only the Chinese page has one. */
+  languageLink?: { href: string; label: string; lang: string };
+}
+
+const { entryId, lang, description, canonical, languageLink } = Astro.props;
+
+const entry = await getEntry("devlog", entryId);
+if (!entry) throw new Error(`The devlog entry ${entryId} is missing.`);
+const { Content, headings } = await render(entry);
+
+const title = headings.find((heading) => heading.depth === 1)?.text;
+if (!title) throw new Error(`The devlog entry ${entryId} needs a "# " title.`);
+const sections = headings.filter((heading) => heading.depth === 2);
+
+const labels =
+  lang === "en"
+    ? { byline: "Devlog", contents: "Contents" }
+    : { byline: "开发日志", contents: "目录" };
+---
+
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage="/assets/images/projects/the-unlit-cut-devlog/cover.jpg"
+>
+  <div class="devlog">
+    <header
+      class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 pb-4 pt-6 sm:px-8 md:pt-10"
+    >
+      <p class="font-body text-xs uppercase tracking-[0.32em] text-white/70">
+        <span class="text-amber-highlight">YILUN LAB</span>
+        <span aria-hidden="true"> · </span>
+        <span class="devlog-byline">{labels.byline}</span>
+      </p>
+      {
+        languageLink && (
+          <a
+            href={languageLink.href}
+            hreflang={languageLink.lang}
+            lang={languageLink.lang}
+            class="rounded-full border border-white/25 px-4 py-2 font-body text-xs tracking-[0.12em] text-white/85 transition-colors hover:border-white/60 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-200"
+          >
+            {languageLink.label}
+          </a>
+        )
+      }
+    </header>
+
+    <main class="devlog-grid mx-auto max-w-6xl px-4 pb-24 sm:px-8">
+      {
+        sections.length > 0 && (
+          <nav class="devlog-toc" aria-labelledby="devlog-toc-heading">
+            <h2 id="devlog-toc-heading">{labels.contents}</h2>
+            <ol>
+              {sections.map((section) => (
+                <li>
+                  <a href={`#${section.slug}`}>{section.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+      <article class="devlog-prose">
+        <Content />
+      </article>
+    </main>
+  </div>
+</BaseLayout>

@@ -1,0 +1,16 @@
+---
+import DevlogLayout from "@components/DevlogLayout.astro";
+
+// Chinese mirror of /projects/the-unlit-cut-devlog. Also unlisted and out of
+// the sitemap; it links back to the English page, which does not link here.
+// The text is src/content/devlog/the-unlit-cut/zh.md.
+export const prerender = true;
+---
+
+<DevlogLayout
+  entryId="the-unlit-cut/zh"
+  lang="zh-Hans"
+  canonical="/projects/the-unlit-cut-devlog/zh"
+  description="YILUN LAB 用四天为 2026 Epic AI MegaJam 制作第一人称光影沙盒游戏《The Unlit Cut》的开发日志。"
+  languageLink={{ href: "/projects/the-unlit-cut-devlog", label: "English", lang: "en" }}
+/>

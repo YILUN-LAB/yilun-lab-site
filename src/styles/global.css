@@ -679,3 +679,208 @@ lite-youtube {
     }
   }
 }
+
+/* ====== The Unlit Cut devlog (/projects/the-unlit-cut-devlog) ======
+   A long read rendered from Markdown, so the article is styled by element.
+   The table of contents sits above the text on narrow screens and beside it
+   from 1024px. The Chinese page uses the system sans-serif throughout. */
+.devlog {
+  --devlog-text: rgb(255 248 236 / 86%);
+  --devlog-muted: rgb(255 248 236 / 60%);
+  --devlog-rule: rgb(255 248 236 / 14%);
+}
+
+.devlog:lang(zh) {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC",
+    "Microsoft YaHei", sans-serif;
+}
+
+.devlog-grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .devlog-grid {
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: 4rem;
+    align-items: start;
+  }
+}
+
+.devlog-toc {
+  border: 1px solid var(--devlog-rule);
+  border-radius: 1rem;
+  padding: 1.25rem 1.25rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 1024px) {
+  .devlog-toc {
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    border: 0;
+    border-left: 1px solid var(--devlog-rule);
+    border-radius: 0;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+  }
+}
+
+.devlog-toc h2 {
+  margin-bottom: 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--devlog-muted);
+}
+
+.devlog-toc ol {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.devlog-toc a {
+  color: var(--devlog-text);
+  text-decoration: none;
+}
+
+.devlog-toc a:hover,
+.devlog-toc a:focus-visible {
+  color: rgb(var(--amber-1));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.devlog-prose {
+  max-width: 44rem;
+  min-width: 0;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--devlog-text);
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+  .devlog-prose {
+    font-size: 1.125rem;
+  }
+}
+
+.devlog-prose > * + * {
+  margin-top: 1.25em;
+}
+
+.devlog-prose h1 {
+  font-family: "Instrument Serif", serif;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 1.02;
+  color: #fff;
+}
+
+.devlog-prose h1 + p {
+  font-size: 1.15em;
+  color: rgb(255 248 236 / 92%);
+}
+
+.devlog-prose h2 {
+  margin-top: 2.6em;
+  padding-top: 1.4em;
+  border-top: 1px solid var(--devlog-rule);
+  font-family: "Instrument Serif", serif;
+  font-size: clamp(1.75rem, 4vw, 2.4rem);
+  line-height: 1.12;
+  color: #fff;
+  scroll-margin-top: 1.5rem;
+}
+
+.devlog:lang(zh) .devlog-prose :is(h1, h2) {
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+.devlog:lang(zh) .devlog-prose h1 {
+  font-size: clamp(2rem, 5.5vw, 3.25rem);
+  line-height: 1.2;
+}
+
+.devlog:lang(zh) .devlog-prose h2 {
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  line-height: 1.35;
+}
+
+.devlog-prose h3 {
+  margin-top: 2em;
+  font-weight: 600;
+  font-size: 1.15em;
+  color: #fff;
+}
+
+.devlog-prose strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+.devlog-prose a {
+  color: rgb(var(--amber-1));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.devlog-prose :is(ul, ol) {
+  padding-left: 1.4em;
+}
+
+.devlog-prose ul {
+  list-style: disc;
+}
+
+.devlog-prose ol {
+  list-style: decimal;
+}
+
+.devlog-prose li + li {
+  margin-top: 0.5em;
+}
+
+.devlog-prose li::marker {
+  color: var(--devlog-muted);
+}
+
+.devlog-prose code {
+  border-radius: 0.3em;
+  background: rgb(255 248 236 / 8%);
+  padding: 0.1em 0.35em;
+  font-size: 0.85em;
+}
+
+.devlog-prose blockquote {
+  border-left: 2px solid rgba(var(--amber-2), 0.6);
+  padding-left: 1.1em;
+  color: var(--devlog-muted);
+}
+
+.devlog-prose figure {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+.devlog-prose figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  background: rgb(255 248 236 / 5%);
+}
+
+.devlog-prose figcaption {
+  margin-top: 0.75em;
+  font-size: 0.85em;
+  line-height: 1.55;
+  color: var(--devlog-muted);
+}
