@@ -19,9 +19,14 @@ the site and copied in unchanged (Prettier ignores the folder):
 | `/projects/the-unlit-cut-devlog`    | `src/content/devlog/the-unlit-cut/en.md` |
 | `/projects/the-unlit-cut-devlog/zh` | `src/content/devlog/the-unlit-cut/zh.md` |
 
-To publish a revision, copy the new file over the old one. The `#` heading
-becomes the page title, and each `##` heading becomes an entry in the table of
-contents. `zh.md` is a placeholder until the Chinese text is ready.
+The source of truth is the private `YILUN-LAB/the-unlit-cut-devlog` repository.
+To publish a revision, copy `en/STORY.md` unchanged to
+`src/content/devlog/the-unlit-cut/en.md` and `zh/STORY.md` unchanged to
+`src/content/devlog/the-unlit-cut/zh.md`. Do not edit, translate, or reformat
+either text in this repository. Verify that each destination is byte-for-byte
+identical to its source before publishing. Both languages contain the full text.
+The `#` heading becomes the page title, and each `##` heading becomes an entry
+in the table of contents.
 
 Images are linked as `![alt](../images/NN-name.jpg)` with an italic caption on
 the next line. `src/lib/remark-devlog-figures.ts` (registered in
