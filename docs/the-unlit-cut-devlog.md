@@ -28,6 +28,12 @@ identical to its source before publishing. Both languages contain the full text.
 The `#` heading becomes the page title, and each `##` heading becomes an entry
 in the table of contents.
 
+The current import is source commit `2540c707b76b87671ddb8a3f70529117fd6c02fa`
+(second illustrated version, authored by Yilun Lab). Both languages contain
+27 figures and four fenced code blocks. The original 15 images are unchanged;
+12 new WebPs were added. Astro's code blocks retain their own horizontal scroll
+and keyboard focus at mobile widths, without widening the page.
+
 Images are linked as `![alt](../images/NN-name.jpg)` with an italic caption on
 the next line. `src/lib/remark-devlog-figures.ts` (registered in
 `astro.config.mjs`) points each link at `NN-name.webp` in the image folder,
