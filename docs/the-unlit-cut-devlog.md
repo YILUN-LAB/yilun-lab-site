@@ -28,8 +28,8 @@ identical to its source before publishing. Both languages contain the full text.
 The `#` heading becomes the page title, and each `##` heading becomes an entry
 in the table of contents.
 
-The current import is source commit `d9cef8a8fab3a206136de328a498be081db6f780`
-(third illustrated version, authored by Yilun Lab). Both languages contain
+The current import is source commit `c2ab47e1a3fcc41872b399751a08fafd631ec9af`
+(final illustrated text for the submitted v1.0.4 build). Both languages contain
 32 figures and no fenced code blocks. The image directory retains all 33 WebPs,
 including the city-sweep comparison that is no longer referenced by the text.
 
@@ -64,4 +64,7 @@ figures with native image buttons and reuses `PhotoLightbox.tsx` for the enlarge
 uncropped images, captions, arrow/swipe navigation and modal focus/scroll cleanup.
 The images and captions remain visible with JavaScript disabled. Unmounting the
 island restores the original figure markup. Viewer controls follow the article
-language; the Chinese-to-English link remains asymmetric.
+language from `document.documentElement.lang`; English uses the shared viewer labels.
+The preview and full-size sources both use each inline image's current source.
+Pointer activation focuses the image button so closing returns to that image in
+browsers that do not focus buttons on click. The Chinese-to-English link remains asymmetric.
