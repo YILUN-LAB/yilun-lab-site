@@ -162,6 +162,9 @@ page links to the other language. Each language's text is one Markdown file in
 `src/content/devlog/the-unlit-cut/` (`en.md`, `zh.md`), copied in unchanged and
 rendered by `DevlogLayout.astro`; `src/lib/remark-devlog-figures.ts` maps its
 `../images/*.jpg` links to WebPs in `public/assets/images/projects/the-unlit-cut-devlog/`.
+`DevlogLightbox.tsx` enhances those static figures on idle, reusing the shared
+`PhotoLightbox` with optional captions. Preserve its keyboard/swipe navigation,
+modal focus/scroll cleanup and the inline-image fallback without JavaScript.
 See `docs/the-unlit-cut-devlog.md`.
 
 ### Ashlar layout engine

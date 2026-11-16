@@ -1,230 +1,191 @@
 # 《The Unlit Cut》：图文开发日志
 
-*The Unlit Cut* 是 YILUN LAB 团队在 2026 Epic AI MegaJam 四天开发期内，用 Unreal Engine 5.8 制作的第一人称光影沙盒游戏。你一手拿着手电筒，一手托着剪纸遮光片盒（gobo box），走上电影停拍后黑暗废弃的布景舞台。通过调暖或调冷光束、把灯推进盒子里，你可以打开彩绘舞台纱幕、投出纸城天际线，冲印出自己的画面。
+《The Unlit Cut》是 YILUN LAB 团队在 2026 Epic AI MegaJam 四天比赛期间，用 Unreal Engine 5.8 做的第一人称灯光沙盒游戏。你手里拿着一支手电筒和一个剪纸遮光片盒（gobo box），走进一部停拍电影留下的漆黑废弃片场。调暖或调冷光束、把手电筒推进盒子里，你就能打开彩绘舞台纱幕、投出纸城天际线，冲印出属于自己的胶片画面。
 
 ## 灵感
 
-我们的创意负责人本身是职业灯光艺术家与设计师，因此项目始于一个问题：只用反射、透射、舞台纱幕、一把手电筒和几种反光材质，真正从灯光手艺出发能做出什么样的游戏？11 月 11 日 23:00 比赛公布主题 *Director's Cut*（导演剪辑版）时，我们把它看作一个关于话语权的问题。电影里，导演的剪刀决定什么值得被看见；在我们的游戏里，玩家扮演灯光师，重返黑暗舞台，照亮那些被剪掉的角落。每一幅布好光的构图都会冲印成一格胶片，终幕放映的那盘胶卷就是你自己的 *Lighting Artist's Cut*（灯光师剪辑版）。
+我们的创意负责人本职做灯光美术与灯光设计，项目从一开始就围绕一个问题展开：用反射、透射、舞台纱幕、手电筒和几种反光材质这些真实的灯光手法，能长出什么样的游戏？11 月 11 日 23:00 比赛开题，主题是 *Director's Cut*（导演剪辑版），我们把它读成了一个关于话语权的问题。电影里由导演的剪刀决定什么值得被看见；在我们的游戏里，玩家扮演灯光师，走回漆黑的舞台，重新照亮那些被剪掉的角落。每一幅打亮的构图都会冲印成一格胶片，片尾放映的那盘胶卷就是你自己的 *Lighting Artist's Cut*（灯光师剪辑版）。
 
-![用 GPT Image 生成的一张开场分镜：初版与更暗的老电影版本](../images/12-intro-frame-old-and-dark.jpg)
-*用 GPT Image 生成的一张开场分镜：初版（左）与更暗的老电影版本（右）。*
+![早期概念草图：灯光师站在漆黑舞台上，光束穿过剪纸盒打开纱幕](../images/35-inspiration-sketch.jpg)
+*基于情绪板用 GPT Image 生成的概念草图：光束穿过剪纸盒，暖光落处纱幕打开。*
 
-我们把故事定在 1994 年 11 月的伦敦 Soho 区，地点是一座维多利亚老仓库改建的地下黑匣子排练厅，时间正是剧组停拍当晚。开场用五张分镜介绍这座排练厅。我们在第 3 天生成了这五张 35 mm 画框内的铅笔淡彩分镜，又在第 4 天重绘成色调更暗的 1.375:1 老电影画幅。游戏只有两个角色：导演 Julian Vance，以及玩家扮演的灯光师。
+![用 GPT Image 生成的一格开场故事板画面：初版与色调更暗的老电影版](../images/12-intro-frame-old-and-dark.jpg)
+*用 GPT Image 生成的一格开场故事板画面：初版（左）与色调更暗的老电影版（右）。*
 
-![地下剧场实际搭建的平面图](../images/15-theatre-plan.jpg)
-*地下剧场实际搭建的平面图。*
+我们把故事定在 1994 年 11 月的伦敦 Soho 区，地点是一座维多利亚老仓库改建的地下黑匣子排练厅，时间正是电影停拍当晚。开场用五格故事板画面介绍这座排练厅。我们在第 3 天把这五格画面做成带 35 mm 胶片边框的铅笔线稿加淡彩风格，第 4 天又按更暗的 1.375:1 老电影画幅重绘了一遍。片场里的道具在任何台词响起之前就把背景交代清楚：一张停拍通告，还有一份预算表。全片只有两个角色：导演 Julian Vance，以及玩家扮演的灯光师。
 
-我们在 11 月 12 日 00:45 写完一页纸 GDD，00:57 至 11:20 整理好情绪板，20:15 起草剧情文案，并陆续写出完整 GDD 1.0 至 1.6 版。我们按八条设计原则做取舍：*光即主角*、*暖意落在角落*、*重沉浸，轻解谜*、*结局要打动人*、*必须好玩像个游戏*、*年代与地点一眼可辨*、*灯光师绝非捡破烂的人*，以及*道具不能旧过头*。
+![为片场制作的年代道具：停拍通告与预算表](../images/18-cancellation-notices.jpg)
+*为片场制作的年代道具：停拍通告与预算表。*
+
+我们在 11 月 12 日 00:45 写完一页纸 GDD，00:57 到 11:20 拼好情绪板，20:15 起草剧情文案，并陆续写出完整版 GDD 1.0 到 1.6。八条明确命名的设计原则指导了我们的取舍：*光是主角*、*温暖落在角落*、*重沉浸而不做硬解谜*、*结局要打动人*、*首先得好玩*、*时代与地点要一眼看懂*、*灯光师绝非捡破烂的人*，以及*道具不能旧过头*。
 
 ## 设计
 
-三个空间点子把这套灯光玩具变成了可玩的游戏：色温改变物理空间，投影化为真实空间，转场直接在剧场内完成、全程不黑屏。游戏没有硬核解谜、失败判定、计时器或战斗；除第一人称双手这一处例外，人物全都只以剪影和影子出现。
+三个空间设计把我们的灯光玩具变成了可玩的游戏：色温改变物理空间、投影变成真实空间、转场直接在剧场里完成且不切黑屏。游戏没有硬核解谜、失败判定、倒计时或战斗，人物只以剪影和影子出现，唯一的例外是第一人称的双手。
 
-![The Unlit Cut 单局完整流程图](../images/22-diagram-play-flow.jpg)
-*单局完整流程图：标题画面、开场、序幕、第一幕（纱幕墙、小巷）、可选加演、小广场、终幕，以及在首次冲印前直接离开触发的顺从结局。*
+![《The Unlit Cut》单局完整流程图](../images/22-diagram-play-flow.jpg)
+*单局流程图：开始界面、开场、序幕、第 1 幕（纱幕墙、小巷）、可选加演、小广场、终幕，以及在第一次冲印前直接离开触发的顺从结局。*
 
-11 月 12 日晚上的首个原型在一个单间里验证了核心构想。11 月 13 日试玩这个 Stage 1 版本后，我们敲定了*“投影成真”*这条规则，向 *Gorogoa* 致敬，并要求手电筒推进盒子后投出的画面必须铺满正前方的整面墙。
+11 月 12 日晚上的第一个原型在单个房间里验证了核心构想。11 月 13 日试玩 Stage 1 版本时，我们敲定了*“投影成真”*这条规则，向《Gorogoa》致敬，并要求把手电筒推进盒子后投出的画面必须铺满正前方的整面墙。
 
-![早期原型画面：黑暗舞台上投出的纸城图案，前景是手电筒和遮光片盒](../images/01-first-paper-city.jpg)
-*早期原型画面：黑暗舞台上投出的纸城图案，前景是手电筒和遮光片盒。*
+![早期原型画面：漆黑舞台上投出纸城图案，前景是手电筒与盒子](../images/01-first-paper-city.jpg)
+*早期原型画面：漆黑舞台上投出纸城图案，前景是手电筒与盒子。*
 
-冷光照射下，舞台纱幕是一道实体屏障。滚动鼠标滚轮调暖手电筒色温后，暖光落点处的纱幕会变透明，玩家可以直接穿过去。第 2 天跑完两轮自动化盲测后，我们把全局暖度阈值从 0.85 调低到 0.65，并在序幕纱幕下方加了一抹暖金色微光。
+在冷光照射下，舞台纱幕是一道实体屏障。滚动鼠标滚轮调暖手电筒光束，暖光落处的纱幕就会变透明，玩家可以直接穿过去。第 2 天跑完两轮自动化盲测后，我们把所有位置的暖度阈值从 0.85 调低到 0.65，并在序幕纱幕下方加了一抹暖金色微光。
 
-![暖光打开纱幕与冷光被纱幕挡住](../images/02-gauze-warm-cold.jpg)
-*暖光打开纱幕（左）与冷光被纱幕挡住（右）。*
+![色温测试：同一处舞台在手电筒冷光端与暖光端下的效果](../images/02-gauze-warm-cold.jpg)
+*色温测试：同一处舞台在手电筒冷光端（左）与暖光端（右）下的效果。*
 
-序幕开始时，你站在黑暗的舞台上，Julian Vance 的声音叮嘱你别碰手电筒，直接从绿色 EXIT 离开。如果你顺从导演，在冲印第一格画面前走入 EXIT 标志下方敞开的黑色通道达 120 cm，本局就会以一句 *"Sensible choice..."*（“明智的选择……”）和一张 *Director's Cut* 字幕卡结束。一旦你完成首次冲印，出口便会关闭；走完全程后，终幕会放映你冲印的所有画面，最后停在 *THE LIGHTING ARTIST'S CUT* 字幕上。
+![暖光在纱幕上打开圆洞，露出后方舞台](../images/23-gauze-pass-through.jpg)
+*暖光在纱幕上打开圆洞，露出后方舞台，玩家可以直接走进去。*
 
-![序幕早期画面：手持电筒与遮光片盒站在黑暗舞台上，屏幕下方显示旁白字幕](../images/03-prologue-first-look.jpg)
-*序幕早期画面：手持电筒与遮光片盒站在黑暗舞台上，屏幕下方显示旁白字幕。*
+序幕开始时，你站在漆黑的舞台上，Julian Vance 的声音叮嘱你别碰手电筒，直接从绿色的 EXIT 出口离开。如果你在冲印第一格画面前听从导演的话，走进 EXIT 标志下方敞开的黑色通道达 120 cm，本局就会伴随一句 *"Sensible choice..."*（明智的选择……）结束，并亮出 *Director's Cut* 标题卡。一旦完成第一次冲印，出口就会关闭；走完全程后，终幕会放映你冲印的所有胶片，最后定格在 *THE LIGHTING ARTIST'S CUT*（灯光师剪辑版）。
 
-穿过序幕纱幕就进入第一幕 *London Skyline*（伦敦天际线）。按下鼠标左键，右手的手电筒会滑入镂空窗户图案的遮光片盒（gobo box），把天际线投影打在彩绘纱幕墙上，导演留下的红色取景框正悬在半空。用暖光填满取景框并保持 3 秒，相机闪光灯亮起，当前构图冲印为 第 1 格（Frame 1），纱幕墙随即消融，平面投影在 3 秒内由近及远升起，变成一条三维纸艺小巷。远端纱幕处的第二个取景框会冲印出 第 2 格（Frame 2），并打开通往小广场的路。
+![序幕早期画面：手持手电筒与盒子站在漆黑舞台上，屏幕下方显示旁白字幕](../images/03-prologue-first-look.jpg)
+*序幕早期画面：手持手电筒与盒子站在漆黑舞台上，屏幕下方显示旁白字幕。*
 
-![第一幕自动化检查生成的缩略图样张，包含画面冲印瞬间与 SCRAPPED 印章](../images/04-act1-print-sheet.jpg)
-*第一幕自动化检查生成的缩略图样张，包含画面冲印瞬间与 SCRAPPED（废弃）印章。*
+穿过序幕纱幕就进入第 1 幕 *London Skyline*（伦敦天际线）。按下鼠标左键，右手的手电筒会滑入刻有窗格镂空的遮光片盒（gobo box），把天际线投影打在彩绘纱幕墙上，导演留下的红色取景框就悬在半空。当你用暖光填满取景框并保持 3 秒，相机闪光灯亮起，当前构图冲印为第 1 格（Frame 1），纱幕墙随之消融，原本平面的投影会在 3 秒内由近及远升起，变成一条三维纸板小巷。小巷尽头远端纱幕上的第二个取景框会冲印出第 2 格（Frame 2），打开通往小广场的路。
 
-第 2 天的版本里，纸城小巷还是一条笔直通道。第 3 天我们重做了街道布局，让小巷拐了个弯，尽头用拱门立面封住，并在转角处藏进一间侧室，作为可选的加演关卡。
+![第 1 幕自动化检查生成的缩略图联系表，包含画面冲印瞬间与 SCRAPPED 印章](../images/04-act1-print-sheet.jpg)
+*第 1 幕自动化检查生成的缩略图联系表，包含画面冲印瞬间与 SCRAPPED 印章。*
 
-![小巷弯道与加演侧室的平面设计图](../images/21-bend-plan.jpg)
-*小巷弯道与加演侧室的平面设计图。*
+在第 2 天的版本里，纸城小巷还是一条笔直向前的通道。到了第 3 天，我们重塑了街道布局，加了一处由拱门立面收尾的转弯，并在拐角藏进一间侧室，用来放可选的加演。
 
-第 3 天我们为这间侧室做了两个版本。下午做的是 *"Extra Number 47"*（47 号群演），在粉笔标记处放了一尊 20 cm 高的芭蕾人偶。当晚我们把剧情剧本第二幕里的弧形反光膜改造成名为 *"The Cut Door"*（被剪掉的门）的可选加演。把暖光凑近 30 cm 的弧形反光膜，两道弧光会弯曲收拢，在门框取景框内扣合成一只“光之眼”。第 24 轮打包时，光之眼材质编译失败，打出来的包里变成一团白块；我们修复了着色器，并把 `package.sh` 改成只要有任何材质编译失败就直接报错退出。
+![小巷转弯处与加演侧室的平面设计图](../images/21-bend-plan.jpg)
+*小巷转弯处与加演侧室的平面设计图。*
 
-![The Cut Door 加演关卡：修复前后的光之眼](../images/10-door-light-eye.jpg)
-*"The Cut Door" 加演关卡：修复前（一团白块）与修复后的光之眼。*
+![游戏内的小巷转弯处与侧室实景](../images/24-side-room-in-game.jpg)
+*游戏里的对应位置：小巷转弯处（左）与侧室，芭蕾人偶的影子正好落在背景板的取景框里（右）。*
 
-在 ElevenLabs（`eleven_v4`）试听五版声线后，我们为 Julian Vance 选定了 *"British Theatrical"*（英式戏剧腔）声线，配上停顿、呼吸、叹气、提高音量和耳语等表演标签，并搭配两轨随色温交叉淡入淡出的背景音乐（`eleven_music_v2_5`）。试玩调整时，我们删掉了第四句台词里的 *"Scene Four."*（“第四场。”），并重录了第一句台词，把剪辑台统一说成 *"the editing table"*，避免出现任何品牌名称。
+第 3 天我们为这间侧室做了两个版本。下午做的是 *"Extra Number 47"*（47 号群演），把一个 20 cm 高的芭蕾人偶摆在粉笔标记上。当晚我们又把剧本第 2 幕里的弧形反光膜改成了名为 *"The Cut Door"*（被剪掉的门）的可选加演。把暖光凑近 30 cm 的弧形反光膜，两道弧光就会弯曲合拢，在门框取景框里扣成一只“光之眼”。在第 24 轮打包时，光之眼的材质编译失败，打出来的包里变成了一团白斑，我们随即修好着色器，并让 `package.sh` 在任何材质编译失败时直接报错退出。
+
+![The Cut Door 加演：修复前后的光之眼](../images/10-door-light-eye.jpg)
+*"The Cut Door" 加演：修复前（一团白斑）与修复后的光之眼。*
+
+在 ElevenLabs（`eleven_v4`）里试听了五轮后，我们给 Julian Vance 选定了 *"British Theatrical"*（英式戏剧腔）声线，配上停顿、呼吸、叹气、提高音量和低语等表演标签，并搭配两段随色温交叉淡入淡出的音乐铺底（`eleven_music_v2_5`）。试玩期间，我们删掉了第四句台词里的 *"Scene Four."*（第四场。），还重录了第一句台词，改成 *"the editing table"*（剪辑台），避免出现任何品牌名。
+
+最后一个下午，我们按试玩结果调了整条流程（以最终提交的版本为准）。开场第五格改用第二人称对玩家说话，导演的字幕也加上了 DIRECTOR: 开头。导演说到 *"take the green exit"* 时，绿色 EXIT 牌会闪两下，伴一声灯管的嗡响；听话走出去的结局配上了 1930 年代的留声机狐步舞。滚轮每格的升温量翻了一倍，大约七格就能化开序幕纱幕。快速转视角时，不会再露出左臂的切面。提示先看你所在的区域，再看主线，还会引导你点亮木马、抬头看星空。熄灯之后抬头看星空，导演会回一句赞叹。终幕放映要站到大纱幕前面才开始；台词里的 *"Scene Twelve."* 也删掉了。
 
 ## 美术
 
-我们的一句话美术方向是*“黑匣子光绘”*：在全黑的小剧场里，用真实灯光在纸板模型上作画，所有色彩都来自玩家手中的光。第 1 天的情绪板上，我们选定了方向 B *"Bling Bling"*：纯黑背景、奶油色道具、珍珠虹彩，以及光束落点处稀疏的星点闪烁。道具设定板上，3D 模型采用旧奶油色与暖灰表面，带有轻微磨损和纸胶带修补痕迹。
+我们的一句话美术方向是*“黑匣子光绘”*：在全黑的小剧场里，用真实灯光在纸板模型上作画，所有色彩都来自玩家手里的光。第 1 天做情绪板时，我们选定了方向 B *"Bling Bling"*：纯黑背景、奶油色道具、珍珠虹彩，以及光束落处稀疏闪烁的星点。在道具设定板上，我们给 3D 模型定下了旧奶油色与暖灰表面，配一点轻微磨损和纸胶带修补痕迹。
 
-![由脚本绘制的遮光片盒镂空图案方案](../images/16-box-pattern-options.jpg)
-*由脚本绘制的遮光片盒镂空图案方案。*
+![方向 B 情绪板画面与后期打包版本中同一时刻的对比](../images/26-direction-b-vs-package.jpg)
+*我们一直拿各个版本与方向 B 概念图做对比：序幕、纸城与终幕放映，左边是情绪板，右边是游戏实机。*
 
-早在第 1 天，Python 与 Blender 脚本（`Scripts/s1/gobo_depth.py` 和 `gobo_textures.py`）就通过光线投射，从盒子模型的凹槽生成了窗户遮光片遮罩。第 2 天我们用脚本（`Scripts/s2/box_patterns.py`）绘制了多版镂空图案方案，并做出能投射原生阴影的中空光学盒。
+![由脚本绘制的盒子镂空图案方案](../images/16-box-pattern-options.jpg)
+*由脚本绘制的盒子镂空图案方案。*
 
-![从盒子模型凹槽光线投射生成的窗户遮光片遮罩，从锐利到柔和](../images/17-window-gobo-masks.jpg)
-*从盒子模型凹槽光线投射生成的窗户遮光片遮罩，从锐利到柔和。*
+早在第 1 天，我们就用 Python 和 Blender 脚本从盒子模型的凹槽里做光线投射，生成了窗格遮光片遮罩。第 2 天我们用脚本画出多版镂空图案方案，并做出了能直接投出原生阴影的中空光学盒。
 
-第 2 天的早期试玩暴露出两个视觉问题：冷光偏蓝过重，同时 Package B03 显得陈旧灰平。我们把色温两端修正为冷光 5000 K、暖光 3000 K。纸城内部，摩天楼的窗户带有光记忆效果：只有手电筒光束扫过的地方才会亮起，点亮时微微闪烁，光束移开后极其缓慢地暗下去。
+![从盒子模型凹槽光线投射生成的窗格遮光片遮罩，从锐利到柔和](../images/17-window-gobo-masks.jpg)
+*从盒子模型凹槽光线投射生成的窗格遮光片遮罩，从锐利到柔和。*
 
-![纸城窗户光效的三张截图](../images/05-city-windows.jpg)
-*纸城窗户光效的三张截图：刚冲印完成、约 30 秒后，以及遮光片盒光束重新照回中央。*
+第 2 天的早期试玩抓出了两个视觉问题：冷光偏蓝过头，而且 Package B03 整体显得陈旧灰暗。我们把色温范围修正为冷端 5000 K、暖端 3000 K。纸城内部的高楼窗户带有光记忆效果：只有手电筒光束扫过的地方才会亮起，点亮时微微闪烁，光束移开后才极其缓慢地暗下去。
 
-第一幕的纱幕墙上，初版城市投影照片感太强，于是我们用 GPT Image 经过三轮迭代生成了风格化手绘壁画，并在第 3 天把它的剪影重绘成伦敦天际线。玩家冲印出第一格画面后，彩绘纱幕墙会在敞开的破洞边缘留下一圈微弱余晖。
+![暖光照射下的纸城内部：光束落处的窗户逐一点亮](../images/05-city-windows.jpg)
+*暖光照射下的纸城内部：光束落处的窗户逐一点亮。*
 
-![修改前后对比：冲印后彩绘纱幕墙在破洞周围留下一圈微弱余晖](../images/06-mural-afterglow.jpg)
-*修改前后对比：冲印后彩绘纱幕墙在破洞周围留下一圈微弱余晖。*
+第 1 幕的纱幕墙上，第一版城市投影照片感太重，于是我们用 GPT Image 经过三轮迭代生成了风格化的手绘壁画，并在第 3 天把剪影重绘成伦敦天际线。玩家冲印出第一格画面后，彩绘纱幕墙会在洞口边缘留下一圈淡淡的余晖。
 
-最后一天的早上，我们把城市材质整体往奶油色调校（壁画饱和度 0.55、亮度 1.25），并对比了光束扫过纸艺立面时的效果。
+![修改前后对比：冲印之后，彩绘纱幕墙在洞口边缘留下一圈淡淡的余晖](../images/06-mural-afterglow.jpg)
+*修改前后对比：冲印之后，彩绘纱幕墙在洞口边缘留下一圈淡淡的余晖。*
 
-![光束扫过纸城内部：最后一天调色时两版城市材质的对比](../images/20-city-sweep-before-after.jpg)
-*光束扫过纸城内部：最后一天调色时两版城市材质的对比。*
+最后一天早上，我们把城市材质整体往奶油色调校（壁画饱和度 0.55，亮度 1.25）。
 
-当你走出纸艺小巷踏入小广场，遮光片盒会向下收起，手电筒化作一根顶端带星的魔法棒。广场中央立着一座 2.8 米高的玩具旋转木马。黑暗中旋转木马起初是纯白色的；当你在 6 米内用魔法棒的光束照向它，木马便伴随四小节 E 大调华尔兹循环乐句转动起来，由纯白经粉彩渐渐晕染成全彩。
+当你走出纸板小巷来到小广场，遮光片盒（gobo box）会向下收起，手电筒变形成顶端带星星的魔法棒。广场中央立着一座 2.8 米高的玩具旋转木马。旋转木马最初在黑暗中呈纯白色；当你在 6 米内用魔法棒的光束照向它，木马就会伴随四小节 E 大调圆舞曲循环旋律转动起来，从纯白渐变成粉彩，再慢慢染上饱满的色彩。
 
-![玩具旋转木马初照亮时呈纯白，随后转为粉彩，最后变为全彩](../images/07-carousel-white-to-colour.jpg)
-*玩具旋转木马初照亮时呈纯白，随后转为粉彩，最后变为全彩。*
+![玩具旋转木马刚照亮时呈纯白色，随后变为粉彩，最后染上饱满色彩](../images/07-carousel-white-to-colour.jpg)
+*玩具旋转木马刚照亮时呈纯白色，随后变为粉彩，最后染上饱满色彩，以及走近木马群的特写。*
 
-魔法棒顶端的五角星会投出一个星形光斑，里面带着我们的灯光师在 2021 年 10 月拍摄的一张蓝红光影照片。
+魔法棒顶端的星星会投出星形光斑。
 
 ![手持魔法棒照亮旋转木马](../images/19-carousel-and-wand.jpg)
 *手持魔法棒照亮旋转木马。*
 
-我们把魔法棒的丝带拆成独立材质槽（`SM_MagicWand_02`），加上星芒辉光和星光拖尾，并把拖尾末端调校得干净利落地收尖。
+我们把魔法棒上的丝带拆成独立材质槽，加上星芒光晕与星星拖尾，并把拖尾末端调得干净利落。
 
-![魔法棒星光拖尾做成收尖效果前后的对比](../images/08-wand-trail.jpg)
-*魔法棒星光拖尾做成收尖效果前后的对比。*
+![魔法棒星星拖尾收尖前后的对比](../images/08-wand-trail.jpg)
+*魔法棒星星拖尾收尖前后的对比。*
 
-小广场与终幕上方悬着由 200 颗星星组成的星幕，星星在光束靠近到 8 米内时苏醒，并错落闪烁。第 4 天一早，我们加入了“世界退场”时刻：当纸城与舞台景片移出视野后便将其隐藏，替换为街道边界、290 颗点亮的虚空星星，以及 260 个柔和虚化的背景光点。
+广场与终幕上空悬着由 200 颗星星组成的天幕，光束靠近到 8 米内时星星就会苏醒，并错落闪烁。第 4 天一早，我们加上了场景消隐演出：当纸城与舞台景片移出视野后就将它们隐藏，换成街道边界、290 颗点亮的虚空星星，以及 260 个柔和虚化的背景光点。
 
-![点亮旋转木马后回头望去：城市已经消失，只剩漫天繁星](../images/09-world-gone-stars.jpg)
-*点亮旋转木马后回头望去：城市已经消失，只剩漫天繁星。*
+![旋转木马点亮后，漫天繁星取代了原先的城市](../images/09-world-gone-stars.jpg)
+*旋转木马点亮后，城市隐去，漫天繁星。*
 
-为了让 1994 年 Soho 排练厅的气息一眼可辨，我们用 273 个构件搭起剧场外壳把舞台围合起来，配以奶油色涂漆砖墙（`T_HouseWall_BaseColor`）、11 个置景模型，以及由脚本（`Scripts/s2/ui_drafts.py`）生成的停拍通知与预算报表。
+游戏最后停在我们的创意负责人设计的片尾界面上（以最终提交的版本为准）：蓝色丝绒上，一圈金色椭圆托着游戏里的八件物件。手电筒和其他物件一起浮着，鼠标靠近就会让开并亮起，旋转木马转起来。
 
-![为布景制作的年代感道具：停拍通知与预算报表](../images/18-cancellation-notices.jpg)
-*为布景制作的年代感道具：停拍通知与预算报表。*
+![片尾界面的设计稿和游戏里的同一画面](../images/27-ending-design-vs-game.jpg)
+*片尾界面：设计稿（左）和游戏里的同一画面（右）。*
 
-标题画面上，我们换掉了早期的纯文本排版，改为在纯黑虚空中用细线悬挂的纸板字母卡，由一束跟随鼠标指针移动的手电筒光束照亮。
+为了让 1994 年的 Soho 排练厅一眼可辨，我们用 273 个组件拼出剧场外壳，把舞台围在奶油色刷漆砖墙与 11 个置景模型中间。墙上贴的停拍通告和预算表也是用脚本绘制的。
 
-![标题画面：初版纯文本排版与后来的悬挂字母卡菜单](../images/11-start-screen-before-after.jpg)
-*标题画面：初版纯文本排版（左）与后来的悬挂字母卡菜单（右）。*
+![搭建完成后的地下剧场平面俯视图](../images/15-theatre-plan.jpg)
+*搭建完成后的地下剧场平面俯视图。*
 
-针对第一人称视角，我们通过 Blender 脚本（`build_forearm_hands.py`）生成了 60 cm 长的奶油色小臂衣袖并更新了手部握姿，还在手电筒侧面与尾部加上了拇指拨轮（`SM_WarmthDial_02`），这样滚动滚轮时手腕保持不动，只转动拨轮。
+在开始界面上，我们换掉了早期的纯文本排版，改成纯黑虚空中用细线悬挂的纸板字母卡，由跟随鼠标指针移动的手电筒光束照亮。
 
-![第一人称手臂与手电筒在盒子外与盒子内的修改前后对比](../images/13-arms-before-after.jpg)
-*第一人称手臂与手电筒在盒子外与盒子内的修改前后对比。*
+![开始界面：初版纯文本排版与后来的悬挂字母卡菜单](../images/11-start-screen-before-after.jpg)
+*开始界面：初版纯文本排版（左）与后来的悬挂字母卡菜单（右）。*
+
+在第一人称视角下，我们用 Blender 脚本生成了 60 cm 长的奶油色小臂衣袖、更新了手部握持姿势，还在手电筒侧面和尾部加了拇指拨轮，滚动滚轮时手腕保持不动，只转动拨轮。
+
+![第一人称双手修改前后的特写，手电筒在盒外与盒内的状态](../images/13-arms-before-after.jpg)
+*双手修改前后的对比，上方为手电筒在盒外，下方为推入盒内。*
 
 ## 工程
 
-我们的项目规范（`AGENTS.md` 第 9 条）最初划分由 C++ 负责系统与数学计算，蓝图负责流程、视觉与参数配置。实际开发中，我们把包括场景流程在内的几乎所有逻辑都推进了 C++ 和 Python 编辑器脚本，这样无需手动打开 `.uasset` 文件就能直接测试规则。每一条玩法规则都先写成不依赖 `UWorld` 的纯 `inline` 函数头文件，分布在 31 个 `*Math.h` 和 `*Rules.h` 头文件中（`GauzeMath`、`FramingMath`、`FilmMath`、`FilmScreenMath`、`LightToyMath`、`FirstPersonPoseMath`、`EndingRules`、`EyeRules`、`MenuRules`、`GuidanceRules`），默认调参数据则放在纯 `USTRUCT` 类型里（`FGauzeTuning`、`FFramingTuning`、`FFilmRailTuning`）。`ALightArtistCharacter` 挂载 `UFlashlightComponent`、`UGoboBoxComponent`、`UFilmPrinterComponent` 和 `UDailiesComponent`，而 C++ 导演类（`APrologueDirector`、`AActDirector`、`AFinaleDirector`）配合 `AUnlitGameMode`、`AUnlitPlayerController` 和 `AUnlitHUD` 驱动剧情。代码库里一个 `BlueprintImplementableEvent` 钩子都没有；蓝图只是由 `Scripts/editor/s2_act1/build_act1_blueprints.py` 生成的薄子类，仅用于绑定资产和数据表。
+我们把游戏架构拆成三层。最底层是规则：暖光怎么打开纱幕、光束覆盖了取景框多少面积、什么时候冲印画面、终幕胶卷怎么走片。每条规则都是不依赖游戏世界的小型 C++ 纯函数头文件，一共 31 个，默认调参直接放在普通数据结构里。往上一层，玩家身上的几个 C++ 组件（手电筒、遮光片盒（gobo box）、胶片冲印器）加上每个场景的 C++ 导演类负责驱动流程。蓝图做得很薄，由编辑器脚本直接生成，只负责指向网格体、材质和参数表。因为规则层完全不需要运行中的游戏世界，279 个自动化测试在无头编辑器里一分钟左右就能跑完。
 
-通过 MCP（`execute_tool_script`）发送的 Python 脚本负责构建关卡和材质。`build_act1_level.py` 根据 `act1_city_layout.json` 及叠加 JSON 文件摆放 `L_Act1`，按标签匹配 Actor，因此重复运行时会就地移动已有 Actor，同时挂上 `Zone_<label>` 标签并连好 `framingZone` 等引用。运行时，各模块通过 `MPC_Flashlight` 共享着色器状态，并通过动态委托（`AFramingZone::OnPrinted` 绑定到 `AActDirector::HandleZonePrinted`、`UFilmReelSubsystem::OnPrintAdded`、`AFilmScreen::OnFinished`）传递玩法事件。由于规则头文件不依赖世界上下文，`Source/TheUnlitCut/Private/Tests/` 下的 279 个自动化测试可以直接在无头编辑器中运行（通过带 `-nullrhi` 的 `Scripts/run-tests.sh`，少数需要字体的测试则用 `UNLIT_TEST_RHI=offscreen`）。文本排版适配在打包后的游戏中检查：`Unlit.TextFit` 会用 Slate 的 `FSlateTextLayout` 测量每一条中英文剧情字符串，一旦出现溢出，agent 脚本就会报错失败。
+![架构图：不依赖游戏世界的规则头文件位于 C++ 组件与 Actor 之下](../images/34-diagram-architecture.jpg)
+*架构图：最底层是不依赖游戏世界的规则，往上依次是 C++ 组件与场景导演类、只挂载资产与参数的薄蓝图、负责搭建关卡的 Python 编辑器脚本，以及两条测试路径（针对规则的无头测试、针对打包游戏的脚本化跑测）。*
 
-![架构图：C++ 组件与 Actor 底层的无世界依赖规则头文件](../images/34-diagram-architecture.jpg)
-*架构图：C++ 组件与 Actor 底层的无世界依赖规则头文件、驱动流程的 C++ 导演类、承载资产与参数的薄蓝图、构建关卡与材质的编辑器 Python 脚本，以及两条测试路径（无头自动化测试；打包游戏上的 AgentRun）。*
+关卡同样没有靠手工摆放。通过 MCP 发给编辑器的 Python 脚本会读取布局文件，按名称放置每一件布景、墙体和取景框；重复运行脚本只会移动已有对象，不会堆出一堆副本。靠这套做法，关卡布局一天改好几次（小巷转弯、侧室、剧场外壳），也不用人工在场景里来回拖拽 Actor。
 
-从纱幕能看出着色器、碰撞和玩法怎样保持一致。每一帧，`UFlashlightComponent::TickComponent` 都会让光束暖度平滑过渡向滚轮目标值（每格滚轮 `0.10`），并调用 `Apply()` 更新聚光灯，同时把 `BeamOrigin`、`BeamDirection`、`BeamTanOuter`、`BeamOn`、`BeamWarmth`、`BeamColor`、`BeamIntensity`、`ReactiveAmount`、`BeamInBox` 和 `CityReveal` 写入 `MPC_Flashlight`。这些光锥参数来自 `GetLitCone()`；当手电筒处于遮光片盒内时，该光锥就是从盒子镂空正面射出、上限 60 度的 `LightToyMath::ProjectionCone`。
+手电筒是全片唯一的灯光数据源。它每一帧都会把暖度平滑过渡到滚轮设定的目标值，并把照亮光锥和暖度写进所有材质都能读取的材质参数集。当手电筒推入遮光片盒（gobo box）里时，这个光锥就变成从盒子镂空正面射出的较窄投影光锥。纱幕着色器、纱幕碰撞体和取景框全都读取同一个光锥，玩家看到的画面、能穿过去的区域，以及判定为被照亮的范围始终一致。
 
-![一束光，三处读取：手电筒每帧将照明光锥与暖度写入 MPC_Flashlight](../images/32-diagram-flashlight-mpc.jpg)
-*一束光，三处读取：手电筒每帧将照明光锥与暖度写入 MPC_Flashlight；M_Gauze 的遮罩、纱幕碰撞与取景覆盖率全都共用同一个光锥。*
+![一束光，三个读取方：手电筒每一帧写入照亮光锥与暖度](../images/32-diagram-flashlight-mpc.jpg)
+*一束光，三个读取方：手电筒每一帧写入照亮光锥与暖度；纱幕遮罩、纱幕碰撞体与取景框覆盖率全都共用同一个光锥。*
 
-`M_Gauze` 是开启了 `ditherOpacityMask = True` 的双面 `BLEND_Masked` 材质；阴影通道会遵循该遮罩，因此暖光能物理穿过纱幕上的洞。它的 Custom HLSL 节点（"S04"）测量每个像素沿光束方向的距离与横向偏移，计算破洞半径（`HoleRadiusScale = 0.9`，`MinHoleRadius = 75` cm），在外围 35% 区域（`EdgeSoftness = 0.35`）做 `smoothstep` 羽化，再用 `smoothstep(WarmthSolid, WarmthOpen, Warmth)` 在 `0.45` 到 `0.65` 之间缩放透光率（`add_print_hole.py` 则把这个实时光洞与冲印后留下的常驻破洞 `PHole * saturate(PrintOpen)` 合并）。在 `TG_PostUpdateWork` 阶段，`AGauzeScreen` 用同一套数学公式计算 `GauzeMath::IsPassable`，一旦透光率达到 `PassTransmission = 0.6` 就关闭阻挡碰撞。
+纱幕使用双面 Masked 材质。着色器会计算每个像素沿光束方向的距离以及偏离光束中心线的距离，并打开一个随距离增大、半径不小于 75 cm 的圆洞，洞口外圈 35% 的半径做羽化过渡。洞口打开的程度取决于暖度：低于 0.45 时完全不透，达到 0.65 时完全打开，中间按平滑曲线过渡。阴影通道共用同一张遮罩，因此暖光能真正穿过洞口，照亮后方的舞台。在玩法逻辑一侧，纱幕在每一帧结束后跑同样的数学公式，一旦透光率达到 0.6 就关闭碰撞，玩家在那一刻就能直接穿过去。冲印画面还会在纱幕上留下第二个永久洞口，并在洞口边缘保留一圈淡淡的余晖。
 
 ![纱幕透光率与光束暖度的关系](../images/30-diagram-gauze-warmth.jpg)
-*纱幕透光率与光束暖度的关系：最终出货采用的 smoothstep(0.45, 0.65) 曲线（虚线为最初 0.85 的调参）、0.6 的可穿行阈值，以及围绕光束射线裁出的破洞。*
+*纱幕透光率与光束暖度的关系：最终发布版采用 smoothstep(0.45, 0.65)（虚线为最初 0.85 的调参），0.6 为可穿过的阈值，以及围绕光束射线切出的圆洞。*
 
-```hlsl
-// Scripts/editor/s1_gameplay/build_gauze.py, lines 12-18
-float3 V = WorldPos - Origin.xyz;
-float Along = max(dot(V, Dir.xyz), 0.0);
-float Across = length(V - Dir.xyz * Along);
-float Radius = max(Along * TanOuter * HoleRadiusScale, MinHoleRadius);
-float Hole = 1.0 - smoothstep(1.0 - EdgeSoftness, 1.0, Across / Radius);
-float Transmission = On * smoothstep(WarmthSolid, WarmthOpen, Warmth);
-return 1.0 - Hole * Transmission;
-```
+取景框是一个 320 × 180 cm 的平面框，上面铺着 16 × 9 网格共 144 个采样点。每一帧我们都会拿每个采样点跟手电筒光锥做检测（只算距离和角度，不打阴影射线），统计有多少个点被照亮。覆盖率达到 70% 时，3 秒保持计时器开始走表；在 50% 到 70% 之间时暂停；低于 50% 时归零。如果玩家一直没对齐，目标阈值会在 60 秒后放宽到 55%，120 秒后放宽到 40%。计时走满后，游戏会在同一帧内连抓三次当前视角画面，让时域效果稳定下来，再把剩下的收尾工作（固化灯光、光束与音效、把冲印画面加入胶卷）分摊到随后四帧执行，这样冲印的那一刻不会卡顿。到了终幕，这盘胶卷会化作一条移动的胶片条，在巨幅纱幕上放映，每一格冲印画面滑入后停留 4 秒。
 
-每个 `AFramingZone` 都是一个 320 × 180 cm 的平面矩形。在 `BeginPlay` 时，`FramingMath::BuildSamples` 会在该矩形上布置 16 × 9 的网格中心点，共计 144 个世界空间采样点。每一帧，`FramingZone.cpp` 都会用手电筒的 `GetLitCone()` 检测每个采样点（`FramingMath::IsLit`，只检查射程与光锥角度，不做阴影或遮光片光线投射），再把照亮的点数除以 144。
+![终幕胶片条的分步设计草图](../images/28-film-strip.jpg)
+*制作终幕胶片条前画的分步示意草图：空白片头、一格格滑入的冲印画面、片尾抽拉，以及最后的消融过渡。*
 
-![320 × 180 cm 画框上的 144 个采样点与照明光锥的检测示意](../images/31-diagram-framing-coverage.jpg)
-*320 × 180 cm 画框上的 144 个采样点与照明光锥（示例光锥）的检测示意，以及保持计时器逻辑：覆盖率 ≥ 0.70 时计时累加，介于 0.50 与 0.70 之间时暂停，低于 0.50 时清零，满 3 s 触发冲印（图中的示例光锥与覆盖率曲线仅作示意）。*
+![320 × 180 cm 取景框上的 144 个采样点与光锥做照射检测](../images/31-diagram-framing-coverage.jpg)
+*320 × 180 cm 取景框上的 144 个采样点与光锥做照射检测，以及保持计时器规则：≥ 0.70 时走表，0.50 到 0.70 之间暂停，低于 0.50 归零，满 3 s 后冲印（图中的光锥与覆盖率曲线为示意）。*
 
-```cpp
-// Source/TheUnlitCut/Public/Framing/FramingMath.h, lines 172-184
-		const FVector ToPoint = Point - Beam.Origin;
-		const double Distance = ToPoint.Size();
-		if (Distance <= UE_KINDA_SMALL_NUMBER || Distance > Beam.Range)
-		{
-			return false;
-		}
-		const double Along = FVector::DotProduct(ToPoint, Beam.Direction);
-		if (Along <= 0.0)
-		{
-			return false;
-		}
-		const double CosCone = FMath::Cos(FMath::DegreesToRadians(static_cast<double>(Beam.OuterConeDegrees)));
-		return Along / Distance >= CosCone;
-```
+为了在无人值守的情况下测试打包后的游戏，我们的 AgentRun 插件可以自动执行 90 个纯文本测试脚本。它会屏蔽真实键鼠，直接把虚拟输入送进游戏的 UI 层，因此在后台跑测试时不会抢开发机的键鼠和窗口焦点。随后检查器会读取运行日志、状态快照和截图亮度。Shipping 包会剥离对象的编辑器标签，所以关卡脚本会给每个取景框打上打包后依然保留的 Tag，让同一套测试脚本在 Development 和 Shipping 包里都能跑通。另一项检查会用游戏自身的文本排版系统测量每一行中英文文本，一旦发现任何文字超出文本框就直接报错。
 
-`FramingMath::Advance` 驱动着 3.0 秒的保持计时器：覆盖率达到或超过 `HoldCoverage = 0.70` 时计时推进；介于 `0.50` 与 `0.70` 之间时暂停；低于 `ClearCoverage = 0.50` 时归零。如果允许计时内迟迟未完成冲印，所需覆盖率会在 60 秒后放宽到 `0.55`，120 秒后放宽到 `0.40`。冲印画面时，`UFilmPrinterComponent::PrintWithScene` 会用 `USceneCaptureComponent2D` 把玩家视角捕获到一张 1920 × 1080 的渲染目标上，并在同一帧内执行 `1 + WarmUpCaptures`（即同帧连续捕获三次），让时域效果稳定下来。`FilmMath::PrintStep` 把后续工作分摊到接下来的四帧里完成，最后把冲印相片发布给 `UFilmReelSubsystem` 和 `AFilmRail`。到了终幕，`AFilmScreen`（`FilmScreenMath::EvaluateStrip`）会在巨幅纱幕上把整盘胶卷作为移动胶片条播放出来：先是 1.5 s 片头引带，每张冲印画面做 0.8 s 缓动滑入并停留 4.0 s，最后拉出胶片并在 2.0 s 内消融。
+![自动化代理测试闭环](../images/33-diagram-agent-tests.jpg)
+*自动化代理测试闭环：从文本脚本驱动带虚拟输入的打包游戏，到输出日志行、截图，以及按跨构建保留的 Tag 执行校验（图中的示例数值仅为示意）。*
 
-```cpp
-// Source/TheUnlitCut/Public/Film/FilmMath.h, lines 68-75
-	/** Frame 0 retains the scene exactly as printed. A light and its shadow box must arrive together. */
-	enum class EPrintStep : uint8 { Capture, KeptLightAndBox, RaysAndSound, PublishReel, PrepareNextPicture, Done };
-
-	inline EPrintStep PrintStep(uint64 FramesSincePrint)
-	{
-		return FramesSincePrint < static_cast<uint64>(EPrintStep::Done)
-			? static_cast<EPrintStep>(FramesSincePrint) : EPrintStep::Done;
-	}
-```
-
-为了在无人值守的情况下验证打包版本，`AgentRun` 插件会通过 `Scripts/run-agent.sh`（`-AgentRun -AgentScript=<name> -windowed`）回放 `Scripts/agent-runs/` 下的 90 个纯文本脚本。在游戏内部，`AgentRun` 会屏蔽物理输入，直接把虚拟鼠标指针与按键事件发给 Slate 控件处理器，因此后台跑测试时不会抢开发者的鼠标、键盘或窗口焦点。`Scripts/s1/check_run.py` 负责校验 `#log`、`#nolog`、`#logbetween`、`#expect`（比对 `Unlit.Dump` 状态）以及截图亮度规则（`#black`、`#bright`、`#differs`）。
-
-![自动化 agent 测试闭环](../images/33-diagram-agent-tests.jpg)
-*自动化 agent 测试闭环：从文本脚本与 run-agent.sh 到接收虚拟输入的打包游戏，产出日志行与截图，再通过匹配跨构建配置一致标签的 #log 或 #expect 规则完成校验（图中示例数字仅作示意）。*
-
-在 Development 构建中，`GetActorNameOrLabel()` 返回编辑器标签；而在 Shipping 构建中，`ACTOR_HAS_LABELS` 被关闭，该函数会返回内部对象名。为了让校验在不同构建配置下完全一致，`build_act1_level.py` 会在每个取景区域上烘焙一个可打包的 `Zone_<name>` 标签，由 `DescribeState()` 以 `zone=` 输出到日志。配合把 `UE_LOG` 行重定向到结果文件的 Shipping soak 变体包，同一套测试脚本可以同时验证 Development 包与 Shipping soak 包。
-
-```cpp
-// Source/TheUnlitCut/Private/Framing/FramingZone.cpp, lines 463-473
-	// frame= is the editor label in Development but the object name in Shipping (ACTOR_HAS_LABELS); zone= comes
-	// from the cooked Zone_<name> tag the level script gives every zone, the same in every configuration and
-	// through rebuilds, so checks match on zone=. The print line ("<name> printed: <state>") carries it too.
-	FString ZoneTagName(TEXT("none"));
-	for (const FName ZoneTag : Tags)
-	{
-		const FString TagText = ZoneTag.ToString();
-		if (TagText.StartsWith(TEXT("Zone_"))) { ZoneTagName = TagText.RightChop(5); break; }
-	}
-	return FString::Printf(TEXT("frame=%s zone=%s coverage=%.2f held=%.2f phase=%s hold=%.2f near=%d fade=%.2f burn=%.2f running=%d"),
-		*GetActorNameOrLabel(), *ZoneTagName, Coverage, State.HeldSeconds, *PhaseText, GetHoldCoverage(), bPawnNear ? 1 : 0, DisplayedFade, DisplayedBurn, State.Phase == EFramingPhase::Holding ? 1 : 0);
-```
-
-![打包游戏中单次全流程自动化跑测生成的截图样张](../images/14-qa-course-sheet.jpg)
-*打包游戏中单次全流程自动化跑测生成的截图样张。*
+![打包游戏单次全流程自动化跑测生成的缩略图联系表](../images/14-qa-course-sheet.jpg)
+*打包游戏单次全流程自动化跑测生成的缩略图联系表。*
 
 ## 我们怎么协作
 
-YILUN LAB 团队由两个人组成：一位创意负责人兼灯光师，以及一位引擎整合负责人。多个 AI 角色会话与我们并肩工作，彼此收发消息，并在 `Saved/Queue/*.md` 中追踪任务。PM-Producer 制定优先级并撰写 QA 与 Windows 任务简报；Game-Designer 编写设计规格书、台词表、关卡图纸、音频管线与开发日志；Art-Director 管理网格体、材质、场景布局与字体；Programming-Lead 负责 C++、编译、打包与代码提交。第 3 天 11:20 左右，我们把程序角色拆分为 Tech-Art-Lead（手臂、着色器、Lumen、近景补光）和新的 Programming-Lead（编辑器、打包、Shipping、Windows、自动化校验），同时在另一台 Mac mini M4 Pro 上接入了 QA-Build 与 Programming-Lead-Remote，在我们的 Windows PC 上接入了 Win-Build，另外还加入了 PM-Intern。第 3 天发生两个会话同时操作编辑器的冲突后，我们引入 `host-lock.sh`，把所有编辑器操作、编译和打包任务全部串行化。
+YILUN LAB 团队由两个人组成：一位负责创意与灯光美术，另一位负责引擎整合。多个按角色分工的 AI 会话与我们并肩协作，彼此收发消息，并通过 `Saved/Queue/*.md` 追踪任务。PM-Producer 负责排定优先级、编写 QA 与 Windows 打包简报；Game-Designer 负责写设计文档、台词表、关卡图纸、音频管线与开发日志；Art-Director 管理网格体、材质、关卡布局与字体；Programming-Lead 负责 C++、编译、打包与代码提交。第 3 天 11:20 左右，我们把原程序角色拆成了 Tech-Art-Lead（负责手臂、着色器、Lumen、近景补光）和新的 Programming-Lead（负责编辑器、打包、Shipping、Windows 移植与自动化检查），同时在一台 Mac mini M4 Pro 上加开了 QA-Build 与 Programming-Lead-Remote，在 Windows PC 上开了 Win-Build，另外还加了 PM-Intern。第 3 天有两个会话同时操作编辑器撞车后，我们加上了 `host-lock.sh`，把所有编辑器操作、编译和打包任务全部改成串行排队。
 
-Claude Code 与 Claude Opus 子代理运行着各个角色会话，通过 Epic 的实验性 MCP 服务器驱动 Unreal Engine 5.8，编写了早期 C++ 系统，并写出了无头 Blender 与 Python 贴图生成脚本。Codex CLI 与 GPT Image 在 git worktree 中编写 C++ 功能与 UI 代码，并生成了纱幕壁画、五张开场分镜、砖墙贴图以及悬挂卡片菜单资产。Tripo Studio 与 Meshy AI 生成了 3D 网格体，实际进游戏的模型都在 Blender 中做了清理与减面。ElevenLabs 与 ffmpeg 制作了配音、音效与音乐，Antigravity CLI（`agy`）则润色了游戏内文案、操作提示、舞台区域名称与视频字幕。
+Claude Code 与 Claude Opus 子代理运行各个角色会话，通过 Epic 实验性的 MCP 服务器驱动 Unreal Engine 5.8，编写了早期的 C++ 系统，以及无头 Blender 脚本与 Python 贴图生成脚本。Codex CLI 与 GPT Image 在多个 git worktree 中编写 C++ 功能与 UI 代码，并生成了纱幕壁画、五格开场故事板画面、砖墙贴图和悬挂卡片菜单资产。Tripo Studio 与 Meshy AI 生成 3D 网格体，实际进游戏的模型都在 Blender 里做了清理和减面。ElevenLabs 与 ffmpeg 制作了配音、音效与音乐，Antigravity CLI（`agy`）则负责润色游戏内文案、操作提示、幕名与视频字幕。
 
 ## 下一步
 
-正式提交前，我们还需要亲手启动并试玩最终的 Windows 候选包，评估游戏内的混音效果与鼠标视角手感，审阅调暗后的开场分镜，并按照 `TRAILER_SHOTLIST.md` 录制实机预告片。在 macOS 端，我们的签名脚本（`7be48a1`）和 `docs/submission/README_Mac.txt` 已就绪，只等付费 Apple Developer 证书到位即可完成公证。赛后更新计划中，我们已经排入了第一人称双手的上半身骨骼、序幕中只拿手电筒的手部形态、更完整的 EXIT 标志闪烁序列，以及尚未合并的焦散反光板预研分支（`origin/codex/reflector-light-2026-11-14`）。
+在最终提交前，我们还需要手动启动并通玩一遍 Windows 最终候选包，实际确认游戏内的混音平衡与鼠标视角手感，检查调暗后的开场故事板画面，并按 `TRAILER_SHOTLIST.md` 录制实机预告片。在 macOS 端，我们的签名脚本（`7be48a1`）和 `docs/submission/README_Mac.txt` 已经就绪，只等付费 Apple Developer 证书下来完成公证。至于赛后计划，我们已经排上了第一人称双手的上半身骨骼、序幕里只拿手电筒的手部形态、更完整的 EXIT 标志闪烁序列，以及尚未合并的焦散反光镜预研分支（`origin/codex/reflector-light-2026-11-14`）。
 
 ## 附录：四天一览
 
-- 11 月 12 日（第 1 天）：写完一页纸 GDD，整理好情绪板，生成 41 个道具网格体。
+- 11 月 12 日（第 1 天）：写完一页纸 GDD，拼好情绪板，生成 41 个道具网格体。
 - 11 月 12 日傍晚：Stage 1 灯光玩具在测试关卡跑通，通过 10 项无头测试。
-- 11 月 13 日（第 2 天）：做出中空光学盒，绘制纱幕壁画，搭建第一幕。
+- 11 月 13 日（第 2 天）：做出中空光学盒，绘制纱幕壁画，拼好第 1 幕。
 - 11 月 13 日傍晚：接入配音与音乐，调低纱幕暖度阈值。
-- 11 月 13 日深夜：窗户光记忆、胶片条放映和 200 颗悬挂星星在黎明前落地。
-- 11 月 14 日（第 3 天）：加入 `host-lock.sh`，生成开场分镜，细化第一人称手臂。
-- 11 月 14 日深夜：用 273 个构件搭起剧场外壳围合舞台，整合标题菜单。
-- 11 月 15 日（第 4 天）：加入世界退场后的星空虚空，重绘开场分镜，通过 Shipping 检查。
+- 11 月 13 日深夜：窗户光记忆、胶片条放映与 200 颗悬挂星星在黎明前落地。
+- 11 月 14 日（第 3 天）：加入 `host-lock.sh`，生成开场故事板画面，细化第一人称手臂。
+- 11 月 14 日深夜：用 273 个组件的剧场外壳围起舞台，并接入开始菜单。
+- 11 月 15 日（第 4 天）：加入城市隐去后的星空虚空演出，重绘开场画面，通过 Shipping 检查。
+- 11 月 15 日下午：试玩修正、按区域给的提示和新的片尾界面进入最终候选版本。

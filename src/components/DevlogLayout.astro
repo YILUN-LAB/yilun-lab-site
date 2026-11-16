@@ -1,6 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import BaseLayout from "./BaseLayout.astro";
+import DevlogLightbox from "./react/DevlogLightbox";
 
 // The Unlit Cut devlog: a standalone, unlisted long read. Like the Hug page it
 // has no studio navigation or footer; the byline is the team, YILUN LAB.
@@ -79,5 +80,6 @@ const labels =
         <Content />
       </article>
     </main>
+    <DevlogLightbox lang={lang} client:idle />
   </div>
 </BaseLayout>

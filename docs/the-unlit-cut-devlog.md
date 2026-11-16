@@ -28,11 +28,10 @@ identical to its source before publishing. Both languages contain the full text.
 The `#` heading becomes the page title, and each `##` heading becomes an entry
 in the table of contents.
 
-The current import is source commit `2540c707b76b87671ddb8a3f70529117fd6c02fa`
-(second illustrated version, authored by Yilun Lab). Both languages contain
-27 figures and four fenced code blocks. The original 15 images are unchanged;
-12 new WebPs were added. Astro's code blocks retain their own horizontal scroll
-and keyboard focus at mobile widths, without widening the page.
+The current import is source commit `d9cef8a8fab3a206136de328a498be081db6f780`
+(third illustrated version, authored by Yilun Lab). Both languages contain
+32 figures and no fenced code blocks. The image directory retains all 33 WebPs,
+including the city-sweep comparison that is no longer referenced by the text.
 
 Images are linked as `![alt](../images/NN-name.jpg)` with an italic caption on
 the next line. `src/lib/remark-devlog-figures.ts` (registered in
@@ -56,6 +55,13 @@ node scripts/optimize-devlog-images.mjs <folder with NN-name.jpg files>
 `src/pages/projects/the-unlit-cut-devlog/index.astro` and `zh.astro` render
 `src/components/DevlogLayout.astro`: a YILUN LAB byline, the table of contents
 (above the text on narrow screens, a sticky column from 1024 px) and the
-article. There is no studio navigation, footer or JavaScript island. Styles
-are the `.devlog` block at the end of `src/styles/global.css`; the Chinese page
-uses the system sans-serif throughout.
+article. There is no studio navigation or footer. Styles are the `.devlog` block
+at the end of `src/styles/global.css`; the Chinese page uses the system sans-serif
+throughout.
+
+`DevlogLightbox.tsx` hydrates once with `client:idle`. It enhances the static
+figures with native image buttons and reuses `PhotoLightbox.tsx` for the enlarged,
+uncropped images, captions, arrow/swipe navigation and modal focus/scroll cleanup.
+The images and captions remain visible with JavaScript disabled. Unmounting the
+island restores the original figure markup. Viewer controls follow the article
+language; the Chinese-to-English link remains asymmetric.

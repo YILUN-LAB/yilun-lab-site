@@ -5,6 +5,7 @@ export interface LightboxPhoto {
   src: string;
   fullSrc?: string;
   alt: string;
+  caption?: string;
 }
 
 export interface LightboxLabels {
@@ -209,6 +210,9 @@ export function PhotoLightbox({
             </svg>
           </button>
           <div className="min-w-0 max-w-2xl text-center font-body">
+            {photo.caption && (
+              <p className="mb-2 text-sm leading-relaxed text-white/80">{photo.caption}</p>
+            )}
             <p aria-live="polite" aria-atomic="true" className="text-sm tabular-nums text-white/80">
               {String(index + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}
             </p>
