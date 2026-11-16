@@ -82,7 +82,7 @@ describe("The Unlit Cut devlog pages", () => {
   it("mounts one idle image viewer in the shared bilingual layout", () => {
     const layout = readFileSync(path.join(root, "src/components/DevlogLayout.astro"), "utf8");
     expect(layout.match(/<DevlogLightbox\b/g)).toHaveLength(1);
-    expect(layout).toMatch(/<DevlogLightbox\s+lang=\{lang\}\s+client:idle/);
+    expect(layout).toMatch(/<DevlogLightbox\s+client:idle/);
   });
 
   it("does not link the English page to the Chinese one", () => {

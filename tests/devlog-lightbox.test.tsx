@@ -6,6 +6,7 @@ import DevlogLightbox from "../src/components/react/DevlogLightbox";
 let article: HTMLDivElement;
 
 beforeEach(() => {
+  document.documentElement.lang = "en";
   article = document.createElement("div");
   article.className = "devlog";
   article.innerHTML = `
@@ -20,12 +21,14 @@ afterEach(() => {
   article.remove();
   document.documentElement.style.overflow = "";
   document.body.style.overflow = "";
+  document.documentElement.lang = "en";
 });
 
-function mount(lang: "en" | "zh-Hans" = "en") {
+function mount(lang = "en") {
+  document.documentElement.lang = lang;
   return render(
     <StrictMode>
-      <DevlogLightbox lang={lang} />
+      <DevlogLightbox />
     </StrictMode>,
     { container: article.querySelector<HTMLDivElement>("[data-viewer]")! }
   );
@@ -36,7 +39,7 @@ describe("Devlog image viewer", () => {
     mount();
     expect(article.querySelectorAll("figure button")).toHaveLength(2);
     fireEvent.click(screen.getByRole("button", { name: "Second picture" }));
-    const dialog = screen.getByRole("dialog", { name: "Development log images" });
+    const dialog = screen.getByRole("dialog", { name: "Project photographs" });
     expect(within(dialog).getByRole("img")).toHaveAttribute("alt", "Second picture");
     expect(within(dialog).getByText("Second caption")).toBeInTheDocument();
     expect(within(dialog).getByText("02 / 02")).toBeInTheDocument();
@@ -58,9 +61,8 @@ describe("Devlog image viewer", () => {
     document.body.style.overflow = "auto";
     mount();
     const trigger = screen.getByRole("button", { name: "First picture" });
-    trigger.focus();
     fireEvent.click(trigger);
-    const dialog = screen.getByRole("dialog", { name: "Development log images" });
+    const dialog = screen.getByRole("dialog", { name: "Project photographs" });
     expect(document.body.style.overflow).toBe("hidden");
     fireEvent.click(dialog.querySelector<HTMLButtonElement>("[data-lightbox-close]")!);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -81,15 +83,12 @@ describe("Devlog image viewer", () => {
   });
 
   it("uses Chinese viewer controls on the Chinese article", () => {
-    mount("zh-Hans");
+    mount("zh-CN");
     fireEvent.click(screen.getByRole("button", { name: "First picture" }));
     const dialog = screen.getByRole("dialog", { name: "开发日志图片" });
-    fireEvent.click(within(dialog).getByRole("button", { name: "下一张图片" }));
+    fireEvent.click(within(dialog).getByRole("button", { name: "下一张" }));
     expect(within(dialog).getByText("02 / 02")).toBeInTheDocument();
     expect(within(dialog).getByText("Second caption")).toBeInTheDocument();
-    expect(dialog.querySelector("[data-lightbox-close]")).toHaveAttribute(
-      "aria-label",
-      "关闭图片查看器"
-    );
+    expect(dialog.querySelector("[data-lightbox-close]")).toHaveAttribute("aria-label", "关闭");
   });
 });
